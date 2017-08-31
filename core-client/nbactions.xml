@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+          <action>
+            <actionName>CUSTOM-Clean and Build, non-recursive</actionName>
+            <displayName>Clean and Build, non-recursive</displayName>
+            <recursive>false</recursive>
+            <goals>
+                <goal>clean</goal>
+                <goal>install:install</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>build</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>rebuild</actionName>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-clean site</actionName>
+            <displayName>clean site</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>site</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-site</actionName>
+            <displayName>site</displayName>
+            <goals>
+                <goal>site</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-javadoc</actionName>
+            <displayName>javadoc</displayName>
+            <goals>
+                <goal>javadoc:javadoc</goal>
+            </goals>
+        </action>
+    </actions>
