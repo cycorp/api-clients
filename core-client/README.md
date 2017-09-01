@@ -1,13 +1,14 @@
 Cyc Core Client Implementation
 ==============================
 
-**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-client-parent.svg)](https://github.com/cycorp/api-suite/releases/tag/core-client-1.0.0-rc6)  
+**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/com.cyc/cyc-core-client-parent.svg)](https://github.com/cycorp/api-suite-clients/releases/)  
 **License:** [Apache 2.0](LICENSE)  
 **Changes:** See the [CHANGELOG](CHANGELOG.md)  
 **Documentation:** [Cyc Developer Center](http://dev.cyc.com/api/core/)  
 
-The Core Client Implementation project (`core-client`) provides the reference implementation 
-for the sibling Core API Specification (`core-api-spec`). 
+The Cyc Core Client provides the reference implementation for the Cyc Core API Specification, which
+may be found in the [`api-suite`](https://github.com/cycorp/api-suite) repository, in the 
+`core-api-spec` directory. For further details about the Core API, see the project's README.
 
 The Core API Specification is the core set of Java APIs for interacting with the Cyc inference
 engine and knowledge base. For further details about the Core API, see the project's README.
@@ -28,11 +29,11 @@ Requirements
 
 ### Java
 
-* `JDK 1.7` or greater to build; code can be run on Java 6.
+* Java 7 or greater to run, `JDK 1.7` or greater to build.
 * [Apache Maven](http://maven.apache.org/) version `3.2` or higher to build the sources. If you are
   new to Maven, you may wish to view the [quick start](http://maven.apache.org/run-maven/index.html).
 
-The APIs may be used without Maven via the `cyc-core-client-impl-1.0.0-rc6-jar-with-dependencies.jar`.
+The APIs may be used without Maven via the `cyc-core-client-impl-1.0.0-rc7.0-jar-with-dependencies.jar`.
 See [Standalone Bundle](#standalone-bundle), below.
 
 ### Cyc Server
@@ -41,12 +42,6 @@ The following Cyc server releases are supported:
 
 * **ResearchCyc 4.0q** or higher. Requires [server code patching](server-patching.md).
 * **EnterpriseCyc 1.7-preview** or higher. Requires [server code patching](server-patching.md).
-
-The Core APIs also include support for the planned upcoming release of **OpenCyc 5.0-preview**,
-although OpenCyc does not have support for advanced features such as QuerySearch or
-ProofViewJustification. Classes and methods which are not supported by OpenCyc will reflect this in
-their javadoc description and in their signature by declaring that they throw a
-`com.cyc.session.exception.OpenCycUnsupportedServerException`.
 
 For inquiries about obtaining a suitable version of Cyc, please visit the
 [Cyc Dev Center downloads page](http://dev.cyc.com/downloads/).
@@ -73,13 +68,13 @@ project, add the following dependencies to your pom.xml:
       <!-- Core API specification -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-api</artifactId>
-      <version>1.0.0-rc6</version>
+      <version>1.0.0-rc7.0</version>
     </dependency>
     <dependency>
       <!-- Reference implementation for the Core API -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc6</version>
+      <version>1.0.0-rc7.0</version>
       <scope>runtime</scope>
     </dependency>
 
@@ -114,8 +109,7 @@ you may download this release in a standalone bundle containing:
 * Source code. (Requires Maven to compile.)
 * Example code. (Requires Maven to compile.)
 
-The bundle is available from the
-[releases page](https://github.com/cycorp/api-suite/releases/tag/core-client-1.0.0-rc6) as a 
+The bundle is available from the [releases page](https://github.com/cycorp/api-suite-clients/releases/) as a 
 tar or zip file. See the README in the bundle for details.
 
 To use a standalone jar in a Maven project, use the "jar-with-dependencies" classifier when
@@ -125,14 +119,14 @@ specifying the dependency:
       <!-- Core API specification -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-api</artifactId>
-      <version>1.0.0-rc6</version>
+      <version>1.0.0-rc7.0</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
     <dependency>
       <!-- Reference implementation for the Core API -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc6</version>
+      <version>1.0.0-rc7.0</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
 
@@ -144,8 +138,8 @@ Building the Sources
 --------------------
 
 **Note:** Installing this project will run all of the API test suites. It is _strongly recommended_
-to only run the API test suites against a _fresh Cyc server instance_ dedicated to that purpose. The
-API tests may alter a Cyc server's KB contents.
+to only run the API test suites against a _fresh Cyc server instance_ dedicated to that purpose, as 
+the API tests can alter a Cyc server's KB contents.
 
 You will first need to have installed the `core-api-spec`, or you will need to build against a 
 released version of the core-api-spec. See the core-api-spec's README for details on how to build
@@ -285,7 +279,7 @@ For the latest API documentation and news, or to ask questions, visit the
 [Cyc Developer Center](http://dev.cyc.com/).
 
 Code samples may be downloaded from the Cyc Core API Use Cases project in the 
-[example-code repository](https://github.com/cycorp/example-code) repository.
+[`example-code`](https://github.com/cycorp/example-code) repository.
 
 
 Contact

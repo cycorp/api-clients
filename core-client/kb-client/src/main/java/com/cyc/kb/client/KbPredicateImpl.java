@@ -20,35 +20,39 @@ package com.cyc.kb.client;
  * limitations under the License.
  * #L%
  */
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycAssertion;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Guid;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.kb.Context;
 import com.cyc.kb.Fact;
-import com.cyc.kb.client.LookupType;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.KbStatus;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.client.config.KbConfiguration;
-import com.cyc.kb.client.config.KbDefaultContext;
+import com.cyc.kb.client.quant.QuantifiedInstanceRestrictedVariable;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
-import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,12 +65,16 @@ import org.slf4j.LoggerFactory;
  * in the 0th argument position. Well-formed (based on predicate arguments) and
  * closed sentences can either be true or false.
  *
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version $Id: KbPredicateImpl.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: KbPredicateImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class KbPredicateImpl extends RelationImpl implements KbPredicate {
+public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T> implements KbPredicate {
 
-  static final Logger log = LoggerFactory.getLogger(KbPredicateImpl.class.getName());
+  public static final boolean VERBOSE_ADD_FACT_ERRORS = false;
+  
+  private static final Logger LOG = LoggerFactory.getLogger(KbPredicateImpl.class.getName());
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("Predicate", new Guid("bd5880d6-9c29-11b1-9dad-c379636f7270"));
 
@@ -98,7 +106,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @throws KbTypeException if cycObject is not or could not be made an
    * instance of #$Predicate
    */
-  KbPredicateImpl(CycObject cycObject) throws KbTypeException {
+  KbPredicateImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -159,7 +167,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @throws CreateException
    */
   public static KbPredicateImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, KbPredicateImpl.class);
+    return KbObjectImplFactory.get(nameOrId, KbPredicateImpl.class);
   }
 
   /**
@@ -179,7 +187,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    */
   @Deprecated
   public static KbPredicateImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, KbPredicateImpl.class);
+    return KbObjectImplFactory.get(cycObject, KbPredicateImpl.class);
   }
 
   /**
@@ -207,7 +215,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @throws CreateException
    */
   public static KbPredicateImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, KbPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, KbPredicateImpl.class);
   }
 
   /**
@@ -236,7 +244,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    */
   @Deprecated
   public static KbPredicateImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, KbPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, KbPredicateImpl.class);
   }
 
   /**
@@ -272,7 +280,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @throws CreateException
    */
   public static KbPredicateImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, KbPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, KbPredicateImpl.class);
   }
 
   /**
@@ -309,7 +317,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @throws CreateException
    */
   public static KbPredicateImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, KbPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, KbPredicateImpl.class);
   }
 
   /**
@@ -347,7 +355,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    */
   public static KbPredicateImpl findOrCreate(String nameOrId, KbCollection constraintCol, ContextImpl ctx)
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, KbPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, KbPredicateImpl.class);
   }
 
   /**
@@ -385,7 +393,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @throws CreateException
    */
   public static KbPredicateImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbPredicateImpl.class);
   }
 
   /**
@@ -424,7 +432,7 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, KbPredicateImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, KbPredicateImpl.class);
 
   }
 
@@ -436,54 +444,37 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, KbPredicateImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, KbPredicateImpl.class);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#getSpecializations()
-   */
+  
   @Override
   public Collection<KbPredicate> getSpecializations() {
     return getSpecializations(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#getSpecializations(java.lang.String)
-   */
+  
   @Override
   public Collection<KbPredicate> getSpecializations(String ctxStr) {
     return getSpecializations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#getSpecializations(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public java.util.Collection<KbPredicate> getSpecializations(Context ctx) {
-    return (this.<KbPredicate>getValues(Constants.genlPreds(), 2, 1, ctx));
+    //return (this.<KbPredicate>getValues(Constants.genlPreds(), 2, 1, ctx));
+    return Constants.genlPreds().getValuesForArgPosition(this, 2, 1, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#addSpecialization(java.lang.String, java.lang.String)
-   */
+  
   @Override
   public KbPredicate addSpecialization(String moreSpecificStr, String ctxStr) throws KbTypeException, CreateException {
     KbPredicate p = KbPredicateImpl.get(moreSpecificStr);
     return addSpecialization(p, ContextImpl.get(ctxStr));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#addSpecialization(com.cyc.kb.Predicate, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public KbPredicate addSpecialization(KbPredicate moreSpecific, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.genlPreds(), 2, (Object) moreSpecific);
+    Constants.genlPreds().addFact(ctx, moreSpecific, this);
     return this;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#getGeneralizations()
-   */
+  
   @Override
   public Collection<KbPredicate> getGeneralizations() throws KbException {
     return getGeneralizations(KbConfiguration.getDefaultContext().forQuery());
@@ -499,47 +490,33 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
     return new SentenceImpl (Constants.getInstance().GENLINVERSEPREDS_PRED, this, (Object) moreGeneral);
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#getGeneralizations(java.lang.String)
-   */
   @Override
   public Collection<KbPredicate> getGeneralizations(String ctxStr) {
     return getGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#getGeneralizations(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<KbPredicate> getGeneralizations(Context ctx) {
-    return (this.<KbPredicate>getValues(Constants.genlPreds(), 1, 2, ctx));
+    //return (this.<KbPredicate>getValues(Constants.genlPreds(), 1, 2, ctx));
+    return Constants.genlPreds().getValuesForArgPosition(this, 1, 2, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#addGeneralization(java.lang.String, java.lang.String)
-   */
+  
   @Override
   public KbPredicate addGeneralization(String moreGeneralStr, String ctxStr) throws KbTypeException, CreateException {
     KbPredicate p = KbPredicateImpl.get(moreGeneralStr);
     return addGeneralization(p, ContextImpl.get(ctxStr));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#addGeneralization(com.cyc.kb.Predicate, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public KbPredicate addGeneralization(KbPredicate moreGeneral, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.genlPreds(), 1, (Object) moreGeneral);
+    Constants.genlPreds().addFact(ctx, this, moreGeneral);
     return this;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Predicate#isGeneralizationOf(com.cyc.kb.KBPredicateImpl, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public boolean isGeneralizationOf(KbPredicate moreSpecific, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isGenlPredOf((Fort) core, (Fort) moreSpecific.getCore(), getCore(ctx));
+      return getAccess().getInspectorTool().isGenlPredOf((Fort) getCore(), (Fort) moreSpecific.getCore(), getCore(ctx));
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e);
     }
@@ -552,14 +529,14 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
 
   @Override
   public List<Fact> getExtent(Context ctx) {
-    List<Fact> kbFacts = new ArrayList<Fact>();
+    final List<Fact> kbFacts = new ArrayList<>();
     try {
-      CycList assertions = getAccess().getLookupTool().getPredExtent(this.getCore(), (ctx != null ? getCore(ctx) : null));
+      final CycList assertions = getAccess().getLookupTool().getPredExtent(this.getCore(), (ctx != null ? getCore(ctx) : null));
       for (Object o : assertions) {
         if (o instanceof CycAssertion) {
           try {
             kbFacts.add(FactImpl.get((CycAssertion) o));
-          } catch (Exception e) {
+          } catch (KbTypeException | CreateException e) {
             // ignore
           }
         }
@@ -603,4 +580,146 @@ public class KbPredicateImpl extends RelationImpl implements KbPredicate {
   static String getClassTypeString() {
     return "#$Predicate";
   }
+  
+  // KB API does not do any introspection.. so if we want to use Query API, we should construct
+  // a fully qualified sentence for the given predicate. That can only be possible when all
+  // other variables are passed in.
+  //
+  @Override
+  public Sentence getSentence(Object... args) throws KbTypeException, CreateException {
+    validateArgArity(args);
+    return new SentenceImpl(this, args);
+  }
+  
+  @Override
+  public Fact getFact(Context ctx, Object... args) throws KbTypeException, CreateException {
+    final Sentence s = getSentence(args);
+    return FactImpl.get(s, ctx);
+  }
+  
+  @Override
+  public Boolean isAsserted(Context ctx, Object... args) {
+    try {
+      getFact(ctx, args);
+      return true;
+    } catch (KbException e) {
+      return false;
+    }
+  }
+  
+  @Override
+  public Collection<Fact> getFacts(Object arg, int argPos, Context ctx) {
+    try {
+      final String ctxStr = (ctx == null) ? KbConfiguration.getDefaultContext().forQuery().stringApiValue() //"#$BaseKB"
+              : ctx.stringApiValue();
+      final String command = "(" + SublConstants.getInstance().withInferenceMtRelevance.stringApiValue() + " " + ctxStr
+              + " (" + SublConstants.getInstance().gatherGafArgIndex.stringApiValue() + " "
+              + objectToApiString(arg) + " " + argPos + " "
+              + this.stringApiValue() + "))";
+      LOG.trace("getFacts: {}", command);
+      final Object res = getAccess().converse().converseObject(command);
+      LOG.trace("getFacts response: {}", res);
+      final Set<Fact> facts = new HashSet<>();
+      if (!CycObjectFactory.nil.equals(res)) {
+        final CycList<CycAssertion> assertList = (CycList<CycAssertion>) res;
+        for (Object o : assertList) {
+          if (o instanceof CycAssertion) {
+            try {
+              facts.add(FactImpl.get((CycAssertion) o));
+            } catch (KbException kbe) {
+              // Nothing to do. We did get the facts we are building
+              // but something went wrong. Just don't add it to the list.
+              LOG.error("Error attempting to get fact {}" + o, kbe);
+            }
+          }
+        }
+      }
+      return facts;
+    } catch (CycConnectionException ex) {
+      throw new KbRuntimeException(ex);
+    } catch (CycApiException ex) {
+      throw new KbRuntimeException(ex.getMessage(), ex);
+    }
+  }
+  
+  @Override
+  public Fact addFact(Context ctx, Object... args) throws KbTypeException, CreateException {
+    if (args.length == 2) {
+      if (args[0] instanceof QuantifiedInstanceRestrictedVariable
+              || args[1] instanceof QuantifiedInstanceRestrictedVariable) {
+        validateArgArity(args);
+        final List<Object> argsWithPredicate = Arrays.asList(this, args[0], args[1]);
+        try {
+          // TODO: Should we be doing this for other assertion & sentence methods? - nwinant, 2017-07-26
+          TypeFactImpl fact = new TypeFactImpl(ctx, argsWithPredicate.toArray());
+          return FactImpl.findOrCreate(fact.getFormula(), fact.getContext());
+        } catch (KbException kbe) {
+          throw new CreateException(kbe.getMessage(), kbe);
+        }
+      }
+    }
+    final Sentence s = getSentence(args);
+    return FactImpl.findOrCreate(s, ctx, VERBOSE_ADD_FACT_ERRORS);
+  }
+  
+  @Override
+  public <O> Collection<O> getValuesForArgPosition(
+          Object arg, int argPosition, int valuePosition, Context ctx) {
+    final Set<O> results = new HashSet<>();
+    final Collection<Fact> facts = getFacts(arg, argPosition, ctx);
+    for (Fact fact : facts) {
+      final CycAssertion ca = (CycAssertion) fact.getCore();
+      final CycList<Object> g = ca.getGaf().getArgs();
+      final Object o = g.get(valuePosition);
+      try {
+        results.add(KbObjectImpl.<O>checkAndCastObject(o));
+      } catch (KbException kbe) {
+        // Don't do anything. 
+        LOG.error("Error attempting to checkAndCastObject {}" + o, kbe);
+      }
+      // TODO: Need to unify casting and typing of KBObject. And individual types.
+      // TODO: Need to decide what exception to throw if an KBObject can't be typed into a subclass here.
+      // TODO: Need to decide if instanceof check should be present
+    }
+    LOG.debug("Results from getValues: {}", results);
+    return results;
+  }
+  
+  @Override
+  public <O> Collection<O> getValuesForArgPositionWithMatchArg(
+          Object arg, int argPos, int valuePos, Object matchArg, int matchArgPos, Context ctx) {
+    final Set<O> results = new HashSet<>();
+    final Collection<Fact> facts = getFacts(arg, argPos, ctx);
+    final Object cycAccessFilter = (matchArg instanceof KbObject)
+            ? ((KbObject) matchArg).getCore()
+            : matchArg;
+    for (Fact fact : facts) {
+      final CycAssertion ca = (CycAssertion) fact.getCore();
+      final CycList<Object> g = ca.getGaf().getArgs();
+      final Object o = g.get(valuePos);
+      if (g.get(matchArgPos).equals(cycAccessFilter)) {
+        try {
+          results.add(KbObjectImpl.<O>checkAndCastObject(o));
+        } catch (KbException kbe) {
+          // Don't do anything. 
+          LOG.error("Error attempting to checkAndCastObject {}" + o, kbe);
+        }
+      }
+      // TODO: Need to unify casting and typing of KBObject. And individual types.
+      // TODO: Need to decide what exception to throw if an KBObject can't be typed into a subclass here.
+      // TODO: Need to decide if instanceof check should be present
+    }
+    return results;
+  }
+  
+  private String objectToApiString(Object obj) {
+    //
+    // FIXME: this needs to be more robust and there's probably already a reusable function for it somewhere - nwinant, 2017-07-21
+    //
+    if (obj instanceof KbObject) {
+      return ((KbObject) obj).stringApiValue();
+    }
+    return (obj instanceof String) ? "\"" + obj + "\"" : "" + obj;
+  }
+  
 }

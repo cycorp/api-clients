@@ -22,28 +22,27 @@ package com.cyc.baseclient.cycobject;
  */
 
 //// External Imports
-import com.cyc.base.exception.BaseClientRuntimeException;
-import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycConstant;
-import com.cyc.base.cycobject.NonAtomicTerm;
-import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.Guid;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.*;
-
 import com.cyc.base.cycobject.Nart;
+import com.cyc.base.cycobject.NonAtomicTerm;
+import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.datatype.Span;
 import com.cyc.baseclient.datatype.StringUtils;
 import com.cyc.baseclient.xml.TextUtil;
 import com.cyc.baseclient.xml.XmlStringWriter;
 import com.cyc.baseclient.xml.XmlWriter;
+import com.cyc.kb.ArgPosition;
 import com.cyc.kb.KbObject;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Provides the behavior and attributes of a Base Client list, typically used
@@ -1060,9 +1059,9 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
         }
         if (shouldCyclify) {
           if (shouldEscape) {
-            result.append(DefaultCycObject.cyclify(element));
+            result.append(DefaultCycObjectImpl.cyclify(element));
           } else {
-            result.append(DefaultCycObject.cyclifyWithEscapeChars(element, false));
+            result.append(DefaultCycObjectImpl.cyclifyWithEscapeChars(element, false));
           }
         } else {
           result.append(element.toString());
@@ -1297,8 +1296,8 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
         } else {
           varMap.put((CycVariableImpl) o1, (CycVariableImpl) o2);
         }
-      } else if (o1 instanceof CycFormulaSentence && o2 instanceof CycFormulaSentence) {
-        if (((CycFormulaSentence) o1).args.equalsAtEL(((CycFormulaSentence) o2).args, varMap) == false) {
+      } else if (o1 instanceof FormulaSentenceImpl && o2 instanceof FormulaSentenceImpl) {
+        if (((FormulaSentenceImpl) o1).args.equalsAtEL(((FormulaSentenceImpl) o2).args, varMap) == false) {
           return false;
         }
       } else if (!(o1 == null ? o2 == null : o1.equals(o2))) {
@@ -1420,7 +1419,7 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
     String cyclifiedObject = null;
     for (int i = 0; i < super.size(); i++) {
       final E object = this.get(i);
-      cyclifiedObject = DefaultCycObject.cyclifyWithEscapeChars(object, isApi);
+      cyclifiedObject = DefaultCycObjectImpl.cyclifyWithEscapeChars(object, isApi);
       if (i > 0) {
         result.append(" ");
       }
@@ -1428,7 +1427,7 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
     }
     if (!isProperList) {
       result.append(" . ");
-      result.append(DefaultCycObject.cyclifyWithEscapeChars(dottedElement, isApi));
+      result.append(DefaultCycObjectImpl.cyclifyWithEscapeChars(dottedElement, isApi));
     }
     result.append(")");
     return result.toString();
@@ -1452,11 +1451,11 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
       if (i > 0) {
         result.append(" ");
       }
-      result.append(DefaultCycObject.cyclify(object));
+      result.append(DefaultCycObjectImpl.cyclify(object));
     }
     if (!isProperList) {
       result.append(" . ");
-      result.append(DefaultCycObject.cyclify(dottedElement));
+      result.append(DefaultCycObjectImpl.cyclify(dottedElement));
     }
     result.append(")");
     return result.toString();
@@ -1597,7 +1596,7 @@ public class CycArrayList<E> extends ArrayList<E> implements CycList<E>, CycObje
       throw new BaseClientRuntimeException("Got unexpected null object.");
     }
     builder.append(" ");
-    builder.append(DefaultCycObject.stringApiValue(object));
+    builder.append(DefaultCycObjectImpl.stringApiValue(object));
   }
   
   private void appendDottedElement(StringBuilder builder) {

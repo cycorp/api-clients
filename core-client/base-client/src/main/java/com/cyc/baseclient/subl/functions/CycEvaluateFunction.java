@@ -47,9 +47,8 @@ import com.cyc.baseclient.CycObjectFactory;
 import static com.cyc.baseclient.connection.SublApiHelper.makeNestedSubLStmt;
 import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.cycobject.GuidImpl;
-import static com.cyc.baseclient.subl.functions.SublFunctions.INDEXICAL_P;
 import com.cyc.baseclient.subl.subtypes.SublObjectSingleArgFunction;
 
 /**
@@ -79,7 +78,7 @@ public class CycEvaluateFunction extends SublObjectSingleArgFunction<CycObject> 
     public Object eval(CycAccess access, CycObject arg)
             throws CycConnectionException, CycApiException {
       final FormulaSentence expr
-              = CycFormulaSentence.makeCycFormulaSentence(INDEXICAL_REFERENT_FN, arg);
+              = FormulaSentenceImpl.makeCycFormulaSentence(INDEXICAL_REFERENT_FN, arg);
       return super.eval(access, expr);
     }
     

@@ -22,54 +22,54 @@ package com.cyc.baseclient;
  */
 
 //// External Imports
-import com.cyc.base.exception.BaseClientRuntimeException;
-import com.cyc.baseclient.kbtool.CycObjectTool;
 import com.cyc.base.CycAccess;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.conn.Worker;
 import com.cyc.base.conn.CycConnection;
+import com.cyc.base.conn.LeaseManager;
+import com.cyc.base.conn.Worker;
+import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.cycobject.Fort;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.base.kbtool.InspectorTool;
+import com.cyc.baseclient.comm.Comm;
+import com.cyc.baseclient.connection.CycConnectionImpl;
+import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
+import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.GuidImpl;
+import com.cyc.baseclient.exception.CycApiClosedConnectionException;
+import com.cyc.baseclient.inference.params.DefaultInferenceParameterDescriptions;
+import com.cyc.baseclient.kbtool.AssertToolImpl;
+import com.cyc.baseclient.kbtool.ComparisonToolImpl;
+import com.cyc.baseclient.kbtool.InferenceToolImpl;
+import com.cyc.baseclient.kbtool.InspectorToolImpl;
+import com.cyc.baseclient.kbtool.KbObjectToolImpl;
+import com.cyc.baseclient.kbtool.LookupToolImpl;
+import com.cyc.baseclient.kbtool.ObjectToolImpl;
+import com.cyc.baseclient.kbtool.OwlToolImpl;
+import com.cyc.baseclient.kbtool.RkfToolImpl;
+import com.cyc.baseclient.kbtool.UnassertToolImpl;
+import com.cyc.baseclient.subl.SublResourceLoader;
+import com.cyc.baseclient.subl.SublSourceFile;
+import com.cyc.baseclient.subl.functions.SublFunctions;
+import com.cyc.baseclient.util.PasswordManager;
+import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
+import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.exception.SessionException;
+import com.cyc.session.exception.SessionRuntimeException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import com.cyc.baseclient.exception.CycApiClosedConnectionException;
-import com.cyc.baseclient.connection.CycConnectionImpl;
-import com.cyc.baseclient.comm.Comm;
-import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.base.cycobject.DenotationalTerm;
-import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.GuidImpl;
-import com.cyc.baseclient.inference.params.DefaultInferenceParameterDescriptions;
-import com.cyc.baseclient.util.PasswordManager;
-import com.cyc.base.conn.LeaseManager;
-import com.cyc.base.cycobject.Fort;
-import com.cyc.base.cycobject.CycList;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.session.CycServer;
-import com.cyc.base.kbtool.InspectorTool;
-import com.cyc.baseclient.kbtool.CycAssertTool;
-import com.cyc.baseclient.kbtool.CycComparisonTool;
-import com.cyc.baseclient.kbtool.CycKbObjectTool;
-import com.cyc.baseclient.kbtool.CycInspectorTool;
-import com.cyc.baseclient.kbtool.CycLookupTool;
-import com.cyc.baseclient.kbtool.CycOwlTool;
-import com.cyc.baseclient.kbtool.CycInferenceTool;
-import com.cyc.baseclient.kbtool.CycRkfTool;
-import com.cyc.baseclient.kbtool.CycUnassertTool;
-import com.cyc.baseclient.subl.SublResourceLoader;
-import com.cyc.baseclient.subl.SublSourceFile;
-import com.cyc.baseclient.subl.functions.SublFunctions;
-import com.cyc.session.CycServerAddress;
-import com.cyc.session.CycSessionConfiguration;
-import com.cyc.session.exception.SessionException;
-import com.cyc.session.exception.SessionRuntimeException;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
 
 /**
  * Provides wrappers for the Base Client.
@@ -78,7 +78,7 @@ import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
  Collaborates with the <tt>CycConnection</tt> class which manages the API connections.
  </p>
  *
- * @version $Id: CycClient.java 170971 2017-03-16 01:34:00Z nwinant $
+ * @version $Id: CycClient.java 173021 2017-07-21 18:36:21Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {
@@ -190,16 +190,16 @@ public class CycClient implements CycAccess {
   private boolean reestablishClosedConnections = true;
   private Boolean isOpenCyc = null;
   private CycCommandTool converseTool;
-  private CycAssertTool assertTool;
-  private CycComparisonTool comparisonTool;
-  private CycKbObjectTool compatibilityTool;
-  private CycInferenceTool inferenceTool;
-  private CycInspectorTool inspectorTool;
-  private CycLookupTool lookupTool;
-  private CycObjectTool objectTool;
-  private CycUnassertTool unassertTool;
-  private CycOwlTool owlTool;
-  private CycRkfTool rkfTool;
+  private AssertToolImpl assertTool;
+  private ComparisonToolImpl comparisonTool;
+  private KbObjectToolImpl compatibilityTool;
+  private InferenceToolImpl inferenceTool;
+  private InspectorToolImpl inspectorTool;
+  private LookupToolImpl lookupTool;
+  private ObjectToolImpl objectTool;
+  private UnassertToolImpl unassertTool;
+  private OwlToolImpl owlTool;
+  private RkfToolImpl rkfTool;
   private CycServerInfoImpl serverInfo;
   
   
@@ -681,12 +681,12 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for asserting facts to the Cyc KB.
    * 
-   * @return CycAssertTool
+   * @return AssertToolImpl
    */
   @Override
-  public CycAssertTool getAssertTool() {
+  public AssertToolImpl getAssertTool() {
     if (assertTool == null) {
-      assertTool = new CycAssertTool(this);
+      assertTool = new AssertToolImpl(this);
     }
     return assertTool;
   }
@@ -694,20 +694,20 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for comparing different CycObjects.
    * 
-   * @return CycComparisonTool
+   * @return ComparisonToolImpl
    */
   @Override
-  public CycComparisonTool getComparisonTool() {
+  public ComparisonToolImpl getComparisonTool() {
     if (comparisonTool == null) {
-      comparisonTool = new CycComparisonTool(this);
+      comparisonTool = new ComparisonToolImpl(this);
     }
     return comparisonTool;
   }
   
   @Override
-  public CycKbObjectTool getKbObjectTool() {
+  public KbObjectToolImpl getKbObjectTool() {
     if (compatibilityTool == null) {
-      compatibilityTool = new CycKbObjectTool(this);
+      compatibilityTool = new KbObjectToolImpl(this);
     }
     return compatibilityTool;
   }
@@ -715,12 +715,12 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for performing inferences over the Cyc KB.
    * 
-   * @return CycInferenceTool
+   * @return InferenceToolImpl
    */
   @Override
-  public CycInferenceTool getInferenceTool() {
+  public InferenceToolImpl getInferenceTool() {
     if (inferenceTool == null) {
-      inferenceTool = new CycInferenceTool(this);
+      inferenceTool = new InferenceToolImpl(this);
     }
     return inferenceTool;
   }
@@ -728,12 +728,12 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for examining individual CycObjects.
    * 
-   * @return CycInspectorTool
+   * @return InspectorToolImpl
    */
   @Override
-  public CycInspectorTool getInspectorTool() {
+  public InspectorToolImpl getInspectorTool() {
     if (inspectorTool == null) {
-      inspectorTool = new CycInspectorTool(this);
+      inspectorTool = new InspectorToolImpl(this);
     }
     return inspectorTool;
   }
@@ -741,12 +741,12 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for looking up CycObjects in the Cyc KB.
    * 
-   * @return CycLookupTool
+   * @return LookupToolImpl
    */
   @Override
-  public CycLookupTool getLookupTool() {
+  public LookupToolImpl getLookupTool() {
     if (lookupTool == null) {
-     lookupTool  = new CycLookupTool(this);
+     lookupTool  = new LookupToolImpl(this);
     }
     return lookupTool;
   }
@@ -754,12 +754,12 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for creating simple CycObjects, such as constants and lists.
    * 
-   * @return CycObjectTool
+   * @return ObjectToolImpl
    */
   @Override
-  public CycObjectTool getObjectTool() {
+  public ObjectToolImpl getObjectTool() {
     if (objectTool == null) {
-      objectTool = new CycObjectTool(this);
+      objectTool = new ObjectToolImpl(this);
     }
     return objectTool;
   }
@@ -767,12 +767,12 @@ public class CycClient implements CycAccess {
   /**
    * Provides tools for unasserting facts to the Cyc KB.
    * 
-   * @return CycUnassertTool
+   * @return UnassertToolImpl
    */
   @Override
-  public CycUnassertTool getUnassertTool() {
+  public UnassertToolImpl getUnassertTool() {
     if (unassertTool == null) {
-      unassertTool = new CycUnassertTool(this);
+      unassertTool = new UnassertToolImpl(this);
     }
     return unassertTool;
   }
@@ -781,11 +781,11 @@ public class CycClient implements CycAccess {
    * Tools for importing OWL ontologies into the Cyc KB
    * 
    * @deprecated Will either by moved to the KnowledgeManagement API, or deleted.
-   * @return set a new CycOwlTool if null and return
+   * @return set a new OwlToolImpl if null and return
    */
-  public CycOwlTool getOwlTool() {
+  public OwlToolImpl getOwlTool() {
     if (owlTool == null) {
-      owlTool = new CycOwlTool(this);
+      owlTool = new OwlToolImpl(this);
     }
     return owlTool;
   }
@@ -796,9 +796,9 @@ public class CycClient implements CycAccess {
    * @deprecated Will either by moved to the KnowledgeManagement API, or deleted.
    * @return set a new CycRKFTool if null and return
    */
-  public CycRkfTool getRKFTool() {
+  public RkfToolImpl getRKFTool() {
     if (rkfTool == null) {
-      rkfTool = new CycRkfTool(this);
+      rkfTool = new RkfToolImpl(this);
     }
     return rkfTool;
   }

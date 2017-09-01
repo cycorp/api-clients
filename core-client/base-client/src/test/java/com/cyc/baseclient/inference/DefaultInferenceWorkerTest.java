@@ -23,26 +23,26 @@ package com.cyc.baseclient.inference;
 
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.cycobject.FormulaSentence;
-import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-import com.cyc.base.inference.InferenceWorkerListener;
-import com.cyc.base.inference.InferenceWorker;
-import com.cyc.baseclient.cycobject.CycVariableImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.base.cycobject.ElMt;
-import com.cyc.query.parameters.InferenceParameters;
+import com.cyc.base.cycobject.FormulaSentence;
+import com.cyc.base.inference.InferenceWorker;
+import com.cyc.base.inference.InferenceWorkerListener;
+import static com.cyc.baseclient.CommonConstants.*;
+import com.cyc.baseclient.cycobject.CycVariableImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
+import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
+import static com.cyc.baseclient.testing.TestConstants.*;
+import com.cyc.baseclient.testing.TestUtils;
 import com.cyc.query.InferenceStatus;
 import com.cyc.query.InferenceSuspendReason;
-import com.cyc.baseclient.testing.TestUtils;
-import static com.cyc.baseclient.CommonConstants.*;
-import static com.cyc.baseclient.testing.TestConstants.*;
+import com.cyc.query.parameters.InferenceParameters;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 /**
@@ -63,7 +63,7 @@ public class DefaultInferenceWorkerTest  {
       final List answers = new ArrayList();
       final CycAccess access = CycAccessManager.getCurrentAccess();
       final CycVariableImpl var1 = new CycVariableImpl("?var");
-      final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
+      final FormulaSentence query = FormulaSentenceImpl.makeCycFormulaSentence(
               access.getLookupTool().getConstantByName(ISA.stringApiValue()),
               var1,
               access.getLookupTool().getConstantByName(DOG.stringApiValue()));

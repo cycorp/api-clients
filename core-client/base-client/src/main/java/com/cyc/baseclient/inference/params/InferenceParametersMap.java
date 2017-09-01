@@ -37,6 +37,7 @@ package com.cyc.baseclient.inference.params;
  */
 
 import com.cyc.base.cycobject.CycSymbol;
+import com.cyc.query.parameters.InferenceParameterGetter;
 import com.cyc.query.parameters.InferenceParameters;
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ abstract class InferenceParametersMap implements InferenceParameters {
   }
   
   @Override
-  public void putAll(InferenceParameters properties) {
+  public void putAll(InferenceParameterGetter properties) {
     for (final String key : properties.keySet()) {
       put(key, properties.get(key));
     }

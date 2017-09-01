@@ -57,40 +57,40 @@ abstract public class AbstractKbObjectFactoryService<T extends KbObjectImpl> {
   }
   
   public T findOrCreate(String nameOrId) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cleanString(nameOrId), getObjectType());
+    return KbObjectImplFactory.findOrCreate(cleanString(nameOrId), getObjectType());
   }
   
   public T findOrCreate(String nameOrId, String constraintColStr)
           throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cleanString(nameOrId), cleanString(constraintColStr), getObjectType());
+    return KbObjectImplFactory.findOrCreate(cleanString(nameOrId), cleanString(constraintColStr), getObjectType());
   }
   
   public T findOrCreate(String nameOrId, KbCollection constraintCol)
           throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cleanString(nameOrId), constraintCol, getObjectType());
+    return KbObjectImplFactory.findOrCreate(cleanString(nameOrId), constraintCol, getObjectType());
   }
   
   public T findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cleanString(nameOrId), cleanString(constraintColStr), cleanString(ctxStr), getObjectType());
+    return KbObjectImplFactory.findOrCreate(cleanString(nameOrId), cleanString(constraintColStr), cleanString(ctxStr), getObjectType());
   }
   
   public T findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
           throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cleanString(nameOrId), constraintCol, ctx, getObjectType());
+    return KbObjectImplFactory.findOrCreate(cleanString(nameOrId), constraintCol, ctx, getObjectType());
   }
   
   public T get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cleanString(nameOrId), getObjectType());
+    return KbObjectImplFactory.get(cleanString(nameOrId), getObjectType());
   }
   
   public KbStatus getStatus(String nameOrId)  {
-    return KbObjectFactory.getStatus(cleanString(nameOrId), getObjectType());
+    return KbObjectImplFactory.getStatus(cleanString(nameOrId), getObjectType());
   }
   
   @Deprecated
   public KbStatus getStatus(CycObject cycObject)  {
-    return KbObjectFactory.getStatus(cycObject, KbTermImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, KbTermImpl.class);
   }
   
   @Deprecated
@@ -105,12 +105,12 @@ abstract public class AbstractKbObjectFactoryService<T extends KbObjectImpl> {
   
   @Deprecated
   protected T findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject.cyclify(), getObjectType());
+    return KbObjectImplFactory.findOrCreate(cycObject.cyclify(), getObjectType());
   }
   
   @Deprecated
   protected T get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, getObjectType());
+    return KbObjectImplFactory.get(cycObject, getObjectType());
   }
   
   private String cleanString(String inputString) {

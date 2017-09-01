@@ -62,7 +62,7 @@ public class FactFactoryTest {
     FactService instance = FactFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getFactService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().fact(), instance);
   }
   
 }

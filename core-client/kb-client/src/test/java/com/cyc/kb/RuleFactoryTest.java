@@ -62,7 +62,7 @@ public class RuleFactoryTest {
     RuleService instance = RuleFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getRuleService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().rule(), instance);
   }
   
 }

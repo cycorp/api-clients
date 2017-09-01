@@ -36,21 +36,23 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.KbObjectService;
 import com.cyc.kb.client.AbstractKbObjectFactoryService;
 import com.cyc.kb.client.KbObjectImpl;
+import com.cyc.kb.spi.KbObjectService;
 
 /**
  *
  * @author nwinant
  */
-public class KbObjectServiceImpl<T extends KbObjectImpl> extends AbstractKbObjectFactoryService<T> implements KbObjectService<T> {
+public class KbObjectServiceImpl
+        extends AbstractKbObjectFactoryService<KbObjectImpl>
+        implements KbObjectService {
   
   // Protected
   
   @Override
-  protected Class<T> getObjectType() {
-    return (Class<T>) KbObjectImpl.class;
+  protected Class<KbObjectImpl> getObjectType() {
+    return (Class<KbObjectImpl>) KbObjectImpl.class;
   }
   
 }

@@ -38,13 +38,13 @@ package com.cyc.baseclient.subl.functions;
  */
 
 import com.cyc.base.CycAccess;
+import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.CycSymbol;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
 import static com.cyc.baseclient.connection.SublApiHelper.makeNestedSubLStmt;
 import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.baseclient.subl.SublFunction;
 
 /**
@@ -57,7 +57,7 @@ import com.cyc.baseclient.subl.SublFunction;
  * 
  * @author nwinant
  */
-public class FboundpFunction extends DefaultCycObject implements SublFunction {
+public class FboundpFunction extends DefaultCycObjectImpl implements SublFunction {
   
   // Fields
   

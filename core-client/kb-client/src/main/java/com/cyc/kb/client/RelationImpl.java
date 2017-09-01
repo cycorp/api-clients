@@ -20,29 +20,28 @@ package com.cyc.kb.client;
  * limitations under the License.
  * #L%
  */
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Guid;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.connection.SublApiHelper;
+import static com.cyc.baseclient.connection.SublApiHelper.makeNestedSubLStmt;
+import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.kb.Context;
 import com.cyc.kb.Fact;
-import com.cyc.kb.client.LookupType;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
 import com.cyc.kb.Relation;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.client.config.KbConfiguration;
-import com.cyc.kb.client.config.KbDefaultContext;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
-import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
 import com.cyc.kb.exception.VariableArityException;
@@ -50,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A <code>RelationImpl</code> object is a facade for a <code>#$Relation</code> in Cyc KB.
@@ -60,10 +60,12 @@ import java.util.Map;
  * of the relation. This class will be rarely, if ever, used by itself. Instead, its subclasses
  * {@link KBPredicateImpl} and {@link KBFunctionImpl} should be used in virtually all cases.
  *
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version $Id: RelationImpl.java 171194 2017-04-01 05:32:51Z daves $
+ * @version $Id: RelationImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class RelationImpl extends KbIndividualImpl implements Relation {
+public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T> implements Relation {
 
   private static final DenotationalTerm TYPE_CORE
           = new CycConstantImpl("Relation", new Guid("bd5880cd-9c29-11b1-9dad-c379636f7270"));
@@ -99,7 +101,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    *
    * @throws KbTypeException if cycObject is not or could not be made an instance of #$Relation
    */
-  RelationImpl(CycObject cycObject) throws KbTypeException {
+  RelationImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -157,7 +159,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    * @throws CreateException
    */
   public static RelationImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, RelationImpl.class);
+    return KbObjectImplFactory.get(nameOrId, RelationImpl.class);
   }
 
   /**
@@ -175,7 +177,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    */
   @Deprecated
   public static RelationImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, RelationImpl.class);
+    return KbObjectImplFactory.get(cycObject, RelationImpl.class);
   }
 
   /**
@@ -197,7 +199,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    * @throws CreateException
    */
   public static RelationImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, RelationImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, RelationImpl.class);
   }
 
   /**
@@ -219,7 +221,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    */
   @Deprecated
   public static RelationImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, RelationImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, RelationImpl.class);
   }
 
   /**
@@ -245,7 +247,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    * @throws CreateException
    */
   public static RelationImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, RelationImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, RelationImpl.class);
   }
 
   /**
@@ -272,7 +274,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    * @throws CreateException
    */
   public static RelationImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, RelationImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, RelationImpl.class);
   }
 
   /**
@@ -299,7 +301,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    */
   public static RelationImpl findOrCreate(String nameOrId, KbCollection constraintCol, ContextImpl ctx)
           throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, RelationImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, RelationImpl.class);
   }
 
   /**
@@ -327,7 +329,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    */
   public static RelationImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr)
           throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, RelationImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, RelationImpl.class);
   }
 
   /**
@@ -362,8 +364,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, RelationImpl.class);
-
+    return KbObjectImplFactory.getStatus(nameOrId, RelationImpl.class);
   }
 
   /**
@@ -374,7 +375,7 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, RelationImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, RelationImpl.class);
   }
 
   @Override
@@ -384,54 +385,41 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
 
   @Override
   public List<Collection<KbCollection>> getArgIsaList(Context ctx) {
-    List<Collection<KbCollection>> argIsaList = new ArrayList<Collection<KbCollection>>();
+    List<Collection<KbCollection>> argIsaList = new ArrayList();
     for (Integer i = 1; i <= this.getArity(); i++) {
       argIsaList.add(this.getArgIsa(i, ctx));
     }
     return argIsaList;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArgIsa(int)
-   */
+  
   @Override
   public Collection<KbCollection> getArgIsa(int argPos) {
     return getArgIsa(argPos, KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArgIsa(int, java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> getArgIsa(int argPos, String ctxStr) {
     return getArgIsa(argPos, KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArgIsa(int, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<KbCollection> getArgIsa(int argPos, Context ctx) {
-    int getPos = 3;
+    int valuePos = 3;
     int filter = argPos;
     int filtPos = 2;
-    return this.<KbCollection>getValues(Constants.argIsa(), 1, getPos, filter, filtPos, ctx);
+    //return this.<KbCollection>getValuesForArg(Constants.argIsa(), 1, getPos, filter, filtPos, ctx);
+    return Constants.argIsa().getValuesForArgPositionWithMatchArg(this, 1, valuePos, filter, filtPos, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#addArgIsa(int, java.lang.String, java.lang.String)
-   */
+  
   @Override
   public Relation addArgIsa(int argPos, String colStr, String ctxStr) throws KbTypeException, CreateException {
     return addArgIsa(argPos, KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#addArgIsa(int, com.cyc.kb.KBCollection, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Relation addArgIsa(int argPos, KbCollection col, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.argIsa(), 1, (Object) argPos, (Object) col);
+    //addFact(ctx, Constants.argIsa(), 1, (Object) argPos, (Object) col);
+    Constants.argIsa().addFact(ctx, this, argPos, col);
     return this;
   }
 
@@ -447,54 +435,41 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
 
   @Override
   public List<Collection<KbCollection>> getArgGenlList(Context ctx) {
-    List<Collection<KbCollection>> argGenlList = new ArrayList<Collection<KbCollection>>();
+    List<Collection<KbCollection>> argGenlList = new ArrayList();
     for (Integer i = 1; i <= this.getArity(); i++) {
       argGenlList.add(this.getArgGenl(i));
     }
     return argGenlList;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArgGenl(int)
-   */
+  
   @Override
   public Collection<KbCollection> getArgGenl(int argPos) {
     return getArgGenl(argPos, KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArgGenl(int, java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> getArgGenl(int argPos, String ctxStr) {
     return getArgGenl(argPos, KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArgGenl(int, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<KbCollection> getArgGenl(int argPos, Context ctx) {
-    int getPos = 3;
+    int valuePos = 3;
     int filter = argPos;
     int filtPos = 2;
-    return this.<KbCollection>getValues(Constants.argGenl(), 1, getPos, filter, filtPos, ctx);
+    //return this.<KbCollection>getValuesForArg(Constants.argGenl(), 1, getPos, filter, filtPos, ctx);
+    return Constants.argGenl().getValuesForArgPositionWithMatchArg(this, 1, valuePos, filter, filtPos, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#addArgGenl(int, java.lang.String, java.lang.String)
-   */
+  
   @Override
   public Relation addArgGenl(int argPos, String colStr, String ctxStr) throws KbTypeException, CreateException {
     return addArgGenl(argPos, KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#addArgGenl(int, com.cyc.kb.KBCollection, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Relation addArgGenl(int argPos, KbCollection col, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.argGenl(), 1, (Object) argPos, (Object) col);
+    //addFact(ctx, Constants.argGenl(), 1, (Object) argPos, (Object) col);
+    Constants.argGenl().addFact(ctx, this, argPos, col);
     return this;
   }
 
@@ -502,12 +477,13 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
   @Override
   public List<Integer> getInterArgDifferent(Context ctx) {
     try {
-      List<Integer> differentArgs = new ArrayList<Integer>();
-      Collection<Fact> facts = this.getFacts(Constants.getInstance().INTER_ARG_DIFF_PRED, 1, ctx);
+      final List<Integer> differentArgs = new ArrayList<>();
+      //Collection<Fact> facts = this.getFacts(Constants.getInstance().INTER_ARG_DIFF_PRED, 1, ctx);
+      final Collection<Fact> facts = Constants.getInstance().INTER_ARG_DIFF_PRED.getFacts(this, 1, ctx);
       if (facts.isEmpty()) {
         return null;
       }
-      Fact first = facts.iterator().next();
+      final Fact first = facts.iterator().next();
       differentArgs.add(first.<Integer>getArgument(2));
       differentArgs.add(first.<Integer>getArgument(3));
       return differentArgs;
@@ -518,19 +494,18 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
 
   @Override
   public Relation addInterArgDifferent(Integer argPosM, Integer argPosN, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.getInstance().INTER_ARG_DIFF_PRED, 1, argPosM, argPosN);
+    //addFact(ctx, Constants.getInstance().INTER_ARG_DIFF_PRED, 1, argPosM, argPosN);
+    Constants.getInstance().INTER_ARG_DIFF_PRED.addFact(ctx, this, argPosM, argPosN);
     return this;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArity()
-   */
+  
   @Override
   public Integer getArity() throws VariableArityException {
     Context ctx = Constants.uvMt();
     if (arityValues == null) {
       try {
-        arityValues = this.<Integer>getValues(Constants.arity(), 1, 2, ctx);
+        //arityValues = this.<Integer>getValuesForArg(Constants.arity(), 1, 2, ctx);
+        arityValues = Constants.arity().getValuesForArgPosition(this, 1, 2, ctx);
       } catch (IllegalArgumentException e) {
         throw new VariableArityException(this + " do not have an Integer arity.  Try using minArity and maxArity instead.", e);
       }
@@ -538,12 +513,9 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
     if (arityValues == null || arityValues.isEmpty()) {
       throw new IllegalArgumentException("There is no asserted arity for " + this);
     }
-    return (Integer) arityValues.iterator().next();
+    return arityValues.iterator().next();
   }
-
-    /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArity()
-   */
+  
   @Override
   public boolean isVariableArity() {
     if (isVariableArity == null) {
@@ -552,16 +524,14 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
     return isVariableArity;
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArityMin()
-   */
   @Override
   public Integer getArityMin() {
     try {
-      Context ctx = Constants.uvMt();
-      String command = SublApiHelper.makeSubLStmt(WITH_MT, ctx.getCore(),
-              SublApiHelper.makeNestedSubLStmt(SublConstants.getInstance().minArity.stringApiValue(), this.getCore()));
-      Object object = getAccess().converse().converseObject(command);
+      final Context ctx = Constants.uvMt();
+      final String command = makeSubLStmt(
+              WITH_MT, ctx.getCore(), makeNestedSubLStmt(
+                      SublConstants.getInstance().minArity.stringApiValue(), this.getCore()));
+      final Object object = getAccess().converse().converseObject(command);
       if (object == null || object.equals(CycObjectFactory.nil)) {
         throw new IllegalArgumentException("No known min-arity for " + this);
       } else {
@@ -572,16 +542,14 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
     }
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#getArityMax()
-   */
   @Override
   public Integer getArityMax() {
     try {
-      Context ctx = Constants.uvMt();
-      String command = SublApiHelper.makeSubLStmt(WITH_MT, ctx.getCore(),
-              SublApiHelper.makeNestedSubLStmt(SublConstants.getInstance().maxArity.stringApiValue(), this.getCore()));
-      Object object = getAccess().converse().converseObject(command);
+      final Context ctx = Constants.uvMt();
+      final String command = makeSubLStmt(
+              WITH_MT, ctx.getCore(), makeNestedSubLStmt(
+                      SublConstants.getInstance().maxArity.stringApiValue(), this.getCore()));
+      final Object object = getAccess().converse().converseObject(command);
       if (object == null || object.equals(CycObjectFactory.nil)) {
         throw new IllegalArgumentException("No known max-arity for " + this);
       } else {
@@ -591,13 +559,71 @@ public class RelationImpl extends KbIndividualImpl implements Relation {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Relation#setArity(int)
+  
+  /**
+   * Provides a string describing the Relation's arity, for use as a substring in error messages and
+   * whatnot.
+   * 
+   * @return a string describing the relation's arity
    */
+  protected String describeArity() {
+    return !isVariableArity()
+            ? "requires exactly " + getArity() + " arguments"
+            : "requires a minimum of " + getArityMin()
+            + " and a maximum of " + getArityMax() + " arguments";
+  }
+  
+  /**
+   * Checks whether a vararg has an acceptable length wrt the Relation's arity, and throws an 
+   * IllegalArgumentException if it does not.
+   * 
+   * @param forbidNullArgs throw an exception if any args are null
+   * @param args 
+   */
+  protected void validateArgArity(boolean forbidNullArgs, Object... args) {
+    if (args == null) {
+      throw new NullPointerException("This " + getTypeString() + " " + describeArity() 
+              + ", but received a null vararg");
+    }
+    try {
+      if (!isVariableArity()) {
+        if (getArity() != args.length) {
+          throw new IllegalArgumentException("This " + getTypeString() + " " + describeArity()
+                  + ", but " + args.length + " args were supplied");
+        }
+      } else if ((args.length < getArityMin()) || (args.length > getArityMax())) {
+        throw new IllegalArgumentException("This " + getTypeString() + " " + describeArity() 
+                + ", but " + args.length + " args were supplied");
+      }
+    } catch (IllegalArgumentException ex) {
+      if (!Objects.toString(ex.getMessage(), "").startsWith("No known ")) {
+        throw ex;
+      }
+      // Min or max arity is unknown, so we're going to trust that args.length is correct...
+    }
+    if (forbidNullArgs) {
+      final StringBuilder sb = new StringBuilder();
+      for (int i=0; i < args.length; i++) {
+        if (args[i] == null) {
+          sb.append(" arg").append(i + 1);
+        }
+        // TODO: should we also check for nil? - nwinant, 2017-07-26
+      }
+      if (sb.length() > 0) {
+      throw new IllegalArgumentException("This " + getTypeString() + " " + describeArity() 
+                + ", but the following args were null: " + sb);
+      }
+    }
+  }
+  
+  protected void validateArgArity(Object... args) {
+    validateArgArity(true, args);
+  }
+  
   @Override
   public Relation setArity(int arityValue) throws KbTypeException, CreateException {
-    addFact(Constants.uvMt(), Constants.arity(), 1, arityValue);
+    //addFact(Constants.uvMt(), Constants.arity(), 1, arityValue);
+    Constants.arity().addFact(Constants.uvMt(), this, arityValue);
     return this;
   }
 

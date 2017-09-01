@@ -38,13 +38,12 @@ package com.cyc.baseclient.subl.subtypes;
  */
 
 import com.cyc.base.CycAccess;
+import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.CycSymbol;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.baseclient.subl.SublFunction;
-import com.cyc.baseclient.subl.SublFunction.*;
 import com.cyc.baseclient.subl.SublSourceFile;
 import static com.cyc.baseclient.subl.functions.SublFunctions.FBOUNDP;
 import java.io.File;
@@ -63,7 +62,7 @@ import java.io.File;
  * 
  * @author nwinant
  */
- public class BasicSublFunction extends DefaultCycObject implements SublFunction {
+ public class BasicSublFunction extends DefaultCycObjectImpl implements SublFunction {
   
   // Fields
   

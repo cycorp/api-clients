@@ -28,7 +28,7 @@ package com.cyc.km.modeling.task;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbTypeException;
-import static com.cyc.query.TestUtils.*;
+import static com.cyc.query.client.TestUtils.*;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import org.junit.*;
 import static org.junit.Assert.*;

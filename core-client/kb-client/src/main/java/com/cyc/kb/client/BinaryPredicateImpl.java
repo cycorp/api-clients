@@ -29,18 +29,19 @@ import com.cyc.base.cycobject.Guid;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.kb.BinaryPredicate;
 import com.cyc.kb.Context;
+import com.cyc.kb.Fact;
 import com.cyc.kb.KbCollection;
-import com.cyc.kb.KbStatus;
-import com.cyc.kb.client.LookupType;
 import com.cyc.kb.KbObject;
-import com.cyc.kb.client.config.KbDefaultContext;
+import com.cyc.kb.KbStatus;
+import com.cyc.kb.client.config.KbConfiguration;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
-import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
+import java.util.Collection;
 
 /**
  * A <code>BinaryPredicate</code> object is a facade for a 
@@ -51,10 +52,12 @@ import com.cyc.kb.exception.KbTypeException;
  * type of predicate in the Cyc KB and terser methods are provided for binary predicates in KBObject. 
  * So we have a class to support strongly typing such predicates. 
  * 
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version $Id: BinaryPredicateImpl.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: BinaryPredicateImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredicate {
+public class BinaryPredicateImpl<T extends DenotationalTerm> extends KbPredicateImpl<T> implements BinaryPredicate {
 
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("BinaryPredicate", new Guid("bd588102-9c29-11b1-9dad-c379636f7270"));
@@ -84,7 +87,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * an instance of #$BinaryPredicate
    */
   @Deprecated
-  BinaryPredicateImpl(CycObject cycObject) throws KbTypeException {
+  BinaryPredicateImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -144,7 +147,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @throws CreateException 
    */
   public static BinaryPredicateImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.get(nameOrId, BinaryPredicateImpl.class);
   }
 
   /**
@@ -164,7 +167,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    */
   @Deprecated
   public static BinaryPredicateImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.get(cycObject, BinaryPredicateImpl.class);
   }
 
   /**
@@ -192,7 +195,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @throws CreateException 
    */
   public static BinaryPredicateImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, BinaryPredicateImpl.class);
   }
 
   /**
@@ -221,7 +224,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    */
   @Deprecated
   public static BinaryPredicateImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, BinaryPredicateImpl.class);
   }
 
   /**
@@ -257,7 +260,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @throws CreateException 
    */
   public static BinaryPredicateImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, BinaryPredicateImpl.class);
   }
 
   /**
@@ -294,7 +297,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @throws CreateException 
    */
   public static BinaryPredicateImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, BinaryPredicateImpl.class);
   }
 
   /**
@@ -332,7 +335,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    */
   public static BinaryPredicateImpl findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx) 
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, BinaryPredicateImpl.class);
   }
 
   /**
@@ -370,7 +373,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @throws CreateException 
    */
   public static BinaryPredicateImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, BinaryPredicateImpl.class);
   }
 
   /**
@@ -410,7 +413,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, BinaryPredicateImpl.class);
   }
 
   /**
@@ -422,7 +425,7 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, BinaryPredicateImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, BinaryPredicateImpl.class);
   }
 
   /**
@@ -458,5 +461,37 @@ public class BinaryPredicateImpl extends KbPredicateImpl implements BinaryPredic
   static String getClassTypeString() {
     return "#$BinaryPredicate";
   }
-
+  
+  @Override
+  protected void validateArgArity(Object... args) {
+    if (args.length != 2) {
+      throw new IllegalArgumentException("All " + getTypeString() + "s require exactly 2 arguments"
+              + ", but " + args.length + " args were supplied");
+    }
+  }
+  
+  @Override
+  public Fact addFact(Context ctx, Object arg1, Object arg2) 
+          throws KbTypeException, CreateException {
+    return super.addFact(ctx, new Object[]{arg1, arg2});
+  }
+  
+  @Override
+  public <O> Collection<O> getValuesForArg(Object arg1, Object arg2, Context ctx) {
+    if ((arg1 == null) && (arg2 == null)) {
+      throw new IllegalArgumentException("arg1 or arg2 must be non-null, but both are null");
+    }
+    if ((arg1 != null) && (arg2 != null)) {
+      throw new IllegalArgumentException("arg1 or arg2 must be null, but neither are null");
+    }
+    final int argPosition   = (arg1 != null) ? 1 : 2;
+    final int valuePosition = (arg2 != null) ? 1 : 2;
+    final Object arg        = (arg1 != null) ? arg1 : arg2;
+    return getValuesForArgPosition(arg, argPosition, valuePosition, ctx);
+  }
+  
+  @Override
+  public <O> Collection<O> getValuesForArg(Object arg1, Object arg2) {
+    return getValuesForArg(arg1, arg2, KbConfiguration.getDefaultContext().forQuery());
+  }
 }

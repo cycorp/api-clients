@@ -25,26 +25,22 @@ import com.cyc.baseclient.CycObjectLibraryLoader;
 import com.cyc.baseclient.CycObjectLibraryLoader.CycLibraryField;
 import com.cyc.kb.Context;
 import com.cyc.kb.KbObject;
+import com.cyc.kb.KbObjectLibraryLoader;
 import java.util.Collection;
-
-import java.util.logging.Logger;
-
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
  * @author vijay
  */
 public class ConstantsTest {
-
-    
-    private static Logger log = null;
-
+  
     @BeforeClass
     public static void setUp() throws Exception {
-        log = Logger.getLogger(ConstantsTest.class.getName());
         TestConstants.ensureInitialized();
     }
 

@@ -51,12 +51,13 @@ import com.cyc.kb.client.SentenceImpl;
 import com.cyc.kb.client.TestConstants;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -100,7 +101,7 @@ public class SentenceServiceImplTest {
   public void testMake_String() throws Exception {
     System.out.println("make");
     SentenceImpl expResult = new SentenceImpl(ISA, THING, PREDICATE);
-    SentenceImpl result = instance.get("(#$isa #$Thing #$Predicate)");
+    Sentence result = instance.get("(#$isa #$Thing #$Predicate)");
     assertEquals(expResult, result);
   }
 
@@ -113,7 +114,7 @@ public class SentenceServiceImplTest {
     Relation pred = RelationImpl.get("resultResultIsa");
     Object[] args = new Object[]{KbTermImpl.get("VectorQuantityOfFn"), KbTermImpl.get("VectorQuantity")};
     SentenceImpl expResult = new SentenceImpl(pred, args[0], args[1]);
-    SentenceImpl result = instance.get(pred, args);
+    Sentence result = instance.get(pred, args);
     assertEquals(expResult, result);
   }
 
@@ -125,7 +126,7 @@ public class SentenceServiceImplTest {
     System.out.println("make");
     Object[] args = new Object[]{ISA, THING, PREDICATE};
     SentenceImpl expResult = new SentenceImpl(ISA, THING, PREDICATE);
-    SentenceImpl result = instance.get(args);
+    Sentence result = instance.get(args);
     assertEquals(expResult, result);
   }
 
@@ -141,7 +142,7 @@ public class SentenceServiceImplTest {
     SentenceImpl expResult = new SentenceImpl(AND,
             new SentenceImpl(ISA, THING, PREDICATE),
             new SentenceImpl(ISA, THING, COLLECTION));
-    SentenceImpl result = instance.and(sentences);
+    Sentence result = instance.and(sentences);
     assertEquals(expResult, result);
   }
 
@@ -157,7 +158,7 @@ public class SentenceServiceImplTest {
     SentenceImpl expResult = new SentenceImpl(AND,
             new SentenceImpl(ISA, THING, PREDICATE),
             new SentenceImpl(ISA, THING, COLLECTION));
-    SentenceImpl result = instance.and(sentences);
+    Sentence result = instance.and((List) sentences);
     assertEquals(expResult, result);
   }
 
@@ -176,7 +177,7 @@ public class SentenceServiceImplTest {
                     new SentenceImpl("(isa ?X Cat)"),
                     new SentenceImpl("(isa ?X Logician)")),
             new SentenceImpl("(likesAsFriend ?X CycAdministrator)"));
-    SentenceImpl result = instance.implies(posLiterals, negLiteral);
+    Sentence result = instance.implies((Collection) posLiterals, negLiteral);
     assertEquals(expResult, result);
   }
 
@@ -191,7 +192,7 @@ public class SentenceServiceImplTest {
     SentenceImpl expResult = new SentenceImpl(IMPLIES,
             new SentenceImpl("(isa ?X Cat)"),
             new SentenceImpl("(likesAsFriend ?X CycAdministrator)"));
-    SentenceImpl result = instance.implies(posLiteral, negLiteral);
+    Sentence result = instance.implies(posLiteral, negLiteral);
     assertEquals(expResult, result);
   }
 
@@ -207,7 +208,7 @@ public class SentenceServiceImplTest {
     SentenceImpl expResult = new SentenceImpl(OR,
             new SentenceImpl(ISA, THING, PREDICATE),
             new SentenceImpl(ISA, THING, COLLECTION));
-    SentenceImpl result = instance.or(sentences);
+    Sentence result = instance.or(sentences);
     assertEquals(expResult, result);
   }
 
@@ -223,7 +224,7 @@ public class SentenceServiceImplTest {
     SentenceImpl expResult = new SentenceImpl(OR,
             new SentenceImpl(ISA, THING, PREDICATE),
             new SentenceImpl(ISA, THING, COLLECTION));
-    SentenceImpl result = instance.or(sentences);
+    Sentence result = instance.or((List) sentences);
     assertEquals(expResult, result);
   }
   

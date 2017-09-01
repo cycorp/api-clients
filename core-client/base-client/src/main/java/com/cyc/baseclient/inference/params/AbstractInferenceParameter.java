@@ -22,19 +22,19 @@ package com.cyc.baseclient.inference.params;
  */
 
 //// External Imports
-import com.cyc.query.parameters.InferenceParameter;
-import com.cyc.base.exception.BaseClientRuntimeException;
-import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycSymbol;
+import com.cyc.base.cycobject.Fort;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.query.parameters.InferenceParameter;
 import com.cyc.query.parameters.InferenceParameterValue;
 import com.cyc.query.parameters.InferenceParameterValueDescription;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Map;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
 
 
 /**
@@ -46,7 +46,7 @@ import com.cyc.baseclient.cycobject.DefaultCycObject;
  *
  * @author zelal
  * @date August 9, 2005, 8:49 PM
- * @version $Id: AbstractInferenceParameter.java 171043 2017-03-23 00:56:58Z nwinant $
+ * @version $Id: AbstractInferenceParameter.java 173021 2017-07-21 18:36:21Z nwinant $
  */
 public abstract class AbstractInferenceParameter implements InferenceParameter {
 
@@ -262,6 +262,6 @@ public abstract class AbstractInferenceParameter implements InferenceParameter {
   }
 
   public Object parameterValueCycListApiValue(final InferenceParameterValue val) {
-    return DefaultCycObject.cyclify(val);
+    return DefaultCycObjectImpl.cyclify(val);
   }
 }

@@ -20,34 +20,24 @@ package com.cyc.kb.client;
  * limitations under the License.
  * #L%
  */
-import com.cyc.base.CycAccessManager;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycObject;
-import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Nart;
-import com.cyc.base.kbtool.InspectorTool;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
-import com.cyc.kb.client.LookupType;
 import com.cyc.kb.client.config.KbConfiguration;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
-import com.cyc.kb.exception.KbRuntimeException;
-import com.cyc.kb.exception.KbServerSideException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
-import com.cyc.session.exception.SessionCommunicationException;
-import com.cyc.session.exception.SessionConfigurationException;
-import com.cyc.session.exception.SessionInitializationException;
-
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,19 +46,20 @@ import org.slf4j.LoggerFactory;
  * Abstract common supertype of several classes that share initialization code.
  * The class and the methods of this class are not part of the KB API.
  *
+ * @param <T> type of CycObject core
+ * 
  * @author David Baxter
  * @todo DaveS review Documentation
  */
-abstract class StandardKbObject extends KbObjectImpl {
+abstract class StandardKbObject<T extends CycObject> extends KbObjectImpl<T> {
 
-  private static final Logger log = LoggerFactory.getLogger(StandardKbObject.class.getCanonicalName());
+  private static final Logger LOG = LoggerFactory.getLogger(StandardKbObject.class.getCanonicalName());
   /**
    * Not part of the KB API. This default constructor only has the effect of
    * ensuring that there is access to a Cyc server.
    * <p>
    *
-   * @throws KbRuntimeException
-   *           if there is a problem connecting to Cyc.
+   * @throws KbRuntimeException if there is a problem connecting to Cyc.
    */
   StandardKbObject() {
     super();
@@ -100,19 +91,20 @@ abstract class StandardKbObject extends KbObjectImpl {
     setCore(cycObject);
   }
 
-  /**
+  /* *
    * !!!EXPERIMENTAL!!!
    *
    * @param nameOrId
    * @param l
    * @throws KbTypeException
    * @throws CreateException
-   */
+   * /
   StandardKbObject(String nameOrId, List<Object> l) throws KbTypeException, CreateException {
     this();
     setCore(nameOrId);
     this.quantification = l;
   }
+  */
 
   /**
    * This not part of the public, supported KB API. This is called by subclasses to find or create 
@@ -142,58 +134,6 @@ abstract class StandardKbObject extends KbObjectImpl {
   StandardKbObject(String nameOrId, LookupType lookup) throws KbTypeException, CreateException  {
     this();
     setCore(nameOrId, lookup);
-  }
-
-
-  /**
-   * This not part of the public, supported KB API. Check that the candidate core
-   * object is valid for this type. This is part of the bootstrapping process,
-   * where we check the core before we build a KB Object. At this point, we can 
-   * not use any KB API methods or {@link #getCore()}.
-   *
-   * This checks the validity of only KBTerm subclasses. The core validity for
-   * Assertion and its subclasses, Sentence, Variable and
-   * Symbol are handled by the individual classes
-   *
-   * If a Variable is wrapped by any subclass of KBTerm, then it is
-   * always considered valid core. This is to allow representing a
-   * #$CycLDenotationalTerm and #$CycLVariable of a given type
-   * (#$Collection) using same KBTerm subclass.
-   *
-   * @param cycObject
-   *          the object that is checked for type given by getTypeString()
-   *
-   * @return if a cycObject is of a given type
-   *
-   * @throws KbRuntimeException
-   *           if there is a problem connecting to Cyc
-   * @throws KbServerSideException
-   *           if there is problem executing a SubL command
-   *
-   * NOTE: This does not throw KBTypeException just because there is a
-   *           server error.
-   */
-  protected boolean isValidCore(CycObject cycObject) throws KbRuntimeException,
-          KbServerSideException {
-    try {
-      if (cycObject instanceof CycVariable) {
-        return true;
-      } else {
-        String command = "(" + SublConstants.getInstance().quickQuietHasTypeQ.stringApiValue() 
-                + " " + cycObject.stringApiValue() + " " + getTypeString() + ")";
-        return CycAccessManager.getCurrentAccess().converse().converseBoolean(command);
-      }
-    } catch (CycApiException e) {
-      throw new KbServerSideException(e.getMessage(), e);
-    } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
-    } catch (SessionConfigurationException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
-    } catch (SessionCommunicationException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
-    } catch (SessionInitializationException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
-    }
   }
 
   /**
@@ -246,14 +186,12 @@ abstract class StandardKbObject extends KbObjectImpl {
       setCore(new CycVariableImpl(nameOrIdOrVar));
       return;
     }
-
     try {
-      CycObject tempCore = getTempCoreFromNameOrId (nameOrIdOrVar);
-      
+      CycObject tempCore = KbObjectImplFactory.getTempCoreFromNameOrId (nameOrIdOrVar);
       if (tempCore == null) {
         if (lookup.equals(LookupType.FIND)) {
           String msg = "The term '" + nameOrIdOrVar + "' was not found.";
-          log.trace(msg);
+          LOG.trace(msg);
           throw new KbObjectNotFoundException(msg);
         } else if (lookup.equals(LookupType.FIND_OR_CREATE)) {
           String cyclifiedStr = getAccess().cyclifyString(nameOrIdOrVar);
@@ -296,29 +234,27 @@ abstract class StandardKbObject extends KbObjectImpl {
           }
         }
       }
-      
       if (tempCore != null && isValidCore(tempCore)) {
-        core = tempCore;
+        setCore(tempCore);
       } else {
-
-        KbStatus status = KbObjectFactory.getStatus(nameOrIdOrVar, this.getClass());
+        KbStatus status = KbObjectImplFactory.getStatus(nameOrIdOrVar, this.getClass());
         if (status == KbStatus.EXISTS_WITH_COMPATIBLE_TYPE
                 && lookup == LookupType.FIND_OR_CREATE) {
           AssertionImpl.assertSentence("(#$isa " + tempCore.cyclify() + " "
                   + getTypeString() + ")", "#$UniversalVocabularyMt", null, null);
           // @todo where should this really be asserted???
-          core = tempCore;
+          setCore(tempCore);
         } else if (status == KbStatus.EXISTS_WITH_COMPATIBLE_TYPE) {
           throw new KbTypeException(tempCore + " is not a " + this.getClass());
         } else if (status == KbStatus.EXISTS_AS_TYPE) {
-          core = tempCore;
+          setCore(tempCore);
         } else if (status == KbStatus.EXISTS_WITH_TYPE_CONFLICT) {
           throw new KbTypeConflictException("Unable to convert "
                   + tempCore.cyclify() + " to a " + this.getClass());
         } else {
           String msg = "The term '" + nameOrIdOrVar + "' is not a " + getTypeString()
                   + ".";
-          log.trace(msg);
+          LOG.trace(msg);
           throw new KbTypeException(msg);
         }
       }
@@ -336,81 +272,6 @@ abstract class StandardKbObject extends KbObjectImpl {
     }
   }
 
-  protected static CycObject getTempCoreFromNameOrId(String nameOrIdOrVar) {
-    CycObject tempCore = null;
-    
-    if (nameOrIdOrVar.startsWith("?")) {
-      // TODO: Should we check in the cache to avoid variable name clash?
-      return new CycVariableImpl(nameOrIdOrVar);
-    }
-    
-    Object o = null;
-    try {
-      o = DefaultCycObject.fromPossibleCompactExternalId(nameOrIdOrVar,
-              getStaticAccess());
-    } catch (Exception ex) {
-      // do nothing--this wasn't an hlid.
-    }
-    if (o instanceof CycObject) {
-      tempCore = (CycObject) o;
-    } else {
-      try {
-        String cyclifiedStr = getStaticAccess().cyclifyString(nameOrIdOrVar);
-        tempCore = getTempCore(cyclifiedStr);
-      } catch (Exception e) {
-        //tempCore is null
-      }
-    }
-    return tempCore;
-  }
-
-  /**
-   * Creates a term and reifies it based on cyclifiedStr
-   *
-   * @param cyclifiedStr  the string to be converted to a CycObject 
-   *
-   * @throws KbRuntimeException if IOException is thrown by CycAPI
-   */
-  private static CycObject getTempCore(String cyclifiedStr) throws KbRuntimeException {
-    CycObject tempCore;
-    try {
-      try {
-        tempCore = getStaticAccess().getLookupTool().getTermByName(cyclifiedStr);
-      } catch (CycApiException e) {
-        // Why are we doing this??
-        // This is throwing a Class cast exception, which we rely on to create new terms
-        // Reliance on ClassCastException is probably not the best way to handle 
-        // the lowest level critical code
-        tempCore = CycFormulaSentence.makeCycSentence(getStaticAccess(), cyclifiedStr);
-      }
-      if (tempCore instanceof Nart) {
-        ((Nart) tempCore).ensureReified(getStaticAccess());
-      }
-      return tempCore;
-    } catch (CycConnectionException ioe) {
-      throw new KbRuntimeException(ioe.getMessage(), ioe);
-    }
-  }
-
-  /**
-   * Checks if a given cycObject is a valid core for a class type given by
-   * getTypeString() and sets the core.
-   *
-   * @param cycObject the object to be checked and assigned
-   *
-   * @throws KbTypeException if cycObject does not satisfy the type
-   */
-  final void setCore(CycObject cycObject) throws KbTypeException {
-    if (isValidCore(cycObject)) {
-      core = cycObject;
-    } else {
-      String msg = "The term \"" + cycObject.toString() + "\" is not a "
-              + getTypeString() + ".";
-      log.trace(msg);
-      throw new KbTypeException(msg);
-    }
-  }
-
   /**
    * !!!EXPERIMENTAL METHOD!!!
    *
@@ -421,9 +282,13 @@ abstract class StandardKbObject extends KbObjectImpl {
    * constructors are used to provide a way for higher level APIs to construct
    * subclass objects using super class objects, when appropriate.
    */
-  final void setCore (KbObject kbObject){
+  final void setCore (KbObject kbObject) {
     //if (kbObject.getClass().isAssignableFrom(this.getClass())){
-    core = KbObjectImpl.getCore(kbObject);
+    try {
+      setCore(KbObjectImpl.getCore(kbObject));
+    } catch (KbTypeException ex) {
+      throw new KbRuntimeException(ex);
+    }
     //} else {
     //  throw new KBApiRuntimeException ("Incompatible types in copy constructor.");
     //}
@@ -437,4 +302,5 @@ abstract class StandardKbObject extends KbObjectImpl {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
+  
 }

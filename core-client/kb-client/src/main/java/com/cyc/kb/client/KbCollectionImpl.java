@@ -30,7 +30,7 @@ import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbFunction;
@@ -50,7 +50,6 @@ import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -65,12 +64,15 @@ import org.slf4j.LoggerFactory;
  * Everything in Cyc KB is either an #$Individual or a #$Collection. The extent 
  * of a #$Collection is context dependent. 
  *
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version $Id: KbCollectionImpl.java 171990 2017-05-17 19:48:07Z nwinant $
+ * @version $Id: KbCollectionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class KbCollectionImpl extends KbTermImpl implements KbCollection {
+public class KbCollectionImpl<T extends DenotationalTerm> 
+        extends KbTermImpl<T> implements KbCollection {
 
-  private static final Logger log = LoggerFactory.getLogger(KbCollectionImpl.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(KbCollectionImpl.class.getName());
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("Collection", new Guid("bd5880cc-9c29-11b1-9dad-c379636f7270"));
 
@@ -97,7 +99,7 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * 
    * @throws KbTypeException if cycObject is not an #$Collection
    */
-  KbCollectionImpl(CycObject cycObject) throws KbTypeException {
+  KbCollectionImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -117,16 +119,17 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
     super(colStr);
   }
 
-  /**
+  /* *
    * EXPERIMENTAL!!! NOT PART OF THE KB API
    * @param colStr
    * @param l
    * @throws com.cyc.kb.exception.KbTypeException
    * @throws com.cyc.kb.exception.CreateException
-   */   
+   * /   
   protected KbCollectionImpl(String colStr, List<Object> l) throws KbTypeException, CreateException {
     super(colStr, l);
   }
+  */
   
   public KbCollectionImpl (KbCollection col, Map<String, Object> kboData) {
     super();
@@ -177,7 +180,7 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws CreateException 
    */
   public static KbCollectionImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, KbCollectionImpl.class);
+    return KbObjectImplFactory.get(nameOrId, KbCollectionImpl.class);
   }
 
   /**
@@ -197,7 +200,7 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    */
   @Deprecated
   public static KbCollectionImpl get(CycObject cycObject) throws KbTypeException, CreateException  {
-    return KbObjectFactory.get(cycObject, KbCollectionImpl.class);
+    return KbObjectImplFactory.get(cycObject, KbCollectionImpl.class);
   }
 
   /**
@@ -224,8 +227,9 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static KbCollectionImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, KbCollectionImpl.class);
+  public static KbCollectionImpl findOrCreate(String nameOrId)
+          throws CreateException, KbTypeException  {
+    return KbObjectImplFactory.findOrCreate(nameOrId, KbCollectionImpl.class);
   }
 
   /**
@@ -253,8 +257,9 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws CreateException 
    */
   @Deprecated
-  public static KbCollectionImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(cycObject, KbCollectionImpl.class);
+  public static KbCollectionImpl findOrCreate(CycObject cycObject) 
+          throws CreateException, KbTypeException  {
+    return KbObjectImplFactory.findOrCreate(cycObject, KbCollectionImpl.class);
   }
 
   /**
@@ -289,8 +294,9 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static KbCollectionImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, KbCollectionImpl.class);
+  public static KbCollectionImpl findOrCreate(String nameOrId, KbCollection constraintCol)
+          throws CreateException, KbTypeException  {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, KbCollectionImpl.class);
   }
 
   /**
@@ -326,8 +332,9 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static KbCollectionImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, KbCollectionImpl.class);
+  public static KbCollectionImpl findOrCreate(String nameOrId, String constraintColStr)
+          throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, KbCollectionImpl.class);
   }
 
   /**
@@ -363,9 +370,11 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static KbCollectionImpl findOrCreate(String nameOrId, KbCollection constraintCol, ContextImpl ctx) 
-      throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, KbCollectionImpl.class);
+  public static KbCollectionImpl findOrCreate(
+          String nameOrId, 
+          KbCollection constraintCol,
+          ContextImpl ctx) throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, KbCollectionImpl.class);
   }
 
   /**
@@ -402,9 +411,11 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static KbCollectionImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) 
-      throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbCollectionImpl.class);
+  public static KbCollectionImpl findOrCreate(
+          String nameOrId,
+          String constraintColStr,
+          String ctxStr) throws CreateException, KbTypeException  {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbCollectionImpl.class);
   }
 
   /**
@@ -444,7 +455,7 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, KbCollectionImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, KbCollectionImpl.class);
 
   }
 
@@ -457,7 +468,7 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, KbCollectionImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, KbCollectionImpl.class);
   }
 
   /**
@@ -470,14 +481,13 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    */
   public static KbCollection getMinCol(Collection<KbCollection> cols) {
     try {
-      CycList<CycObject> cl = new CycArrayList<CycObject>();
+      final CycList<CycObject> cl = new CycArrayList<>();
       for (KbCollection col : cols) {
         cl.add(KbObjectImpl.getCore(col));
       }
-      String command = "(" + SublConstants.getInstance().withAllMts.stringApiValue() 
+      final String command = "(" + SublConstants.getInstance().withAllMts.stringApiValue() 
               + " (" + SublConstants.getInstance().minCol.stringApiValue() + " " + cl.stringApiValue() + "))";
-      
-      CycObject co = getStaticAccess().converse().converseCycObject(command);
+      final CycObject co = getStaticAccess().converse().converseCycObject(command);
       return KbCollectionImpl.get(co);
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e.getMessage(), e);
@@ -491,303 +501,229 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
     }
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#allSpecializations()
-   */
   @Override
   public Collection<KbCollection> allSpecializations() {
     return allSpecializations((Context) null);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#allSpecializations(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> allSpecializations(String ctxStr) {
     return allSpecializations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#allSpecializations(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<KbCollection> allSpecializations(Context ctx) {
     @SuppressWarnings("rawtypes")
+    final Set<KbCollection> results = new HashSet<>();
     CycList cycResults;
-    Set<KbCollection> results = new HashSet<KbCollection>();
     try {
       if (ctx != null) {
-        String command = "(" + SublConstants.getInstance().allSpecs.stringApiValue() + " " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + ")";
+        final String command = "(" + SublConstants.getInstance().allSpecs.stringApiValue()
+                + " " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + ")";
         cycResults = getAccess().converse().converseList(command);
       } else {
-        String command = "(" + SublConstants.getInstance().removeDuplicates.stringApiValue()
+        final String command = "(" + SublConstants.getInstance().removeDuplicates.stringApiValue()
                 + " (" + SublConstants.getInstance().withAllMts.stringApiValue()
-                + " (" + SublConstants.getInstance().allSpecs.stringApiValue() + " " + this.getCore().stringApiValue() + ")))";
+                + " (" + SublConstants.getInstance().allSpecs.stringApiValue()
+                + " " + this.getCore().stringApiValue() + ")))";
         cycResults = getAccess().converse().converseList(command);
       }
-
       for (Object o : cycResults) {
         try {
           results.add(KbCollectionImpl.get((CycObject) o));
-        } catch (CreateException ce){ // ignore
-        } catch (KbTypeException te){ // ignore
+        } catch (CreateException | KbTypeException ce){
+          // ignore
         }
       }
-
       return results;
-    } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex);
-    } catch (CycApiException ex) {
+    } catch (CycConnectionException | CycApiException ex) {
       throw new KbRuntimeException(ex);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getSpecializations()
-   */
+  
   // @todo Consider adding max-specs as another method.
   @Override
   public Collection<KbCollection> getSpecializations() {
     return getSpecializations(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getSpecializations(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> getSpecializations(String ctxStr) {
     return getSpecializations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getSpecializations(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<KbCollection> getSpecializations(Context ctx) {
-    return this.<KbCollection>getValues(Constants.genls(), 2, 1, ctx);
+    //return this.<KbCollection>getValuesForArg(Constants.genls(), 2, 1, ctx);
+    return Constants.genls().getValuesForArgPosition(this, 2, 1, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addSpecialization(java.lang.String)
-   */
+  
   @Override
-  public KbCollection addSpecialization(String moreSpecificStr) throws KbTypeException, CreateException {
+  public KbCollection addSpecialization(String moreSpecificStr)
+          throws KbTypeException, CreateException {
     return addSpecialization(KbUtils.getKBObjectForArgument(moreSpecificStr, KbCollectionImpl.class));
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addSpecialization(java.lang.String, java.lang.String)
-   */
   @Override
-  public KbCollection addSpecialization(String moreSpecificStr, String ctxStr) throws KbTypeException, CreateException {
-    KbCollection c;
-    ContextImpl ctx; 
+  public KbCollection addSpecialization(String moreSpecificStr, String ctxStr) 
+          throws KbTypeException, CreateException {
     try {
-      ctx = ContextImpl.get(ctxStr);
-      c = KbCollectionImpl.get(moreSpecificStr);
+      final KbCollection c   = KbCollectionImpl.get(moreSpecificStr);
+      final ContextImpl  ctx = ContextImpl.get(ctxStr);
+      return addSpecialization(c, ctx);
     } catch (KbException e){
       throw new IllegalArgumentException(e.getMessage(), e);
     }
-    
-    return addSpecialization(c, ctx);
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addSpecialization(com.cyc.kb.KBCollection)
-   */
   @Override
-  public KbCollection addSpecialization(KbCollection moreSpecific) throws KbTypeException, CreateException {
+  public KbCollection addSpecialization(KbCollection moreSpecific) 
+          throws KbTypeException, CreateException {
     return addSpecialization(moreSpecific, KbConfiguration.getDefaultContext().forAssertion());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addSpecialization(com.cyc.kb.KBCollection, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
-  public KbCollection addSpecialization(KbCollection moreSpecific, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.genls(), 2, (Object) moreSpecific);
+  public KbCollection addSpecialization(KbCollection moreSpecific, Context ctx)
+          throws KbTypeException, CreateException {
+    //addFact(ctx, Constants.genls(), 2, (Object) moreSpecific);
+    Constants.genls().addFact(ctx, moreSpecific, this);
     return (KbCollection) this;
   }
 
   /*
    * genls methods
    */
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#allGeneralizations()
-   */
+  
   @Override
   public Collection<KbCollection> allGeneralizations() {
     return allGeneralizations((Context) null);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#allGeneralizations(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> allGeneralizations(String ctxStr) {
     return allGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#allGeneralizations(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   @SuppressWarnings("unchecked")
   public Collection<KbCollection> allGeneralizations(Context ctx) {
+    final Set<KbCollection> results = new HashSet<>();
     CycList<Object> cycResults;
-    Set<KbCollection> results = new HashSet<KbCollection>();
     try {
       if (ctx != null) {
-        String command = "(" + SublConstants.getInstance().removeDuplicates.stringApiValue() 
-                + " (" + SublConstants.getInstance().allGenls.stringApiValue() 
+        final String command = "(" + SublConstants.getInstance().removeDuplicates.stringApiValue()
+                + " (" + SublConstants.getInstance().allGenls.stringApiValue()
                 + " " + this.getCore().stringApiValue() + " " + ctx.stringApiValue() + "))";
         cycResults = (CycList<Object>) getAccess().converse().converseList(command);
       } else {
-        String command = "(" + SublConstants.getInstance().removeDuplicates.stringApiValue() 
-                + " (" + SublConstants.getInstance().withAllMts + " (" + SublConstants.getInstance().allGenls + " " 
+        final String command = "(" + SublConstants.getInstance().removeDuplicates.stringApiValue()
+                + " (" + SublConstants.getInstance().withAllMts
+                + " (" + SublConstants.getInstance().allGenls + " "
                 + this.getCore().stringApiValue() + ")))";
         cycResults = getAccess().converse().converseList(command);
       }
-
       for (Object o : cycResults) {
         try {
           results.add(KbCollectionImpl.get((CycObject) o));
-        } catch (CreateException ce){ // ignore
-        } catch (KbTypeException te){ // ignore
-        }
+        } catch (CreateException | KbTypeException ce){
+          // ignore
+        }        
       }
-
       return results;
-    } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex);
-    } catch (CycApiException ex) {
+    } catch (CycConnectionException | CycApiException ex) {
       throw new KbRuntimeException(ex);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getGeneralizations()
-   */
+  
   @Override
   public Collection<? extends KbCollection> getGeneralizations() {
     return getGeneralizations(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getGeneralizations(java.lang.String)
-   */
+  
   @Override
   public Collection<? extends KbCollection> getGeneralizations(String ctxStr) {
     return getGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getGeneralizations(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<? extends KbCollection> getGeneralizations(Context ctx) {
-    return (this.<KbCollectionImpl>getValues(Constants.genls(), 1, 2, ctx));
+    //return (this.<KbCollectionImpl>getValuesForArg(Constants.genls(), 1, 2, ctx));
+    return Constants.genls().getValuesForArgPosition(this, 1, 2, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addGeneralization(java.lang.String)
-   */
+  
   @Override
-  public KbCollection addGeneralization(String moreGeneralStr) throws KbTypeException, CreateException {
+  public KbCollection addGeneralization(String moreGeneralStr)
+          throws KbTypeException, CreateException {
     return addGeneralization(KbUtils.getKBObjectForArgument(moreGeneralStr, KbCollectionImpl.class));
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addGeneralization(java.lang.String, java.lang.String)
-   */
   @Override
-  public KbCollection addGeneralization(String moreGeneralStr, String ctxStr) throws KbTypeException, CreateException {
-    KbCollectionImpl c;
-    ContextImpl ctx;
+  public KbCollection addGeneralization(String moreGeneralStr, String ctxStr)
+          throws KbTypeException, CreateException {
     try {
-      c = KbCollectionImpl.get(moreGeneralStr);
-      ctx = ContextImpl.get(ctxStr);
+      final ContextImpl      ctx = ContextImpl.get(ctxStr);
+      final KbCollectionImpl c   = KbCollectionImpl.get(moreGeneralStr);
+      return addGeneralization(c, ctx);
     } catch (KbException e){
       throw new IllegalArgumentException(e.getMessage(), e);
     }
-    return addGeneralization(c, ctx);
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addGeneralization(com.cyc.kb.KBCollection)
-   */
   @Override
-  public KbCollection addGeneralization(KbCollection moreGeneral) throws KbTypeException, CreateException {
+  public KbCollection addGeneralization(KbCollection moreGeneral)
+          throws KbTypeException, CreateException {
     return addGeneralization(moreGeneral, KbConfiguration.getDefaultContext().forAssertion());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#addGeneralization(com.cyc.kb.KBCollectionImpl, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
-  public KbCollection addGeneralization(KbCollection moreGeneral, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.genls(), 1, (Object) moreGeneral);
+  public KbCollection addGeneralization(KbCollection moreGeneral, Context ctx)
+          throws KbTypeException, CreateException {
+    //addFact(ctx, Constants.genls(), 1, (Object) moreGeneral);
+    Constants.genls().addFact(ctx, this, moreGeneral);
     return this;
   }
   
   @Override
-  public Sentence addGeneralizationSentence(KbCollection moreGeneral) throws KbTypeException, CreateException {
+  public Sentence addGeneralizationSentence(KbCollection moreGeneral) 
+          throws KbTypeException, CreateException {
     return new SentenceImpl(Constants.genls(), this, (Object) moreGeneral);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getInstances()
-   */
+  
   @Override
-  public <O> Collection<? extends O> getInstances() {
-    return getInstances(KbConfiguration.getDefaultContext().forQuery());
+  public <O> Collection<O> getInstances(Context ctx) {
+    //return (this.<O>getValuesForArg(Constants.isa(), 2, 1, ctx));
+    return Constants.isa().getValuesForArgPosition(this, 2, 1, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getInstances(java.lang.String)
-   */
+  
   @Override
   public <O> Collection<O> getInstances(String ctxStr) {
     return getInstances(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getInstances(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
-  public <O> Collection<O> getInstances(Context ctx) {
-    return (this.<O>getValues(Constants.isa(), 2, 1, ctx));
+  public <O> Collection<? extends O> getInstances() {
+    return getInstances(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#instancesOf()
-   */
+  
   @Override
-  public Collection<KbCollection> instancesOf() {
-    return instancesOf(KbConfiguration.getDefaultContext().forQuery());
+  public Collection<KbCollection> instancesOf(Context ctx) {
+    //return (this.<KbCollection>getValuesForArg(Constants.isa(), 1, 2, ctx));
+    return Constants.isa().getValuesForArgPosition(this, 1, 2, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#instancesOf(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> instancesOf(String ctxStr) {
     return instancesOf(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#instancesOf(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
-  public Collection<KbCollection> instancesOf(Context ctx) {
-    return (this.<KbCollection>getValues(Constants.isa(), 1, 2, ctx));
+  public Collection<KbCollection> instancesOf() {
+    return instancesOf(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#instantiates(java.lang.String, java.lang.String)
-   */
+  
   @Override
-  public KbCollectionImpl instantiates(String colStr, String ctxStr) throws KbTypeException, CreateException {
+  public KbCollectionImpl instantiates(String colStr, String ctxStr)
+          throws KbTypeException, CreateException {
     ContextImpl ctx;
     KbCollection col;
     try {
@@ -798,49 +734,41 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
     }
     return instantiates(col, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#instantiates(com.cyc.kb.KBCollection, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
-  public KbCollectionImpl instantiates(KbCollection col, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.isa(), 1, (Object) col);
+  public KbCollectionImpl instantiates(KbCollection col, Context ctx) 
+          throws KbTypeException, CreateException {
+    //addFact(ctx, Constants.isa(), 1, (Object) col);
+    Constants.isa().addFact(ctx, this, col);
     return this;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#isGeneralizationOf(com.cyc.kb.KBCollectionImpl, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public boolean isGeneralizationOf(KbCollection moreSpecific, Context ctx) {
     try {
-      return getAccess().getInspectorTool().isGenlOf(core, getCore(moreSpecific), getCore(ctx));
+      return getAccess().getInspectorTool()
+              .isGenlOf(getCore(), getCore(moreSpecific), getCore(ctx));
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#isGeneralizationOf(java.lang.String)
-   */
+  
   @Override
   public boolean isGeneralizationOf(String moreSpecificStr) {
     try {
-      return getAccess().getInspectorTool().isGenlOf(core, KbCollectionImpl.get(moreSpecificStr).getCore());
+      return getAccess().getInspectorTool()
+              .isGenlOf(getCore(), KbCollectionImpl.get(moreSpecificStr).getCore());
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e);
     } catch (KbException e){
       throw new IllegalArgumentException(e.getMessage(), e);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#isGeneralizationOf(com.cyc.kb.KBCollectionImpl)
-   */
+  
   @Override
   public boolean isGeneralizationOf(KbCollection moreSpecific) {
     try {
-      return getAccess().getInspectorTool().isGenlOf(core, getCore(moreSpecific));
+      return getAccess().getInspectorTool().isGenlOf(getCore(), getCore(moreSpecific));
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e);
     }
@@ -887,15 +815,12 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @throws KbException
    */
   public FormulaSentence toSentence() throws KbException {
-    FormulaSentence cfs = null;
-    Variable v = this.getVariable();
-    cfs = CycFormulaSentence.makeCycFormulaSentence(Constants.isa().getCore(), v.getCore(), core);
+    final Variable v = this.getVariable();
+    final FormulaSentence cfs = FormulaSentenceImpl
+            .makeCycFormulaSentence(Constants.isa().getCore(), v.getCore(), getCore());
     return cfs;
   }
-   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBCollection#getVariable()
-   */
+  
   public Variable getVariable() throws KbException {
     return new VariableImpl(getVariableName());
   }
@@ -906,10 +831,11 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
       try {
         KbFunction f = this.<KbFunction>getArgument(0);
         if (f.isInstanceOf(KbCollectionImpl.get("SubcollectionRelationFunction"))) {
-          varName = "SUB-" + ((KbCollectionImpl)this.<KbCollection>getArgument(1)).getVariableName();
+          varName = "SUB-" + ((KbCollectionImpl)this
+                  .<KbCollection>getArgument(1)).getVariableName();
         } 
-      } catch (Exception e) {
-        log.warn("Tried to get variable name intelligently and failed. " + e.getMessage());
+      } catch (KbTypeException | CreateException e) {
+        LOG.warn("Tried to get variable name intelligently and failed. " + e.getMessage());
         // Just get it by string manipulation
       }
     }
@@ -940,8 +866,8 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
   }
   
   private static String deriveRandomizedInstanceName(KbObject kbo){
-    String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    StringBuffer sb = new StringBuffer();
+    final String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    final StringBuilder sb = new StringBuilder();
     int charLength = characters.length();
     for (int i=0; i<10; i++) {
       double idx = Math.random() * charLength;
@@ -995,7 +921,8 @@ public class KbCollectionImpl extends KbTermImpl implements KbCollection {
    * @return InstanceRestrictedVariable
    * @throws KbException
    */
-  public InstanceRestrictedVariable toInstanceRestrictedVariable(Context ctx, Variable var) throws KbException {
+  public InstanceRestrictedVariable toInstanceRestrictedVariable(Context ctx, Variable var)
+          throws KbException {
     return new InstanceRestrictedVariable(ctx, this, var);
   }
 }

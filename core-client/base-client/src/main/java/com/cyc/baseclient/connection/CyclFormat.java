@@ -21,15 +21,15 @@ package com.cyc.baseclient.connection;
  * #L%
  */
 
-import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
+import com.cyc.base.cycobject.CycList;
+import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.CycList;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,9 +69,9 @@ public class CyclFormat extends Format {
     }
     
     private String buildFormatCommand(Object obj) {
-        return "(get-pretty-formatted-string " + DefaultCycObject.stringApiValue(obj) + " " 
-                + DefaultCycObject.stringApiValue(showHashDollar) + " " 
-                + DefaultCycObject.stringApiValue(newlines) + ")";
+        return "(get-pretty-formatted-string " + DefaultCycObjectImpl.stringApiValue(obj) + " " 
+                + DefaultCycObjectImpl.stringApiValue(showHashDollar) + " " 
+                + DefaultCycObjectImpl.stringApiValue(newlines) + ")";
     }
     
     @Override
@@ -88,7 +88,7 @@ public class CyclFormat extends Format {
     @Override
     public Object parseObject(String source, ParsePosition pos) {
         try {
-            String command = "(multiple-value-list (read-from-string-ignoring-errors (cyclify-string " + DefaultCycObject.stringApiValue(source) + ")))";
+            String command = "(multiple-value-list (read-from-string-ignoring-errors (cyclify-string " + DefaultCycObjectImpl.stringApiValue(source) + ")))";
             CycList ret = (CycList) getCycAccess().converse().converseCycObject(command);
             Object value = ret.first();
             Object indexOrError = ret.second();

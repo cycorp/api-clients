@@ -21,11 +21,15 @@ package com.cyc.baseclient;
  * #L%
  */
 
-import com.cyc.baseclient.testing.TestUtils;
 import com.cyc.base.CycAccess;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
+import com.cyc.base.cycobject.ElMt;
 import com.cyc.base.cycobject.Fort;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
+import com.cyc.baseclient.testing.TestUtils;
+import com.cyc.session.exception.SessionException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -34,10 +38,6 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
-import com.cyc.base.cycobject.ElMt;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.session.exception.SessionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,18 +120,18 @@ public class SimpleKbTransactionTest {
         assertTrue("commitTestConstant2 already exists.", cyc.getLookupTool().getConstantByName("commitTestConstant2") == null);
         try {
             commitTestConstant2 = cyc.getAssertTool().findOrCreateNewPermanent("commitTestConstant2");
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
             assert (cyc.getInspectorTool().isPredicate(commitTestConstant2));
 
             SimpleKbTransaction instance = new SimpleKbTransaction();
             CycClient.setCurrentTransaction(instance);
             assertTrue("Before commit, there's no active KBTransaction", CycClient.getCurrentTransaction() != null);
-            cyc.getUnassertTool().unassertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getUnassertTool().unassertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
             assertTrue("Before commit, commitTestConstant2 is not known to be a predicate.", cyc.getInspectorTool().isPredicate(commitTestConstant2));
             commitTestConstant = cyc.getAssertTool().findOrCreateNewPermanent("commitTestConstant");
             assertTrue("Unable to find commitTestConstant before commit.", cyc.getLookupTool().getConstantByName("commitTestConstant") != null);
 
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + predicate + ")"), CommonConstants.BASE_KB);
             assertFalse("commitTestConstant is known to be a predicate before the transaction has been committed.", cyc.getInspectorTool().isPredicate(commitTestConstant));
 
             instance.commit();
@@ -162,19 +162,19 @@ public class SimpleKbTransactionTest {
 
         try {
             commitTestConstant2 = cyc.getAssertTool().findOrCreateNewPermanent("commitTestConstant2");
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
             assert (cyc.getInspectorTool().isPredicate(commitTestConstant2));
 
             SimpleKbTransaction instance = new SimpleKbTransaction();
             CycClient.setCurrentTransaction(instance);
 
-            cyc.getUnassertTool().unassertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getUnassertTool().unassertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
 
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + binaryPredicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + binaryPredicate + ")"), CommonConstants.BASE_KB);
 
             commitTestConstant = cyc.getAssertTool().findOrCreateNewPermanent("commitTestConstant");
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + predicate + ")"), CommonConstants.BASE_KB);
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + isa + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + isa + ")"), CommonConstants.BASE_KB);
             assertFalse("commitTestConstant is known to be a predicate before the transaction has been committed.", cyc.getInspectorTool().isPredicate(commitTestConstant));
             Exception ex = null;
             try {
@@ -212,22 +212,22 @@ public class SimpleKbTransactionTest {
         assertTrue("commitTestConstant2 already exists.", cyc.getLookupTool().getConstantByName("commitTestConstant2") == null);
         try {
             commitTestConstant2 = cyc.getAssertTool().findOrCreateNewPermanent("commitTestConstant2");
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
             assert (cyc.getInspectorTool().isPredicate(commitTestConstant2));
 
             SimpleKbTransaction instance = new SimpleKbTransaction();
             CycClient.setCurrentTransaction(instance);
             assertTrue("Before commit, there's no active KBTransaction", CycClient.getCurrentTransaction() != null);
-            cyc.getUnassertTool().unassertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getUnassertTool().unassertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + predicate + ")"), CommonConstants.BASE_KB);
             assertTrue("Before commit, commitTestConstant2 is not known to be a predicate.", cyc.getInspectorTool().isPredicate(commitTestConstant2));
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + binaryPredicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant2 " + binaryPredicate + ")"), CommonConstants.BASE_KB);
 
 
 
             commitTestConstant = cyc.getAssertTool().findOrCreateNewPermanent("commitTestConstant");
             assertTrue("Unable to find commitTestConstant before commit.", cyc.getLookupTool().getConstantByName("commitTestConstant") != null);
 
-            cyc.getAssertTool().assertGaf(CycFormulaSentence.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + predicate + ")"), CommonConstants.BASE_KB);
+            cyc.getAssertTool().assertGaf(FormulaSentenceImpl.makeCycSentence(cyc, "(" + isa + " #$commitTestConstant " + predicate + ")"), CommonConstants.BASE_KB);
             assertFalse("commitTestConstant is known to be a predicate before the transaction has been committed.", cyc.getInspectorTool().isPredicate(commitTestConstant));
 
             instance.rollback();

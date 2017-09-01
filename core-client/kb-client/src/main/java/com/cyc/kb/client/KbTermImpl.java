@@ -25,10 +25,12 @@ package com.cyc.kb.client;
  * #L%
  */
 
+import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Guid;
+import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.kb.Context;
@@ -38,30 +40,41 @@ import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
 import com.cyc.kb.KbTerm;
+import com.cyc.kb.Sentence;
+import static com.cyc.kb.client.KbObjectImpl.getCore;
+import com.cyc.kb.client.config.KbConfiguration;
 import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.DeleteException;
+import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeException;
+import java.text.ParseException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
  * A <code>KBTerm</code> is a facade for any #$CycLDenotationalTerm, but in the 
  * API its purpose is to create terms that are only known to be #$Thing. 
  *    
+ * @param <T> type of CycObject core
+ * 
  * @author Dave Schneider
- * @version $Id: KbTermImpl.java 172769 2017-07-05 21:36:26Z nwinant $
+ * @version $Id: KbTermImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class KbTermImpl extends StandardKbObject implements KbTerm {
+public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbObjectImpl<T> implements KbTerm {
 
+  //====|    Fields    |==========================================================================//
+  
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("Thing", new Guid("bd5880f4-9c29-11b1-9dad-c379636f7270"));
 
   static DenotationalTerm getClassTypeCore() {
     return TYPE_CORE;
   }
+  
+  //====|    Construction    |====================================================================//
 
   /**
    * Not part of the KB API. This default constructor only has the effect of
@@ -81,16 +94,21 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    * 
    * @throws KbTypeException 
    */
-  KbTermImpl(CycObject cycObject) throws KbTypeException  {
+  KbTermImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
-  /**
+  /* *
    * EXPERIMENTAL!!! NOT PART OF THE KB API
-   */
+   * @param termStr
+   * @param l
+   * @throws com.cyc.kb.exception.KbTypeException
+   * @throws com.cyc.kb.exception.CreateException
+   * /
   protected KbTermImpl(String termStr, List<Object> l) throws KbTypeException, CreateException {
     super(termStr, l);
   }
+  */
   
   /**
    * This not part of the public, supported KB API. finds or creates an kb Term (#$Thing)
@@ -125,13 +143,11 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
   KbTermImpl(String termStr, LookupType lookup) throws KbTypeException, CreateException  {
     super(termStr, lookup);
   }
-
   
   protected KbTermImpl(DefaultContext contexts, KbTerm term) {
     super();
     this.setCore(term);
   }
-  
   
   /**
    * Get the
@@ -147,7 +163,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    * @throws CreateException 
    */
   public static KbTermImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, KbTermImpl.class);
+    return KbObjectImplFactory.get(nameOrId, KbTermImpl.class);
   }
 
   /**
@@ -167,7 +183,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    */
   @Deprecated
   public static KbTermImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, KbTermImpl.class);
+    return KbObjectImplFactory.get(cycObject, KbTermImpl.class);
   }
 
   /**
@@ -187,7 +203,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    * @throws CreateException 
    */
   public static KbTermImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, KbTermImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, KbTermImpl.class);
   }
 
   /**
@@ -206,7 +222,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    */
   @Deprecated
   public static KbTermImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, KbTermImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, KbTermImpl.class);
   }
 
   /**
@@ -239,7 +255,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    */
   public static KbTerm findOrCreate(String nameOrId, KbCollection constraintCol) 
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, KbTermImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, KbTermImpl.class);
   }
 
   /**
@@ -273,7 +289,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    */
   public static KbTerm findOrCreate(String nameOrId, String constraintColStr) 
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, KbTermImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, KbTermImpl.class);
   }
 
   /**
@@ -307,7 +323,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    */
   public static KbTerm findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx) 
       throws CreateException, KbTypeException{
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, KbTermImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, KbTermImpl.class);
   }
 
   /**
@@ -342,7 +358,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    */
   public static KbTerm findOrCreate(String nameOrId, String constraintColStr, String ctxStr) 
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbTermImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbTermImpl.class);
   }
 
   /**
@@ -382,7 +398,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId)  {
-    return KbObjectFactory.getStatus(nameOrId, KbTermImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, KbTermImpl.class);
 
   }
 
@@ -395,7 +411,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject)  {
-    return KbObjectFactory.getStatus(cycObject, KbTermImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, KbTermImpl.class);
   }
 
   @Override
@@ -404,9 +420,6 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
     return (O) super.replaceTerms(substitutions);
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBTerm#provablyNotInstanceOf(com.cyc.kb.KBCollectionImpl, com.cyc.kb.ContextImpl)
-   */
   @Override
   public boolean provablyNotInstanceOf(KbCollection col, Context ctx) {
     try {
@@ -415,10 +428,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBTerm#provablyNotInstanceOf(java.lang.String, java.lang.String)
-   */
+  
   @Override
   public boolean provablyNotInstanceOf(String colStr, String ctxStr) {
     ContextImpl ctx;
@@ -441,7 +451,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
       } else {
         return null;
       }
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException | KbTypeException | CreateException e) {
       return null;
     }
   }
@@ -454,7 +464,7 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
       } else {
         return null;
       }
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException | ParseException e) {
       return null;
     }
   }
@@ -492,4 +502,105 @@ public class KbTermImpl extends StandardKbObject implements KbTerm {
   static String getClassTypeString() {
     return "#$Thing";
   }
+  
+  @Override
+  public KbTerm rename(final String name) throws InvalidNameException {
+    if (getCore() instanceof CycConstant) {
+      try {
+        getAccess().getObjectTool().rename(((CycConstant) getCore()), name, true,
+                KbConfiguration.getShouldTranscriptOperations());
+      } catch (CycConnectionException e) {
+        throw new KbRuntimeException("Unable to rename " + this + " to " + name, e);
+      } catch (CycApiException cae) {
+        throw new InvalidNameException(cae.getMessage(), cae);
+      }
+      return this;
+    } else {
+      throw new UnsupportedOperationException("Couldn't rename " + getCore()
+              + ". Not an atomic term (i.e. a CycConstant.) Check if the object isAtomic() before rename operation.");
+    }
+  }
+  
+  @Override
+  public void delete() throws DeleteException {
+    try {
+      if (getCore() instanceof Fort) {
+        getAccess().getUnassertTool().kill((Fort) getCore(), true, KbConfiguration.getShouldTranscriptOperations());
+        this.setIsValid(false);
+      } /*
+       * else if (core instanceof CycAssertion) { CycAssertion ca =
+       * (CycAssertion) core; if (ca.isGaf()){
+       * cyc.unassertGaf(ca.getGaf(), ca.getMt()); } else { throw new
+       * Exception ("Couldn't delete the fact: " + core.toString()); } }
+       */ else {
+        throw new DeleteException("Couldn't kill: "
+                + getCore().toString()
+                + ". It was not a Fort.");
+      }
+    } catch (CycConnectionException e) {
+      throw new KbRuntimeException(
+              "Couldn't kill the constant " + getCore().toString(), e);
+    } catch (CycApiException cae) {
+      throw new KbRuntimeException("Could not kill the constant: " + getCore()
+              + " very likely because it is not in the KB. " + cae.getMessage(), cae);
+    }
+  }
+  
+  @Override
+  public KbTerm instantiates(KbCollection col, Context ctx) throws KbTypeException, CreateException {
+    Constants.isa().addFact(ctx, this, col);
+    return this;
+  }
+  
+  @Override
+  public KbTerm instantiates(String colStr, String ctxStr) throws KbTypeException, CreateException {
+    return instantiates(KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
+  }
+  
+  @Override
+  public KbTerm instantiates(KbCollection col) throws KbTypeException, CreateException {
+    return instantiates(col, KbConfiguration.getDefaultContext().forAssertion());
+  }
+
+  @Override
+  public Sentence instantiatesSentence(KbCollection col) throws KbTypeException, CreateException {
+    return new SentenceImpl(Constants.isa(), this, (Object) col);
+  }
+  
+  @Override
+  public boolean isInstanceOf(KbCollection col) {
+    try {
+      return getAccess().getInspectorTool().isa(this.getCore(), (Fort) col.getCore());
+    } catch (CycConnectionException e) {
+      throw new KbRuntimeException(e.getMessage(), e);
+    }
+  }
+  
+  @Override
+  public boolean isInstanceOf(String colStr) {
+    return isInstanceOf(KbUtils.getKBObjectForArgument(colStr, KbCollectionImpl.class));
+  }
+  
+  @Override
+  public boolean isInstanceOf(KbCollection col, Context ctx) {
+    try {
+      return getAccess().getInspectorTool().isa(this.getCore(), getCore(col), getCore(ctx));
+    } catch (CycConnectionException e) {
+      throw new KbRuntimeException(e.getMessage(), e);
+    }
+  }
+  
+  @Override
+  public boolean isInstanceOf(String colStr, String ctxStr) {
+    return isInstanceOf(
+            KbUtils.getKBObjectForArgument(colStr, KbCollectionImpl.class), 
+            KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
+  }
+  
+  @Override
+  public KbTerm addQuotedIsa(KbCollection coll, Context ctx) throws KbTypeException, CreateException {
+    super.addQuotedIsa(coll, ctx);
+    return this;
+  }
+  
 }

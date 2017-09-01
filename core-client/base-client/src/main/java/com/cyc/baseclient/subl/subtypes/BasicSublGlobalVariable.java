@@ -38,12 +38,11 @@ package com.cyc.baseclient.subl.subtypes;
  */
 
 import com.cyc.base.CycAccess;
+import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.CycSymbol;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
-import com.cyc.baseclient.subl.SublFunction.*;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.baseclient.subl.SublGlobalVariable;
 import static com.cyc.baseclient.subl.functions.SublFunctions.BOUNDP;
 
@@ -53,7 +52,7 @@ import static com.cyc.baseclient.subl.functions.SublFunctions.BOUNDP;
  * @author nwinant
  * @param <T> The variable's value type
  */
-public class BasicSublGlobalVariable<T> extends DefaultCycObject implements SublGlobalVariable<T> {
+public class BasicSublGlobalVariable<T> extends DefaultCycObjectImpl implements SublGlobalVariable<T> {
   
   // Fields
   

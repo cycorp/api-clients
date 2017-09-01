@@ -24,11 +24,10 @@ package com.cyc.baseclient.xml.cycml;
 import com.cyc.base.cycobject.Naut;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import static com.cyc.baseclient.xml.cycml.Constants.CYCML_NAMESPACE;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -175,10 +174,10 @@ public class CycmlDecoder {
   private static com.cyc.base.cycobject.FormulaSentence translateSentence(Sentence sentence) {
     final List<Object> terms = sentence.getSentenceOrAndOrOr();
     if (terms.get(0) instanceof Predicate) {
-      return new CycFormulaSentence(translateTerms(terms));
+      return new FormulaSentenceImpl(translateTerms(terms));
     } else {
       assert (terms.size() == 1);
-      return (CycFormulaSentence) translateObject(terms.get(0));
+      return (FormulaSentenceImpl) translateObject(terms.get(0));
     }
   }
 
@@ -217,7 +216,7 @@ public class CycmlDecoder {
   private static com.cyc.base.cycobject.FormulaSentence translateAnd(And and) {
     final List<Object> terms = translateTerms(and.getSentence());
     terms.add(0, translateConstant(and.getConstant()));
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 
   private static com.cyc.base.cycobject.FormulaSentence translateForAll(ForAll forAll) {
@@ -225,7 +224,7 @@ public class CycmlDecoder {
             translateConstant(forAll.getConstant()),
             translateVariable(forAll.getVariable()),
             translateSentence(forAll.getSentence()));
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 
   private static com.cyc.base.cycobject.FormulaSentence translateThereExists(ThereExists thereExists) {
@@ -233,50 +232,50 @@ public class CycmlDecoder {
             translateConstant(thereExists.getConstant()),
             translateVariable(thereExists.getVariable()),
             translateSentence(thereExists.getSentence()));
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 
   private static com.cyc.base.cycobject.FormulaSentence translateEquiv(Equiv equiv) {
     final List<Object> terms = translateTerms(equiv.getContent());
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 
   private static com.cyc.base.cycobject.FormulaSentence translateThereExistExactly(
           ThereExistExactly thereExistExactly) {
-    return new CycFormulaSentence(translateTerms(thereExistExactly.getContent()));
+    return new FormulaSentenceImpl(translateTerms(thereExistExactly.getContent()));
   }
 
   private static com.cyc.base.cycobject.FormulaSentence translateThereExistAtLeast(
           ThereExistAtLeast thereExistAtLeast) {
-    return new CycFormulaSentence(translateTerms(thereExistAtLeast.getContent()));
+    return new FormulaSentenceImpl(translateTerms(thereExistAtLeast.getContent()));
   }
 
   private static com.cyc.base.cycobject.FormulaSentence translateThereExistAtMost(
           ThereExistAtMost thereExistAtMost) {
-    return new CycFormulaSentence(translateTerms(thereExistAtMost.getContent()));
+    return new FormulaSentenceImpl(translateTerms(thereExistAtMost.getContent()));
   }
 
   private static Object translateImplies(Implies implies) {
     final List<Object> terms = translateTerms(implies.getContent());
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 
   private static Object translateNot(Not not) {
     final List<? extends Object> terms = Arrays.asList(
             translateConstant(not.getConstant()),
             translateSentence(not.getSentence()));
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 
   private static Object translateOr(Or or) {
     final List<Object> terms = translateTerms(or.getSentence());
     terms.add(0, translateConstant(or.getConstant()));
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
 
   }
 
   private static Object translateXor(Xor xor) {
     final List<Object> terms = translateTerms(xor.getContent());
-    return new CycFormulaSentence(terms);
+    return new FormulaSentenceImpl(terms);
   }
 }

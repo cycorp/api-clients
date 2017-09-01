@@ -36,25 +36,28 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.ContextService;
 import com.cyc.kb.Context;
-import com.cyc.kb.client.ContextImpl;
 import com.cyc.kb.DefaultContext;
+import com.cyc.kb.client.AbstractKbObjectFactoryService;
+import com.cyc.kb.client.ContextImpl;
 import com.cyc.kb.client.config.KbDefaultContext;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.kb.spi.ContextService;
 
 /**
  *
  * @author nwinant
  */
-public class ContextServiceImpl<T extends ContextImpl> extends KbIndividualServiceImpl<T> implements ContextService<T> {
+public class ContextServiceImpl 
+        extends AbstractKbObjectFactoryService<ContextImpl> 
+        implements ContextService {
   
   // Protected
   
   @Override
-  protected Class<T> getObjectType() {
-    return (Class<T>) ContextImpl.class;
+  protected Class<ContextImpl> getObjectType() {
+    return (Class<ContextImpl>) ContextImpl.class;
   }
   
   @Override

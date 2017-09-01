@@ -29,10 +29,10 @@ import java.io.*;
 /**
  * This class implements a Cyc Fort (First Order Reified Term).
  *
- * @version $Id: FortImpl.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: FortImpl.java 173021 2017-07-21 18:36:21Z nwinant $
  * @author Stephen L. Reed
  */
-public abstract class FortImpl extends DefaultCycObject implements Fort, DenotationalTerm, Serializable {
+public abstract class FortImpl extends DefaultCycObjectImpl implements Fort, DenotationalTerm, Serializable {
   
   /**
    * Compares this object with the specified object for order.

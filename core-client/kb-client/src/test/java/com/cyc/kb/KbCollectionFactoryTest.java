@@ -62,7 +62,7 @@ public class KbCollectionFactoryTest {
     KbCollectionService instance = KbCollectionFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getCollectionService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().collection(), instance);
   }
   
 }

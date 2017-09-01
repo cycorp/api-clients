@@ -26,16 +26,14 @@ import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Guid;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.kb.KbCollection;
+import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
 import com.cyc.kb.SecondOrderCollection;
-import com.cyc.kb.client.LookupType;
-import com.cyc.kb.KbObject;
-import com.cyc.kb.client.config.KbDefaultContext;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
-import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
 
@@ -49,10 +47,12 @@ import com.cyc.kb.exception.KbTypeException;
  * the KB API utilize this subclass (specialization) of KBCollection (#$Collection.)
  * So we have a class to support strongly typing such collections. 
  * 
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version $Id: SecondOrderCollectionImpl.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: SecondOrderCollectionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class SecondOrderCollectionImpl extends KbCollectionImpl implements SecondOrderCollection {
+public class SecondOrderCollectionImpl<T extends DenotationalTerm> extends KbCollectionImpl<T> implements SecondOrderCollection {
 
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("SecondOrderCollection", new Guid("1d075598-1fd3-11d6-8000-0050dab92c2f"));
@@ -81,7 +81,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @throws KbTypeException if cycObject is not or could not be made 
    * an instance of #$SecondOrderCollection
    */
-  SecondOrderCollectionImpl(CycObject cycObject) throws KbTypeException {
+  SecondOrderCollectionImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -141,7 +141,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @throws CreateException 
    */
   public static SecondOrderCollectionImpl get(String nameOrId) throws KbTypeException, CreateException  {
-    return KbObjectFactory.get(nameOrId, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.get(nameOrId, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -161,7 +161,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    */
   @Deprecated
   public static SecondOrderCollectionImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.get(cycObject, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -189,7 +189,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @throws CreateException 
    */
   public static SecondOrderCollectionImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -218,7 +218,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    */
   @Deprecated
   public static SecondOrderCollectionImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -254,7 +254,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @throws CreateException 
    */
   public static SecondOrderCollectionImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -291,7 +291,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @throws CreateException 
    */
   public static SecondOrderCollectionImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -329,7 +329,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    */
   public static SecondOrderCollectionImpl findOrCreate(String nameOrId, KbCollection constraintCol, ContextImpl ctx) 
       throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -368,7 +368,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    */
   public static SecondOrderCollectionImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) 
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, SecondOrderCollectionImpl.class);
   }
 
   /**
@@ -408,7 +408,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, SecondOrderCollectionImpl.class);
 
   }
 
@@ -421,7 +421,7 @@ public class SecondOrderCollectionImpl extends KbCollectionImpl implements Secon
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, SecondOrderCollectionImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, SecondOrderCollectionImpl.class);
   }
  
   /**

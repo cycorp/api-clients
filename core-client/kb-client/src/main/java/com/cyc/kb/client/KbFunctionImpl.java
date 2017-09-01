@@ -21,38 +21,32 @@ package com.cyc.kb.client;
  * #L%
  */
 
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Guid;
 import com.cyc.base.cycobject.Nart;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
-import com.cyc.baseclient.datatype.DateConverter;
 import com.cyc.kb.Context;
-import com.cyc.kb.client.LookupType;
+import com.cyc.kb.DefaultContext;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbFunction;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
-import com.cyc.kb.DefaultContext;
 import com.cyc.kb.client.config.KbConfiguration;
-import com.cyc.kb.client.config.KbDefaultContext;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
-import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
-import java.util.Date;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -70,13 +64,15 @@ import org.slf4j.LoggerFactory;
  * A new function is by default made a <code>#$ReifiableFunction</code> in the underlying 
  * Cyc Knowledge Base. A future version of the API will support un-reifiable functions.
  *
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version	$Id: KbFunctionImpl.java 171194 2017-04-01 05:32:51Z daves $
+ * @version	$Id: KbFunctionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
   // @TODO: Add examples
-public class KbFunctionImpl extends RelationImpl implements KbFunction {
+public class KbFunctionImpl<T extends DenotationalTerm> extends RelationImpl<T> implements KbFunction {
 
-  private static final Logger log = LoggerFactory.getLogger(KbFunctionImpl.class.getName());
+  //private static final Logger LOG = LoggerFactory.getLogger(KbFunctionImpl.class.getName());
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("Function-Denotational", new Guid("bd5c40b0-9c29-11b1-9dad-c379636f7270"));
 
@@ -106,7 +102,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @throws KbTypeException if cycObject is not or could not be made 
    * an instance of #$Function-Denotational
    */
-  KbFunctionImpl(CycObject cycObject) throws KbTypeException {
+  KbFunctionImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -171,7 +167,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @throws CreateException 
    */
   public static KbFunctionImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, KbFunctionImpl.class);
+    return KbObjectImplFactory.get(nameOrId, KbFunctionImpl.class);
   }
 
   /**
@@ -191,7 +187,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    */
   @Deprecated
   public static KbFunctionImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, KbFunctionImpl.class);
+    return KbObjectImplFactory.get(cycObject, KbFunctionImpl.class);
   }
 
   /**
@@ -219,7 +215,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @throws CreateException 
    */
   public static KbFunctionImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, KbFunctionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, KbFunctionImpl.class);
   }
 
   /**
@@ -248,7 +244,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    */
   @Deprecated
   public static KbFunctionImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, KbFunctionImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, KbFunctionImpl.class);
   }
 
   /**
@@ -284,7 +280,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @throws CreateException 
    */
   public static KbFunctionImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, KbFunctionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, KbFunctionImpl.class);
   }
 
   /**
@@ -321,7 +317,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @throws CreateException 
    */
   public static KbFunctionImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, KbFunctionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, KbFunctionImpl.class);
   }
 
   /**
@@ -359,7 +355,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    */
   public static KbFunctionImpl findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx) 
       throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, KbFunctionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, KbFunctionImpl.class);
   }
 
   /**
@@ -397,7 +393,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @throws CreateException 
    */
   public static KbFunctionImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbFunctionImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbFunctionImpl.class);
   }
 
   /**
@@ -437,7 +433,7 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, KbFunctionImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, KbFunctionImpl.class);
   }
 
   /**
@@ -449,116 +445,86 @@ public class KbFunctionImpl extends RelationImpl implements KbFunction {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, KbFunctionImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, KbFunctionImpl.class);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#findOrCreateFunctionalTerm(java.lang.Class, java.lang.Object)
-   */
+  
   @Override
   @SuppressWarnings("deprecation")
-  public <O> O findOrCreateFunctionalTerm(Class<O> retType, Object... args) throws KbTypeException, CreateException {
+  public <O extends KbObject> O findOrCreateFunctionalTerm(Class<O> retType, Object... args) 
+          throws KbTypeException, CreateException {
+    validateArgArity(args);
     try {
-      CycList<Object> natArgs = new CycArrayList<Object>();
+      final FormulaSentence fs = SentenceImpl.convertKBObjectArrayToCycFormulaSentence(args);
+      final CycList<Object> natArgs = new CycArrayList<>();
       natArgs.add(this.getCore());
-
-      FormulaSentence fs = SentenceImpl.convertKBObjectArrayToCycFormulaSentence(args);
       natArgs.addAll(fs.getArgs());
-
-      CycObject co = null;
-      if (this.isInstanceOf(Constants.getInstance().REIFIABLE_FUNC, Constants.uvMt())) {
+      final CycObject co;
+      if (isInstanceOf(Constants.getInstance().REIFIABLE_FUNC, Constants.uvMt())) {
         co = new NartImpl(natArgs);
         ((Nart) co).ensureReified(getAccess());
       } else {
         co = new NautImpl(natArgs);
       }
-
       return KbObjectImpl.<O>checkAndCastObject(co);
     } catch (CycConnectionException ex) {
       throw new KbRuntimeException(ex.getMessage(), ex);
     } 
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#getResultIsa()
-   */
+  
   @Override
   public Collection<KbCollection> getResultIsa() {
     return getResultIsa(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#getResultIsa(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> getResultIsa(String ctxStr) {
     return getResultIsa(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#getResultIsa(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Collection<KbCollection> getResultIsa(Context ctx) {
-    return (this.<KbCollection>getValues(Constants.resultIsa(), 1, 2, ctx));
+    //return (this.<KbCollection>getValuesForArg(Constants.resultIsa(), 1, 2, ctx));
+    return Constants.resultIsa().getValuesForArgPosition(this, 1, 2, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#addResultIsa(java.lang.String, java.lang.String)
-   */
+  
   @Override
   public KbFunction addResultIsa(String colStr, String ctxStr) throws KbTypeException, CreateException  {
     return addResultIsa(KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#addResultIsa(com.cyc.kb.KBCollection, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public KbFunction addResultIsa(KbCollection col, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.resultIsa(), 1, (Object) col);
+    //addFact(ctx, Constants.resultIsa(), 1, (Object) col);
+    Constants.resultIsa().addFact(ctx, this, col);
     return this;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#getResultGenl()
-   */
+  
   @Override
   public Collection<KbCollection> getResultGenl()
           throws KbException {
     return getResultGenl(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#getResultGenl(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> getResultGenl(String ctxStr) {
     return getResultGenl(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#getResultGenl(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public java.util.Collection<KbCollection> getResultGenl(Context ctx) {
-    return (this.<KbCollection>getValues(Constants.resultGenl(), 1, 2, ctx));
+    //return (this.<KbCollection>getValuesForArg(Constants.resultGenl(), 1, 2, ctx));
+    return Constants.resultGenl().getValuesForArgPosition(this, 1, 2, ctx);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#addResultGenl(java.lang.String, java.lang.String)
-   */
+  
   @Override
   public KbFunction addResultGenl(String colStr, String ctxStr) throws KbTypeException, CreateException {
     return addResultGenl(KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBFunction#addResultGenl(com.cyc.kb.KBCollection, com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public KbFunction addResultGenl(KbCollection col, Context ctx) throws KbTypeException, CreateException {
-    addFact(ctx, Constants.resultGenl(), 1, (Object) col);
+    //addFact(ctx, Constants.resultGenl(), 1, (Object) col);
+    Constants.resultGenl().addFact(ctx, this, col);
     return this;
   }
   

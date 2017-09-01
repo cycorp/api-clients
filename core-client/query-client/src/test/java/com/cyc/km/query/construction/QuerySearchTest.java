@@ -30,8 +30,8 @@ import com.cyc.kb.exception.KbException;
 import com.cyc.km.modeling.task.CycBasedTask;
 import com.cyc.nl.Span;
 import com.cyc.query.Query;
-import com.cyc.query.QueryTestConstants;
-import static com.cyc.query.TestUtils.assumeNotOpenCyc;
+import com.cyc.query.client.QueryTestConstants;
+import static com.cyc.query.client.TestUtils.assumeNotOpenCyc;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -173,7 +173,7 @@ public class QuerySearchTest {
     for (final Query query : queries) {
       if (targetPred.equals(query.getQuerySentence().getArgument(0))) {
         foundTarget = true;
-        Collection<Span> locations = situatedQueries.get(query);
+        final Collection<Span> locations = situatedQueries.get(query);
         final Span span = new Span(querySearch.getSearchString().indexOf(
                 targetSubstring), targetSubstring.length() - 1);
         assertTrue("Failed to find " + span + ". Found " + locations,

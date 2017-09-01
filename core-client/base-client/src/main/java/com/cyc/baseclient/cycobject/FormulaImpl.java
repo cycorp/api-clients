@@ -21,31 +21,31 @@ package com.cyc.baseclient.cycobject;
  * #L%
  */
 //// External Imports
-import com.cyc.base.exception.BaseClientRuntimeException;
-import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
-import com.cyc.base.cycobject.NonAtomicTerm;
+import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Formula;
-import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.Nart;
-import java.io.IOException;
-import java.util.*;
+import com.cyc.base.cycobject.NonAtomicTerm;
+import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.baseclient.datatype.StringUtils;
 import com.cyc.baseclient.xml.XmlWriter;
+import com.cyc.kb.ArgPosition;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * A class representing CycL formulas.
  * <P>
- * Cyc formulas may be either sentential (see {@link CycFormulaSentence}) or
+ * Cyc formulas may be either sentential (see {@link FormulaSentenceImpl}) or
  * denotational (see {@link NautImpl}).
  * <P>
  * A formula consists of an operator, which must be a {@link CycObject} and a
  * sequence of arguments, which may be either {@link CycObject}s or certain
  * primitives, notably booleans, strings, and numbers. See
- * {@link DefaultCycObject#isCycLObject(java.lang.Object)} for syntactically
+ * {@link DefaultCycObjectImpl#isCycLObject(java.lang.Object)} for syntactically
  * valid argument types.
  *
  * @author baxter
@@ -58,7 +58,7 @@ public class FormulaImpl implements Formula {
    * <P>
    * CycArrayList arguments will be converted to CycNauts or CycSentences.
    * <P>
-   * See {@link DefaultCycObject#isCycLObject(java.lang.Object)} for
+   * See {@link DefaultCycObjectImpl#isCycLObject(java.lang.Object)} for
    * syntactically valid argument types.
    *
    * @param terms
@@ -74,7 +74,7 @@ public class FormulaImpl implements Formula {
    * <P>
    * CycArrayList arguments will be converted to CycNauts or CycSentences.
    * <P>
-   * See {@link DefaultCycObject#isCycLObject(java.lang.Object)} for
+   * See {@link DefaultCycObjectImpl#isCycLObject(java.lang.Object)} for
    * syntactically valid argument types.
    *
    * @param functor
@@ -91,7 +91,7 @@ public class FormulaImpl implements Formula {
   /**
    * Build a new FormulaImpl from terms.
    * <P>
-   * @see DefaultCycObject#isCycLObject(java.lang.Object) for syntactically
+   * @see DefaultCycObjectImpl#isCycLObject(java.lang.Object) for syntactically
    * valid argument types.
    *
    * @param terms
@@ -112,7 +112,7 @@ public class FormulaImpl implements Formula {
   /**
    * Add arg to the end of this formula.
    * <P>
-   * See {@link DefaultCycObject#isCycLObject(java.lang.Object)} for
+   * See {@link DefaultCycObjectImpl#isCycLObject(java.lang.Object)} for
    * syntactically valid argument types.
    *
    * @param arg
@@ -121,7 +121,7 @@ public class FormulaImpl implements Formula {
     if (arg instanceof Iterable) {
       Object betterArg = NautImpl.convertIfPromising(arg);
       if (!(betterArg instanceof NautImpl)) {
-        betterArg = new CycFormulaSentence((Iterable) arg);
+        betterArg = new FormulaSentenceImpl((Iterable) arg);
       }
       addArgLow(betterArg);
     } else if (arg instanceof CycSymbolImpl) {
@@ -409,7 +409,7 @@ public class FormulaImpl implements Formula {
     for (final Map.Entry<K, V> entry : substitutions.entrySet()) {
       for (final ArgPosition argPos : getArgPositionsForTerm(entry.getKey())) {
         final V replacement = entry.getValue();
-        if (!DefaultCycObject.isCycLObject(replacement)) {
+        if (!DefaultCycObjectImpl.isCycLObject(replacement)) {
           throw new IllegalArgumentException(
                   replacement + " is not a CycL object.");
         }
@@ -573,15 +573,15 @@ public class FormulaImpl implements Formula {
 
   private void gatherFreeVariables(List<CycVariable> freeVarsSoFar,
           Set<CycVariable> boundVars, boolean includeQueryable) {
-    if (this instanceof CycFormulaSentence
-            && (((CycFormulaSentence) this).isExistential() || ((CycFormulaSentence) this).isUniversal())) {
+    if (this instanceof FormulaSentenceImpl
+            && (((FormulaSentenceImpl) this).isExistential() || ((FormulaSentenceImpl) this).isUniversal())) {
       Set<CycVariable> locallyBoundVars = gatherLocallyBoundVariables();
       boundVars.addAll(locallyBoundVars);
       ((FormulaImpl) getArg2()).gatherFreeVariables(freeVarsSoFar, boundVars, includeQueryable);
       boundVars.removeAll(locallyBoundVars);
     } else if (includeQueryable
-            && this instanceof CycFormulaSentence
-            && (((CycFormulaSentence) this).isConditionalSentence())) {
+            && this instanceof FormulaSentenceImpl
+            && (((FormulaSentenceImpl) this).isConditionalSentence())) {
       gatherQueryableVariablesFromConditionalSentence(boundVars, freeVarsSoFar);
     } else {
       for (final Object arg : getArgsUnmodifiable()) {

@@ -22,24 +22,24 @@ package com.cyc.baseclient.util;
  */
 
 //// Internal Imports
-import com.cyc.baseclient.exception.CycTaskInterruptedException;
-import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
+import com.cyc.base.conn.Worker;
+import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.base.exception.CycTimeOutException;
 import com.cyc.base.inference.InferenceWorkerSynch;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.DefaultSublWorker;
+import com.cyc.baseclient.connection.CycConnectionImpl;
+import com.cyc.baseclient.connection.DefaultSublWorkerSynch;
+import com.cyc.baseclient.connection.SublWorkerSynch;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.connection.SublWorkerSynch;
-import com.cyc.baseclient.connection.DefaultSublWorkerSynch;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.baseclient.connection.CycConnectionImpl;
-import com.cyc.baseclient.DefaultSublWorker;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.CycObject;
-import com.cyc.base.conn.Worker;
-import com.cyc.base.exception.CycTimeOutException;
-import com.cyc.base.cycobject.CycList;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.exception.CycTaskInterruptedException;
 import java.util.List;
 import java.util.Locale;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * @author tbrussea
  * @date Tue Aug  7 15:50:28 CDT 2007
- * @version $Id: CommUtils.java 170971 2017-03-16 01:34:00Z nwinant $
+ * @version $Id: CommUtils.java 173021 2017-07-21 18:36:21Z nwinant $
  */
 public final class CommUtils {
   
@@ -258,7 +258,7 @@ public final class CommUtils {
     apiCmd.append(function);
     for (Object arg : arguments) {
       apiCmd.append(" ");
-      apiCmd.append(DefaultCycObject.stringApiValue(arg));
+      apiCmd.append(DefaultCycObjectImpl.stringApiValue(arg));
     }
     apiCmd.append(')');
     return apiCmd.toString();

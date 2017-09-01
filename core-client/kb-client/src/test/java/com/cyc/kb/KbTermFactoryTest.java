@@ -62,7 +62,7 @@ public class KbTermFactoryTest {
     KbTermService instance = KbTermFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getTermService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().term(), instance);
   }
   
 }

@@ -22,29 +22,29 @@ package com.cyc.baseclient.cycobject;
  */
 
 //// External Imports
-import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Nart;
 import com.cyc.base.cycobject.Naut;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.xml.XmlStringWriter;
+import com.cyc.baseclient.xml.XmlWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ListIterator;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.cycobject.DenotationalTerm;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.xml.XmlStringWriter;
-import com.cyc.baseclient.xml.XmlWriter;
 
 /**
  * This class implements the behavior and attributes of a
  * a Base Client NART (Non Atomic Reified Term).
  *
- * @version $Id: NartImpl.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: NartImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  * @author Stefano Bertolo
  * @author Stephen L. Reed
  */
@@ -54,9 +54,9 @@ public class NartImpl extends FortImpl implements Nart {
   /**
    * XML serialization tags.
    */
-  public static final String natXMLtag = "nat";
-  public static final String functorXMLtag = "functor";
-  public static final String argXMLtag = "arg";
+  public static final String NAT_XML_TAG = "nat";
+  public static final String FUNCTOR_XML_TAG = "functor";
+  public static final String ARG_XML_TAG = "arg";
   /**
    * XML serialization indentation.
    */
@@ -72,6 +72,7 @@ public class NartImpl extends FortImpl implements Nart {
   /**
    * Constructs a new unary <tt>CycNart</tt> object from the NautImpl formula
    *
+   * @param formula
    */
   public NartImpl(final Naut formula) {
     this.formula = formula;
@@ -96,7 +97,7 @@ public class NartImpl extends FortImpl implements Nart {
    * @param cycList a list representation of the <tt>CycNart</tt>
    */
   public NartImpl(CycList cycList) {
-    if (cycList.size() == 0) {
+    if (cycList.isEmpty()) {
       throw new BaseClientRuntimeException("Cannot make a CycNart from an empty CycList");
     }
     if (!(cycList.first() instanceof Fort)) {
@@ -111,17 +112,17 @@ public class NartImpl extends FortImpl implements Nart {
    * @return the Nart that as reified
    * @throws com.cyc.base.exception.CycConnectionException
    */
+  @Override
   public Nart ensureReified(CycAccess access) throws CycConnectionException {
     Object result;
     try {
       String command = "(canonicalize-term-assert " + this.stringApiValue() + ")";
       result = access.converse().converseObject(command);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException e) {
       throw new CycApiException("Exception while ensuring that " + this + " is a NART.", e);
     }
     if (!(result instanceof Nart)) {
       throw new CycApiException("Unable to convert " + this + " into a Cyc NART.");
-
     }
     return this;
   }
@@ -182,6 +183,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @param functor the <tt>Fort</tt> functor object of the <tt>NartImpl</tt>
    */
+  @Override
   public void setFunctor(Fort functor) {
     formula.getArgs().set(0, functor);
   }
@@ -192,10 +194,12 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return the arguments of the <tt>NartImpl</tt>
    */
+  @Override
   public List getArguments() {
     return (List) formula.getArgs().rest();
   }
 
+  @Override
   public Object getArgument(final int argnum) {
     return formula.getArg(argnum);
   }
@@ -205,6 +209,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @param arguments the arguments of the <tt>NartImpl</tt>
    */
+  @Override
   public void setArguments(CycList arguments) {
     formula.setArgs(arguments);
   }
@@ -212,8 +217,10 @@ public class NartImpl extends FortImpl implements Nart {
   /**
    * Sets the specified argument of the <tt>NartImpl</tt> to argument.
    *
+   * @param argNum
    * @param argument
    */
+  @Override
   public void setArgument(final int argNum, Object argument) {
     formula.getArgs().set(argNum, argument);
   }
@@ -222,6 +229,7 @@ public class NartImpl extends FortImpl implements Nart {
    * Returns the XML representation of this object.
    *
    * @return the XML representation of this object
+   * @throws java.io.IOException
    */
   @Deprecated
   public String toXMLString() throws IOException {
@@ -231,8 +239,9 @@ public class NartImpl extends FortImpl implements Nart {
   }
 
   /**
-   * Prints the XML representation of the <ttt>NartImpl</tt> to an <tt>XMLWriter</tt>
+   * Prints the XML representation of the <tt>NartImpl</tt> to an <tt>XMLWriter</tt>
    * It is supposed to look like this:<p>
+   * 
    * <pre>
    * <nat>
    *  <functor>
@@ -259,26 +268,27 @@ public class NartImpl extends FortImpl implements Nart {
    * to the indentation currently specified in the indent_string field
    * of the xml_writer object, relative = true.
    *
+   * @throws java.io.IOException
    */
   @Deprecated
   @Override
   public void toXML(XmlWriter xmlWriter, int indent, boolean relative)
           throws IOException {
-    xmlWriter.printXMLStartTag(natXMLtag, indent, relative, true);
-    xmlWriter.printXMLStartTag(functorXMLtag, indentLength, true, true);
+    xmlWriter.printXMLStartTag(NAT_XML_TAG, indent, relative, true);
+    xmlWriter.printXMLStartTag(FUNCTOR_XML_TAG, indentLength, true, true);
     //this.getFunctor().toXML(xmlWriter, indentLength, true);
     this.convertCycObjectToXML(this.getFunctor(), xmlWriter, indentLength, true);
-    xmlWriter.printXMLEndTag(functorXMLtag, -indentLength, true);
+    xmlWriter.printXMLEndTag(FUNCTOR_XML_TAG, -indentLength, true);
     ListIterator iterator = this.getArguments().listIterator();
     Object arg;
     while (iterator.hasNext()) {
-      xmlWriter.printXMLStartTag(argXMLtag, 0, true, true);
+      xmlWriter.printXMLStartTag(ARG_XML_TAG, 0, true, true);
       arg = iterator.next();
       // Use a shared method with CycArrayList for arbitrary elements.
       CycArrayList.toXML(arg, xmlWriter, indentLength, true);
-      xmlWriter.printXMLEndTag(argXMLtag, 0, true);
+      xmlWriter.printXMLEndTag(ARG_XML_TAG, 0, true);
     }
-    xmlWriter.printXMLEndTag(natXMLtag, -indentLength, true);
+    xmlWriter.printXMLEndTag(NAT_XML_TAG, -indentLength, true);
   }
 
   /**
@@ -306,6 +316,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return a <tt>String</tt> representation of the Base Client NART.
    */
+  @Override
   public String toString() {
     if (isInvalid) {
       return "INVALID-NART";
@@ -319,6 +330,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return a cyclified <tt>String</tt>.
    */
+  @Override
   public String cyclify() {
     if (isInvalid) {
       return "INVALID-NART";
@@ -334,6 +346,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return a cyclified <tt>String</tt>.
    */
+  @Override
   public String cyclifyWithEscapeChars() {
     if (isInvalid) {
       return "INVALID-NART";
@@ -346,6 +359,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return this object in a form suitable for use as an <tt>String</tt> api expression value
    */
+  @Override
   public String stringApiValue() {
     return "(canonicalize-term '" + cyclifyWithEscapeChars() + ")";
   }
@@ -355,6 +369,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return this object in a form suitable for use as an <tt>CycArrayList</tt> api expression value
    */
+  @Override
   public Object cycListApiValue() {
     CycArrayList apiValue = new CycArrayList();
     apiValue.add(CycObjectFactory.makeCycSymbol("canonicalize-term"));
@@ -363,10 +378,10 @@ public class NartImpl extends FortImpl implements Nart {
   }
 
   /**
-   * Returns a string representation of the <ttt>NartImpl</tt> with the guid in place
+   * Returns a string representation of the <tt>NartImpl</tt> with the guid in place
    * of the constant name.
    *
-   * @return a <tt>String</tt> representation of the <ttt>NartImpl</tt> with <tt>GuidImpl</tt>
+   * @return a <tt>String</tt> representation of the <tt>NartImpl</tt> with <tt>GuidImpl</tt>
    * external forms in place of the <tt>CycConstantImpl</tt> names.
    */
   public String metaGuid() {
@@ -375,7 +390,7 @@ public class NartImpl extends FortImpl implements Nart {
             (functor instanceof CycConstantImpl
             ? ((CycConstantImpl) functor).getGuid().toString() : ((NartImpl) functor).metaGuid());
     ListIterator iterator = getArguments().listIterator();
-    StringBuffer result = new StringBuffer("(");
+    StringBuilder result = new StringBuilder("(");
     result.append(functorGuid);
     Object arg;
     String argGuid;
@@ -405,7 +420,7 @@ public class NartImpl extends FortImpl implements Nart {
             ? ((CycConstantImpl) this.getFunctor()).getName()
             : ((NartImpl) this.getFunctor()).metaName());
     ListIterator iterator = this.getArguments().listIterator();
-    StringBuffer result = new StringBuffer("(");
+    StringBuilder result = new StringBuilder("(");
     result.append(functorName);
     Object arg;
     String argName;
@@ -429,6 +444,7 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return a hash value for this object
    */
+  @Override
   public int hashCode() {
     return formula.hashCode();
   }
@@ -439,6 +455,7 @@ public class NartImpl extends FortImpl implements Nart {
    * @param object the <tt>Object</tt> for equality comparison
    * @return equals <tt>boolean</tt> value indicating equality or non-equality.
    */
+  @Override
   public boolean equals(Object object) {
     if (!(object instanceof NartImpl)) {
       return false;
@@ -453,6 +470,7 @@ public class NartImpl extends FortImpl implements Nart {
    * @param object the <tt>Object</tt> for equality comparison
    * @return equals <tt>boolean</tt> value indicating equality or non-equality.
    */
+  @Override
   public boolean equalsAtEL(Object object) {
     return getFormula().equalsAtEL(object);
   }
@@ -462,18 +480,20 @@ public class NartImpl extends FortImpl implements Nart {
    *
    * @return true if the functor and arguments are instantiated
    */
+  @Override
   public boolean hasFunctorAndArgs() {
     return formula.getArity() > 0;
   }
 
   /**
-   * Returns a list of all constants refered to by this CycObject.
+   * Returns a list of all constants referred to by this CycObject.
    * For example, a CycConstantImpl will return a List with itself as the
- value, a nart will return a list of its functor and all the constants refered
- to by its arguments, a CycArrayList will do a deep search for all constants,
- a symbol or variable will return the empty list.
-   * @return a list of all constants refered to by this CycObject
-   **/
+   * value, a nart will return a list of its functor and all the constants referred
+   * to by its arguments, a CycArrayList will do a deep search for all constants,
+   * a symbol or variable will return the empty list.
+   * @return a list of all constants referred to by this CycObject
+   */
+  @Override
   public List getReferencedConstants() {
     return getFormula().getReferencedConstants();
   }

@@ -41,7 +41,7 @@ import com.cyc.base.CycAccessManager;
 import com.cyc.base.cycobject.CycAssertion;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.Nart;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.baseclient.testing.TestIterator;
 import com.cyc.kb.Assertion;
 import com.cyc.kb.KbTerm;
@@ -132,7 +132,7 @@ public class ServiceTestUtils {
     final CycAccess cyc = CycAccessManager.getCurrentAccess();
     for (int i = 0; i < numExamples; i++) {
       final CycAssertion randomAssertion = cyc.getLookupTool().getRandomAssertion();
-      final String hlid = DefaultCycObject.toCompactExternalId(randomAssertion, cyc);
+      final String hlid = DefaultCycObjectImpl.toCompactExternalId(randomAssertion, cyc);
       System.out.println(randomAssertion);
       System.out.println("      " + hlid);
       System.out.println();

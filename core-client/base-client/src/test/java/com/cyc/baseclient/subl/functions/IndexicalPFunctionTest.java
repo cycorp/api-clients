@@ -26,7 +26,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import static com.cyc.baseclient.subl.functions.SublFunctions.INDEXICAL_P;
 import java.util.Arrays;
 import java.util.List;
@@ -44,12 +44,11 @@ public class IndexicalPFunctionTest extends AbstractSublFunctionTest {
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    indexicalSentences = Arrays.asList(
-            CycFormulaSentence
+    indexicalSentences = Arrays.asList(FormulaSentenceImpl
             .makeCycSentence(access, "(TheNamedFn SetOrCollection \"indexical 1\")"),
-            CycFormulaSentence
+            FormulaSentenceImpl
             .makeCycSentence(access, "(TheNamedFn SetOrCollection \"indexical 2\")"),
-            CycFormulaSentence
+            FormulaSentenceImpl
             .makeCycSentence(access, "(TheNamedFn SetOrCollection \"indexical 3\")"));
     indexicalConstants = Arrays.asList(
             access.getLookupTool().getConstantByName("#$Now-Indexical"),

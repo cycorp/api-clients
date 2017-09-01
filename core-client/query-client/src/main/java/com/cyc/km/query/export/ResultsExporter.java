@@ -27,9 +27,8 @@ import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.exception.ExportException;
 import com.cyc.baseclient.export.PrintWriterExporter;
 import com.cyc.query.Query;
-import com.cyc.query.QueryImpl;
 import com.cyc.query.QueryAnswer;
-
+import com.cyc.query.client.QueryImpl;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;

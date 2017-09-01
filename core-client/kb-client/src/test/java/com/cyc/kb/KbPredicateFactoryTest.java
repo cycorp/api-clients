@@ -62,7 +62,7 @@ public class KbPredicateFactoryTest {
     KbPredicateService instance = KbPredicateFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getPredicateService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().predicate(), instance);
   }
   
 }

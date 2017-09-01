@@ -22,26 +22,23 @@ package com.cyc.baseclient.parser;
  */
 
 //// Internal Imports
-import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.baseclient.cycobject.CycVariableImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
-import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
-import com.cyc.baseclient.exception.CycApiServerSideException;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.baseclient.CommonConstants;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.session.CycServer;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Nart;
-import com.cyc.baseclient.kbtool.CycObjectTool;
-
-//// External Imports
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.baseclient.CommonConstants;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.CycVariableImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
+import com.cyc.baseclient.exception.CycApiServerSideException;
+import com.cyc.baseclient.kbtool.ObjectToolImpl;
 import java.io.*;
 import java.util.*;
 
@@ -49,7 +46,7 @@ import java.util.*;
  * <P>CycLParserUtil is designed to be the main entry point into parsing
  * CycL expressions.
  *
- * @version $Id: CyclParserUtil.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: CyclParserUtil.java 173021 2017-07-21 18:36:21Z nwinant $
  * @author Tony Brusseau
  */
 public class CyclParserUtil {
@@ -91,19 +88,19 @@ public class CyclParserUtil {
     return (CycArrayList)completeConstants(parser.termList(testForEOF), access);
   }
   
-  public static CycFormulaSentence parseCycLSentence(String toParse, boolean testForEOF, CycAccess access)
+  public static FormulaSentenceImpl parseCycLSentence(String toParse, boolean testForEOF, CycAccess access)
   throws ParseException, CycConnectionException, CycApiException, CycApiServerSideException, 
   InvalidConstantNameException, InvalidConstantGuidException, 
   UnsupportedVocabularyException, TokenMgrError, IOException {
     return parseCycLSentence(new StringReader(toParse), testForEOF, access);
   }
   
-  public static CycFormulaSentence parseCycLSentence(Reader reader, boolean testForEOF, CycAccess access)
+  public static FormulaSentenceImpl parseCycLSentence(Reader reader, boolean testForEOF, CycAccess access)
   throws ParseException, CycConnectionException, CycApiException, CycApiServerSideException, 
   InvalidConstantNameException, InvalidConstantGuidException, 
   UnsupportedVocabularyException, TokenMgrError, IOException {
     CyclParser parser = new CyclParser(reader, access);
-    return new CycFormulaSentence((CycArrayList)completeConstants(parser.sentence(testForEOF), access));
+    return new FormulaSentenceImpl((CycArrayList)completeConstants(parser.sentence(testForEOF), access));
   }
   
   public static String parseCycLString(String toParse, boolean testForEOF, CycAccess access) 
@@ -188,7 +185,7 @@ public class CyclParserUtil {
   UnsupportedVocabularyException, TokenMgrError, IOException {
     Object result = parseCycLDenotationalTerm(reader, testForEOF, access);
     if (result instanceof CycArrayList) {
-      Object result2 = ((CycObjectTool)(access.getObjectTool())).getHLCycTerm(DefaultCycObject.cyclify(result));
+      Object result2 = ((ObjectToolImpl)(access.getObjectTool())).getHLCycTerm(DefaultCycObjectImpl.cyclify(result));
       if (!(result2 instanceof Nart)) {
         throw new BaseClientRuntimeException("Unknown fort: " + result);
       }
@@ -213,14 +210,14 @@ public class CyclParserUtil {
    **/
   public static Object nartSubstitute(Object cyclObject, CycAccess access)
   throws CycConnectionException {
-    if (!DefaultCycObject.isCycLObject(cyclObject)) {
-      throw new BaseClientRuntimeException(DefaultCycObject.cyclify(cyclObject) + " is not a valid Cyc object.");
+    if (!DefaultCycObjectImpl.isCycLObject(cyclObject)) {
+      throw new BaseClientRuntimeException(DefaultCycObjectImpl.cyclify(cyclObject) + " is not a valid Cyc object.");
     }
     if (!(cyclObject instanceof CycObject)) { // @todo need a test that sees if the CycObject
                                               // contains any CycLists any fast fail if not
       return cyclObject;
     }
-    return access.converse().converseObject("(nart-substitute  '" + DefaultCycObject.cyclifyWithEscapeChars(cyclObject, true) + ")");
+    return access.converse().converseObject("(nart-substitute  '" + DefaultCycObjectImpl.cyclifyWithEscapeChars(cyclObject, true) + ")");
   }
 
    /** Takes a CycL formula represented in CycArrayList form and replaces all the subcomponents
@@ -233,13 +230,13 @@ public class CyclParserUtil {
    **/
   public static Object toHL(Object cyclObject, CycAccess access)
   throws CycConnectionException {
-    if (!DefaultCycObject.isCycLObject(cyclObject)) {
-      throw new BaseClientRuntimeException(DefaultCycObject.cyclify(cyclObject) + " is not a valid Cyc object.");
+    if (!DefaultCycObjectImpl.isCycLObject(cyclObject)) {
+      throw new BaseClientRuntimeException(DefaultCycObjectImpl.cyclify(cyclObject) + " is not a valid Cyc object.");
     }
     if (!(cyclObject instanceof CycObject)) {
       return cyclObject;
     }
-    return access.converse().converseObject("(canonicalize-term  '" + DefaultCycObject.cyclifyWithEscapeChars(cyclObject, true) + ")");
+    return access.converse().converseObject("(canonicalize-term  '" + DefaultCycObjectImpl.cyclifyWithEscapeChars(cyclObject, true) + ")");
   }
   
   public static Object parseCycLNonAtomicDenotationalTerm(String toParse, boolean testForEOF, CycAccess access) 
@@ -264,7 +261,7 @@ public class CyclParserUtil {
            InvalidConstantNameException, 
            InvalidConstantGuidException, 
            UnsupportedVocabularyException {
-    List allConstants = DefaultCycObject.getReferencedConstants(obj);
+    List allConstants = DefaultCycObjectImpl.getReferencedConstants(obj);
     if ((allConstants == null) || (allConstants.size() == 0)) { return obj; }
     CycArrayList incompleteConstantsWithNames = null;
     CycArrayList incompleteConstantsWithGuids = null;

@@ -31,8 +31,8 @@ import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
 import com.cyc.kb.ArgPosition;
@@ -82,122 +82,121 @@ import org.slf4j.LoggerFactory;
  * and understood by the server, and are used extensively to perform queries or make assertions.
  *
  * @author Vijay Raj
- * @version $Id: SentenceImpl.java 172769 2017-07-05 21:36:26Z nwinant $
+ * @version $Id: SentenceImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  * @since 1.0
  */
-public class SentenceImpl extends StandardKbObject implements Sentence {
-
-  private static Logger log = LoggerFactory.getLogger(SentenceImpl.class.getCanonicalName());
-
-  // The list of KBObject or Primitive datatypes
-  // This is to preserve all the KBObjects passed in to construct the sentence.
-  // This is expected to be useful when Sentence has to be reconstructed when
-  // handling RestrictedVariable, since the RVs have a restriction within, that
-  // gets added to the sentence. 
+public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence> implements Sentence {
+  
+  //====|    Static methods    |==================================================================//
+  
   /**
-   * NOT PART OF KB API 1.0
-   */
-  // 2014-10-28: This is not populated from FormulaSentence and can be assumed to be
-  // non null at any time.
-  private List<Object> arguments;
-
-  /**
-   * Return a new <code>Sentence</code> based on the existing CycFormulaSentence
-   * <code>cycObject</code>.
+   * Conjoin sentences. Creates a list and calls {@link #and(java.lang.Iterable)}
    *
-   * @param cycObject	the source CycObject for the Sentence. The constructor verifies that the
-   * CycObject is a #$CycLSentence
+   * @param sentences list of sentences to be conjoined
    *
-   * @throws KbTypeException is thrown in cycObject is not an instance of CycFormulaSentence
+   * @return a new conjoined sentence
+   * @throws KbTypeException
    * @throws com.cyc.kb.exception.CreateException
    */
-  public SentenceImpl(CycObject cycObject) throws KbTypeException, CreateException {
-    super(cycObject);
-    arguments = formulaSentenceToArgList((FormulaSentence) cycObject);
-  }
-
-  // @TODO: This does not support typed 
-  private List<Object> formulaSentenceToArgList(FormulaSentence formula) throws CreateException {
-    List<Object> tempArgList = new ArrayList<Object>();
-    for (Object o : formula.getArgs()) {
-        // NOTE: There is a recursion here.
-        // checkAndCastObject calls SentenceImpl(CycObject) which inturn calls
-        // this method
-      tempArgList.add(KbObjectImpl.checkAndCastObject(o));
-        }
-    return tempArgList;
+  public static Sentence and(Sentence... sentences) throws KbTypeException, CreateException {
+    return and(Arrays.asList(sentences));
   }
 
   /**
-   * Builds a sentence based on <code>pred</code> and other <code>args</code>. Note that
-   * <code>args</code> should be KBObjects,
-   * {@link java.lang.String Strings}, {@link java.lang.Number Numbers}, or
-   * {@link java.util.Date Dates}. This constructor also handles {@link java.util.List Lists} and
-   * {@link java.util.Set Sets} (and Lists of Lits or Sets of Lists, etc.) of those supported
-   * objects.
+   * Conjoin sentences. Creates a new sentence with #$and as the relation and all other sentences as
+   * the arguments.
    *
-   * @param pred the first argument of the formula
-   * @param args the other arguments of the formula in the order they appear in the list
+   * @param sentences list of sentences to be conjoined
    *
-   * @throws KbTypeException is thrown if the built cycObject is not a instance of
-   * CycFormulaSentence. This should never happen.
+   * @return a new conjunction sentence
+   * @throws com.cyc.kb.exception.KbTypeException
    * @throws com.cyc.kb.exception.CreateException
    */
-  public SentenceImpl(Relation pred, Object... args) throws KbTypeException, CreateException {
-    this(combineParams(pred, args));
+  public static Sentence and(Iterable<Sentence> sentences) throws KbTypeException, CreateException {
+    List<FormulaSentence> cfsList = new ArrayList<>();
+    for (Sentence s : sentences) {
+      cfsList.add(toCycSentence(s));
+    }
+    final FormulaSentence cfs = FormulaSentenceImpl.makeConjunction(cfsList);
+    // TODO: Can we catch KBTypeException. We know all components are Sentences.
+    // combination should be a Sentence
+    return new SentenceImpl(cfs);
   }
 
   /**
-   * Returns a new list of objects based on <code>pred</code> and other <code>args</code>. Note that
-   * <code>args</code> should be KBObjects,
-   * {@link java.lang.String Strings}, {@link java.lang.Number Numbers}, or
-   * {@link java.util.Date Dates}. This constructor also handles {@link java.util.List Lists} and
-   * {@link java.util.Set Sets} (and Lists of Lits or Sets of Lists, etc.) of those supported
-   * objects.
+   * Disjoin sentences. Creates a list and calls {@link #or(java.lang.Iterable)}
    *
-   * @param pred the first argument of the formula
-   * @param args the other arguments of the formula in order
+   * @param sentences list of sentences to be disjoined
    *
-   * @return a new list with the supplied arguments
-   */
-  private static Object[] combineParams(Relation pred, Object... args) {
-    List<Object> l = new ArrayList<Object>();
-    l.addAll(Arrays.asList(args));
-    l.add(0, pred);
-    return l.toArray();
-  }
-
-  /**
-   * Builds an arbitrary sentence based on the <code>args</code> provided. Note that
-   * <code>args</code> should either be KBObjects or Java classes, String, Number or Date. This
-   * constructor also handles java.util.List and java.util.Set of other supported KB API or Java
-   * objects. It even supports, List of List etc.
-   *
-   * @param args the arguments of the formula in order
-   *
-   * @throws KbTypeException never thrown
+   * @return a new disjunction sentence
+   * @throws KbTypeException
    * @throws com.cyc.kb.exception.CreateException
    */
-  public SentenceImpl(Object... args) throws KbTypeException, CreateException {
-    this(convertKBObjectArrayToCycFormulaSentence(args));
-    arguments = Arrays.asList(args);
-    log.debug("Create sentence with args: {}", Arrays.asList(args));
+  public static Sentence or(Sentence... sentences) throws KbTypeException, CreateException {
+    return or(Arrays.asList(sentences));
   }
 
   /**
-   * Used in the method {@link #convertKBObjectArrayToCycFormulaSentence(java.lang.Object...)}
+   * Disjoin sentences. Creates a new sentence with #$or as the relation and all other sentences as
+   * the arguments.
+   *
+   * @param sentences list of sentences to be disjoined
+   *
+   * @return a new disjunction sentence
+   * @throws com.cyc.kb.exception.KbTypeException
+   * @throws com.cyc.kb.exception.CreateException
    */
-  static private final CycConstant THE_EMPTY_LIST = new CycConstantImpl("TheEmptyList", new Guid("bd79c885-9c29-11b1-9dad-c379636f7270"));
+  public static Sentence or(Iterable<Sentence> sentences) throws KbTypeException, CreateException {
+    List<FormulaSentence> cfsList = new ArrayList<>();
+    for (Sentence s : sentences) {
+      cfsList.add(toCycSentence(s));
+    }
+    final FormulaSentence cfs = FormulaSentenceImpl.makeDisjunction(cfsList);
+    // TODO: Can we catch KBTypeException. We know all components are Sentences.
+    // combination should be a Sentence    
+    return new SentenceImpl(cfs);
+  }
 
+  public static Sentence implies(Collection<Sentence> posLiterals, Sentence negLiteral) throws KbTypeException, CreateException {
+    return implies(and(posLiterals), negLiteral);
+  }
+
+  public static Sentence implies(Sentence posLiteral, Sentence negLiteral) throws KbTypeException, CreateException {
+    final FormulaSentence conditional = FormulaSentenceImpl.makeConditional((FormulaSentence) posLiteral.getCore(), (FormulaSentence) negLiteral.getCore());
+    return new SentenceImpl(conditional);
+  }
+  
   /**
-   * Build a CycFormulaSentence from the given KBObjects arguments <code>args</code>. Note that
+   * Return the KBCollection as a KBObject of the Cyc term that underlies this class
+   * (<code>CycLSentence</code>).
+   *
+   * @return KBCollectionImpl.get("#$CycLSentence");
+   */
+  public static KbObject getClassType() {
+    try {
+      return KbCollectionImpl.get(getClassTypeString());
+    } catch (KbException kae) {
+      throw new KbRuntimeException(kae.getMessage(), kae);
+    }
+  }
+
+  static String getClassTypeString() {
+    return "#$CycLSentence";
+  }
+  
+  private static FormulaSentenceImpl toCycSentence(Sentence sentence) {
+    return (FormulaSentenceImpl) sentence.getCore();
+  }
+  
+  /**
+   * Build a FormulaSentence from the given KBObjects arguments <code>args</code>. Note that
    * <code>args</code> should either be KBObjects or Java classes, String, Number or Date. This
    * method also handles java.util.List and java.util.Set of other supported KB API or Java objects.
    * It even supports, List of List etc.
    *
    * @param args
    *
-   * @return a CycFormulaSentence corresponding to the arguments <code>args</code>.
+   * @return a FormulaSentence corresponding to the arguments <code>args</code>.
    */
   public static FormulaSentence convertKBObjectArrayToCycFormulaSentence(Object... args) {
     //this should never actually happen, but when it does, this is what we should do
@@ -205,7 +204,7 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
       return (FormulaSentence) args[0];
     }
     List<Object> outargs = new ArrayList<>();
-    List<Object> tempoutargs = new ArrayList<Object>();
+    List<Object> tempoutargs = new ArrayList<>();
     try {
       for (Object arg : args) {
         if (arg instanceof RestrictedVariable) {
@@ -248,14 +247,149 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
     if (outargs.isEmpty()) {
       outargs.addAll(tempoutargs);
     } else {
-      outargs.add(CycFormulaSentence.makeCycFormulaSentence(tempoutargs.toArray()));
+      outargs.add(FormulaSentenceImpl.makeCycFormulaSentence(tempoutargs.toArray()));
     }
 
-    return CycFormulaSentence.makeCycFormulaSentence(outargs.toArray());
+    return FormulaSentenceImpl.makeCycFormulaSentence(outargs.toArray());
+  }
+  
+  /**
+   * Introducing a static method to change the Exception thrown to KBApiException instead of
+   * CycApiException.
+   *
+   * @param cycLString the string to parse into a FormulaSentence
+   *
+   * @return a FormulaSentence represented by CycL string, <code>cycLString</code>
+   *
+   * @throws CreateException if cycLString can not be parsed
+   */
+  private static FormulaSentence parseCycLStringOrId(String cycLString) throws CreateException {
+    try {
+      return FormulaSentenceImpl.makeCycSentence(getStaticAccess(), cycLString);
+    } catch (CycApiException | CycConnectionException ex) {
+      try {
+        Object o = DefaultCycObjectImpl.fromPossibleCompactExternalId(cycLString, getStaticAccess());
+        o = FormulaSentenceImpl.convertIfPromising(o);
+        if (o instanceof FormulaSentence) {
+          return (FormulaSentence) o;
+        }
+      } catch (CycConnectionException ex1) {
+        throw new CreateException(ex1.getMessage(), ex1);
+      }
+      throw new CreateException(ex.getMessage(), ex);
+    }
+  }
+  
+  /**
+   * Returns a new list of objects based on <code>pred</code> and other <code>args</code>. Note that
+   * <code>args</code> should be KBObjects,
+   * {@link java.lang.String Strings}, {@link java.lang.Number Numbers}, or
+   * {@link java.util.Date Dates}. This constructor also handles {@link java.util.List Lists} and
+   * {@link java.util.Set Sets} (and Lists of Lits or Sets of Lists, etc.) of those supported
+   * objects.
+   *
+   * @param pred the first argument of the formula
+   * @param args the other arguments of the formula in order
+   *
+   * @return a new list with the supplied arguments
+   */
+  private static Object[] combineParams(Relation pred, Object... args) {
+    final List<Object> result = new ArrayList<>();
+    result.add(pred);
+    result.addAll(Arrays.asList(args));
+    return result.toArray();
+  }
+  
+  //====|    Fields    |==========================================================================//
+
+  private static final Logger LOG = LoggerFactory.getLogger(SentenceImpl.class.getCanonicalName());
+
+  /**
+   * Used in the method {@link #convertKBObjectArrayToCycFormulaSentence(java.lang.Object...)}
+   */
+  private static final CycConstant THE_EMPTY_LIST = new CycConstantImpl(
+          "TheEmptyList", new Guid("bd79c885-9c29-11b1-9dad-c379636f7270"));
+  
+  // The list of KBObject or Primitive datatypes
+  // This is to preserve all the KBObjects passed in to construct the sentence.
+  // This is expected to be useful when Sentence has to be reconstructed when
+  // handling RestrictedVariable, since the RVs have a restriction within, that
+  // gets added to the sentence. 
+  /**
+   * NOT PART OF KB API 1.0
+   */
+  // 2014-10-28: This is not populated from FormulaSentence and can be assumed to be
+  // non null at any time.
+  private List<Object> arguments;
+  
+  //====|    Construction    |====================================================================//
+
+  /**
+   * Return a new <code>Sentence</code> based on the existing FormulaSentence
+   * <code>cycObject</code>.
+   *
+   * @param cycObject	the source CycObject for the Sentence. The constructor verifies that the
+   * CycObject is a #$CycLSentence
+   *
+   * @throws KbTypeException is thrown in cycObject is not an instance of FormulaSentence
+   * @throws com.cyc.kb.exception.CreateException
+   */
+  public SentenceImpl(FormulaSentence cycObject) throws KbTypeException, CreateException {
+    super(cycObject);
+    arguments = formulaSentenceToArgList((FormulaSentence) cycObject);
+  }
+  
+  // @TODO: This does not support typed 
+  private List<Object> formulaSentenceToArgList(FormulaSentence formula) throws CreateException {
+    List<Object> tempArgList = new ArrayList<>();
+    for (Object o : formula.getArgs()) {
+        // NOTE: There is a recursion here.
+        // checkAndCastObject calls SentenceImpl(CycObject) which inturn calls
+        // this method
+      tempArgList.add(KbObjectImpl.checkAndCastObject(o));
+        }
+    return tempArgList;
   }
 
   /**
-   * Attempts to convert a CycL string into a CycFormulaSentence and thus into a KBObject, Sentence.
+   * Builds a sentence based on <code>pred</code> and other <code>args</code>. Note that
+   * <code>args</code> should be KBObjects,
+   * {@link java.lang.String Strings}, {@link java.lang.Number Numbers}, or
+   * {@link java.util.Date Dates}. This constructor also handles {@link java.util.List Lists} and
+   * {@link java.util.Set Sets} (and Lists of Lits or Sets of Lists, etc.) of those supported
+   * objects.
+   *
+   * @param pred the first argument of the formula
+   * @param args the other arguments of the formula in the order they appear in the list
+   *
+   * @throws KbTypeException is thrown if the built cycObject is not a instance of
+ FormulaSentence. This should never happen.
+   * @throws com.cyc.kb.exception.CreateException
+   */
+  public SentenceImpl(Relation pred, Object... args) throws KbTypeException, CreateException {
+    this(combineParams(pred, args));
+  }
+
+
+  /**
+   * Builds an arbitrary sentence based on the <code>args</code> provided. Note that
+   * <code>args</code> should either be KBObjects or Java classes, String, Number or Date. This
+   * constructor also handles java.util.List and java.util.Set of other supported KB API or Java
+   * objects. It even supports, List of List etc.
+   *
+   * @param args the arguments of the formula in order
+   *
+   * @throws KbTypeException never thrown
+   * @throws com.cyc.kb.exception.CreateException
+   */
+  public SentenceImpl(Object... args) throws KbTypeException, CreateException {
+    this(convertKBObjectArrayToCycFormulaSentence(args));
+    arguments = Arrays.asList(args);
+    LOG.debug("Create sentence with args: {}", Arrays.asList(args));
+  }
+  
+  /**
+   * Attempts to convert a CycL string into a FormulaSentence and thus into a KBObject, Sentence.
    * <p>
    *
    * @param sentStr	the string representing a Sentence in the KB, a CycL sentence
@@ -266,33 +400,8 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
   public SentenceImpl(String sentStr) throws KbTypeException, CreateException {
     this(parseCycLStringOrId(sentStr));
   }
-
-  /**
-   * Introducing a static method to change the Exception thrown to KBApiException instead of
-   * CycApiException.
-   *
-   * @param cycLString the string to parse into a CycFormulaSentence
-   *
-   * @return a FormulaSentence represented by CycL string, <code>cycLString</code>
-   *
-   * @throws CreateException if cycLString can not be parsed
-   */
-  private static FormulaSentence parseCycLStringOrId(String cycLString) throws CreateException {
-    try {
-      return CycFormulaSentence.makeCycSentence(getStaticAccess(), cycLString);
-    } catch (Exception ex) {
-      try {
-        Object o = DefaultCycObject.fromPossibleCompactExternalId(cycLString, getStaticAccess());
-        o = CycFormulaSentence.convertIfPromising(o);
-        if (o instanceof FormulaSentence) {
-          return (FormulaSentence) o;
-        }
-      } catch (CycConnectionException ex1) {
-        throw new CreateException(ex1.getMessage(), ex1);
-      }
-      throw new CreateException(ex.getMessage(), ex);
-    }
-  }
+  
+  //====|    Methods    |=========================================================================//
 
   /*
    * Creates a
@@ -320,14 +429,10 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
    throw new UnsupportedOperationException("Stub method. Not tested.");
    }
    */
-  /**
-   * *******************
-   * Static methods *******************
-   */
+  
   /**
    * This not part of the public, supported KB API. Check that the candidate core object is valid
-   * CycFormulaSentence. In the CycKB the object would be valid #$CycLSentence
-   *
+   * FormulaSentence. In the CycKB the object would be valid #$CycLSentence
    * Refer to {@link StandardKBObject#isValidCore(com.cyc.base.cycobject.CycObject) } for more
    * comments
    *
@@ -338,115 +443,33 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
   @Override
   //@todo Should this be static?  Also, why is the javadoc for this not showing up.  I'm seeing javadoc from somewhere else...
   protected boolean isValidCore(CycObject cycObject) {
-    if (cycObject instanceof CycFormulaSentence) {
-      return true;
-      // return !toCycSentence(tempCore).hasWffConstraintViolations(CycAccess.getCurrent(), CycAccess.universalVocabularyMt);
-    } else {
-      return false;
-    }
+    return (cycObject instanceof FormulaSentence);
   }
-
+  
   @Override
   public boolean isAssertible(Context ctx) {
-    return !getFormulaSentence().hasWffConstraintViolations(getAccess(), ContextImpl.asELMt(ctx));
+    return !getCore().hasWffConstraintViolations(getAccess(), ContextImpl.asELMt(ctx));
   }
 
   @Override
   public String notAssertibleExplanation(Context ctx) {
     try {
-      return getFormulaSentence().getNonWffAssertExplanation(getAccess(), ContextImpl.asELMt(ctx));
+      return getCore().getNonWffAssertExplanation(getAccess(), ContextImpl.asELMt(ctx));
     } catch (Exception e) {
-      log.error(e.getMessage());
-      log.error(Arrays.toString(e.getStackTrace()));
+      LOG.error(e.getMessage());
+      LOG.error(Arrays.toString(e.getStackTrace()));
       return null;
     }
   }
 
-  /**
-   * Conjoin sentences. Creates a list and calls {@link #and(java.lang.Iterable)}
-   *
-   * @param sentences list of sentences to be conjoined
-   *
-   * @return a new conjoined sentence
-   * @throws KbTypeException
-   * @throws com.cyc.kb.exception.CreateException
-   */
-  public static Sentence and(Sentence... sentences) throws KbTypeException, CreateException {
-    return and(Arrays.asList(sentences));
-  }
-
-  /**
-   * Conjoin sentences. Creates a new sentence with #$and as the relation and all other sentences as
-   * the arguments.
-   *
-   * @param sentences list of sentences to be conjoined
-   *
-   * @return a new conjunction sentence
-   * @throws com.cyc.kb.exception.KbTypeException
-   * @throws com.cyc.kb.exception.CreateException
-   */
-  public static Sentence and(Iterable<Sentence> sentences) throws KbTypeException, CreateException {
-    List<FormulaSentence> cfsList = new ArrayList<FormulaSentence>();
-    for (Sentence s : sentences) {
-      cfsList.add(toCycSentence(s));
-    }
-    final FormulaSentence cfs = CycFormulaSentence.makeConjunction(cfsList);
-    // TODO: Can we catch KBTypeException. We know all components are Sentences.
-    // combination should be a Sentence
-    return new SentenceImpl(cfs);
-  }
-
-  /**
-   * Disjoin sentences. Creates a list and calls {@link #or(java.lang.Iterable)}
-   *
-   * @param sentences list of sentences to be disjoined
-   *
-   * @return a new disjunction sentence
-   * @throws KbTypeException
-   * @throws com.cyc.kb.exception.CreateException
-   */
-  public static Sentence or(Sentence... sentences) throws KbTypeException, CreateException {
-    return or(Arrays.asList(sentences));
-  }
-
-  /**
-   * Disjoin sentences. Creates a new sentence with #$or as the relation and all other sentences as
-   * the arguments.
-   *
-   * @param sentences list of sentences to be disjoined
-   *
-   * @return a new disjunction sentence
-   * @throws com.cyc.kb.exception.KbTypeException
-   * @throws com.cyc.kb.exception.CreateException
-   */
-  public static Sentence or(Iterable<Sentence> sentences) throws KbTypeException, CreateException {
-    List<FormulaSentence> cfsList = new ArrayList<FormulaSentence>();
-    for (Sentence s : sentences) {
-      cfsList.add(toCycSentence(s));
-    }
-    final FormulaSentence cfs = CycFormulaSentence.makeDisjunction(cfsList);
-    // TODO: Can we catch KBTypeException. We know all components are Sentences.
-    // combination should be a Sentence    
-    return new SentenceImpl(cfs);
-  }
-
-  public static Sentence implies(Collection<Sentence> posLiterals, Sentence negLiteral) throws KbTypeException, CreateException {
-    return implies(and(posLiterals), negLiteral);
-  }
-
-  public static Sentence implies(Sentence posLiteral, Sentence negLiteral) throws KbTypeException, CreateException {
-    final FormulaSentence conditional = CycFormulaSentence.makeConditional((FormulaSentence) posLiteral.getCore(), (FormulaSentence) negLiteral.getCore());
-    return new SentenceImpl(conditional);
-  }
-
   @Override
   public Set<ArgPosition> getArgPositionsForTerm(Object term) {
-    Set<ArgPosition> returnResult = new HashSet<ArgPosition>();
+    Set<ArgPosition> returnResult = new HashSet<>();
     if (term instanceof KbObject) {
       term = ((KbObject) term).getCore();
     }
-    if (getCore() instanceof CycFormulaSentence) {
-      Set<com.cyc.kb.ArgPosition> result = getFormulaSentence().getArgPositionsForTerm(term);
+    if (getCore() instanceof FormulaSentence) {
+      Set<com.cyc.kb.ArgPosition> result = getCore().getArgPositionsForTerm(term);
       for (com.cyc.kb.ArgPosition pos : result) {
         returnResult.add(new ArgPositionImpl(pos));
       }
@@ -456,7 +479,7 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
 
   @Override
   public Sentence setArgPosition(ArgPosition pos, Object value) throws KbTypeException, CreateException {
-    CycFormulaSentence existing = getFormulaSentence();
+    FormulaSentence existing = getCore();
     Object coreValue = value;
     if (value instanceof KbObject) {
       coreValue = ((KbObject) value).getCore();
@@ -519,17 +542,14 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
       return new SentenceImpl(unaryRel, sent);
     }
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Sentence#assertIn(com.cyc.kb.ContextImpl)
-   */
+  
   @Override
   public Assertion assertIn(Context ctx) throws KbException {
     if (this.getArgument(0).equals(LogicalConnectiveImpl.get("implies"))) {
-      log.debug("Attempting to assert the Sentence " + this + " in Context: " + ctx + " as a rule.");
+      LOG.debug("Attempting to assert the Sentence " + this + " in Context: " + ctx + " as a rule.");
       return RuleImpl.findOrCreate(this, ctx);
     } else {
-      log.debug("Attempting to assert the Sentence " + this + " in Context: " + ctx + " as a fact.");
+      LOG.debug("Attempting to assert the Sentence " + this + " in Context: " + ctx + " as a fact.");
       return FactImpl.findOrCreate(this, ctx);
     }
   }
@@ -541,12 +561,12 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
    * @throws com.cyc.kb.exception.KbException
    */
   public Sentence expandSentence() throws KbException {
-    List<Sentence> literals = new ArrayList<Sentence>();
+    List<Sentence> literals = new ArrayList<>();
     literals.add(this);
     for (Object arg : arguments) {
-      if (arg instanceof KbTerm) {
+      if (arg instanceof KbTermImpl) {
         if (((KbTermImpl) arg).isVariable()) {
-          literals.add(((KbTerm) arg).getRestriction());
+          literals.add(((KbTermImpl) arg).getRestriction());
         }
       }
     }
@@ -564,7 +584,7 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
    * @return
    */
   public Collection<KbTerm> getListOfTypedVariables() {
-    Set<KbTerm> terms = new HashSet<KbTerm>();
+    Set<KbTerm> terms = new HashSet<>();
     for (Object arg : arguments) {
       if (arg instanceof KbTerm && ((KbTermImpl) arg).isVariable()) {
         terms.add((KbTerm) arg);
@@ -605,27 +625,17 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
         }
       }
       return result;
-    } catch (KbTypeException ex) {
-      throw new RuntimeException(ex.getMessage(), ex);
-    } catch (CreateException ex) {
+    } catch (KbTypeException | CreateException ex) {
       throw new RuntimeException(ex.getMessage(), ex);
     }
-  }
-  
-  private static CycFormulaSentence toCycSentence(Sentence sentence) {
-    return (CycFormulaSentence) sentence.getCore();
-  }
-  
-  private CycFormulaSentence getFormulaSentence() {
-    return (CycFormulaSentence) core;
   }
   
   @Override
   public List<Variable> getVariables(boolean includeQueryable) throws KbException {
     final List<Variable> results = new ArrayList<>();
     final List<CycVariable> cycvars = includeQueryable
-            ? getFormulaSentence().findQueryableVariables()
-            : getFormulaSentence().findFreeVariables();
+            ? getCore().findQueryableVariables()
+            : getCore().findFreeVariables();
     for (CycVariable v : cycvars) {
       results.add(new VariableImpl(v));
     }
@@ -636,10 +646,10 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
   public List<KbObject> getIndexicals(boolean includeAllIndexicals)
           throws KbException, SessionCommunicationException {
     final List<KbObject> allIndexicals = new ArrayList();
-    final CycFormulaSentence sentence = getFormulaSentence();
+    final FormulaSentence sentence = getCore();
     try {
       final CycList cyclist = sentence.findIndexicals(getAccess());
-      allIndexicals.addAll(KbObjectFactory.asKbObjectList(cyclist));
+      allIndexicals.addAll(KbObjectImplFactory.asKbObjectList(cyclist));
     } catch (CycConnectionException | CycApiException ex) {
       throw new SessionCommunicationException(ex);
     }
@@ -672,7 +682,7 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
   
   @Override
   public Sentence replaceTerms(List<Object> from, List<Object> to) throws KbTypeException, CreateException {
-    List<Object> modifiedArgument = new ArrayList<Object>();
+    List<Object> modifiedArgument = new ArrayList<>();
     for (Object arg : arguments) {
       // If a user wants to replace an entire sentence, it is allowed.
       if (from.contains(arg)) {
@@ -713,42 +723,17 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
   public KbObject getType() {
     return getClassType();
   }
-
-  /**
-   * Return the KBCollection as a KBObject of the Cyc term that underlies this class
-   * (<code>CycLSentence</code>).
-   *
-   * @return KBCollectionImpl.get("#$CycLSentence");
-   */
-  public static KbObject getClassType() {
-    try {
-      return KbCollectionImpl.get(getClassTypeString());
-    } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
-    }
-  }
-
+  
   @Override
   String getTypeString() {
     return getClassTypeString();
   }
-
-  static String getClassTypeString() {
-    return "#$CycLSentence";
-  }
-
+  
   //@todo shouldn't all of these be in the Sentence Interface, with appropriate comments, include mention that they destructively modify things?
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Sentence#getArguments()
-   */
-  /**
-   * This is not part of KB API 1.0
-   *
-   * @return the arguments as list of KBObjects
-   */
+  
   public List<Object> getArguments() {
     // Make a new list to preserve immutability
-    List<Object> copiedList = new ArrayList<Object>();
+    final List<Object> copiedList = new ArrayList<>();
     // The objects themselves (KB Objects) are immutable, so it is safe to just copy
     // them. Java.util.date is mutable though.
     for (Object arg : arguments) {
@@ -756,11 +741,27 @@ public class SentenceImpl extends StandardKbObject implements Sentence {
     }
     return arguments;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Sentence#setArguments(java.util.List)
-   */
+  
   public void setArguments(List<Object> arguments) {
     this.arguments = arguments;
   }
+  
+  @Override
+  public Boolean isValid() {
+    for (Object arg : getArguments()) {
+      boolean valid = true;
+      if (arg instanceof KbTerm) {
+        valid = ((KbTerm) arg).isValid();
+      } else if (arg instanceof Assertion) {
+        valid = ((Assertion) arg).isValid();
+      } else if (arg instanceof Sentence) {
+        valid = ((Sentence) arg).isValid();
+      }
+      if (!valid) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
 }

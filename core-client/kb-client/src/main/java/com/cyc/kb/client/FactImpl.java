@@ -27,7 +27,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.kb.Assertion.Direction;
 import com.cyc.kb.Assertion.Strength;
 import com.cyc.kb.Context;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * is used to create and remove arbitrary assertions from Cyc.
  * 
  * @author Vijay Raj
- * @version $Id: FactImpl.java 171787 2017-05-04 23:16:40Z nwinant $
+ * @version $Id: FactImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class FactImpl extends AssertionImpl implements Fact {
   protected FactImpl() {
     super();
   }
-
+  
   /**
    * This not part of the public, supported KB API. an implementation-dependent constructor
    * <p>
@@ -100,7 +100,7 @@ public class FactImpl extends AssertionImpl implements Fact {
   // If made package private, reflection of getConstructor(CycObject.class) fails
   // TODO: Check if this is a problem for other classes as well.
   @SuppressWarnings("deprecation")
-  FactImpl(CycObject cycAssert) throws KbTypeException {
+  FactImpl(CycAssertion cycAssert) throws KbTypeException {
     super(cycAssert);
   }
 
@@ -173,13 +173,13 @@ public class FactImpl extends AssertionImpl implements Fact {
     try {
       final CycAssertion ca = findAssertion(factStr, ctxStr);
       if (ca != null) {
-        core = ca;
+        setCore(ca);
       } else if (findOnly == true) {
         throw new KbObjectNotFoundException(
                 "Could not find the assertion: " + factStr + " in Mt: " + ctxStr);
       } else {
         // For facts, the direction is always backward.
-        core = assertSentence(factStr, ctxStr, null, null);
+        setCore(assertSentence(factStr, ctxStr, null, null));
       }
     } catch (CreateException | KbTypeException ex) {
       throw new KbException(ex);
@@ -216,14 +216,14 @@ public class FactImpl extends AssertionImpl implements Fact {
 
       final CycAssertion ca = findAssertion(factSentence, ContextImpl.asELMt(ctx));
       if (ca != null) {
-        core = ca;
+        setCore(ca);
       } else if (findOnly == true) {
         throw new KbObjectNotFoundException(
                 "Could not find the assertion: " + factSentence + " in Mt: " + ctx);
       } else {
-        // core = assertSentence(ctx, factSentence);
+        // setCore(assertSentence(ctx, factSentence));
         // For Facts, the direction is always backward
-        core = assertSentence(factSentence, ctx, null, null);
+        setCore(assertSentence(factSentence, ctx, null, null));
       }
     } catch (KbTypeException | CreateException ex) {
       throw new KbException(ex);
@@ -254,16 +254,16 @@ public class FactImpl extends AssertionImpl implements Fact {
       final CycAssertion ca = findAssertion(
           (FormulaSentence) factSentence.getCore(), ContextImpl.asELMt(ctx));
       if (ca != null) {
-        core = ca;
+        setCore(ca);
       } else if (findOnly == true) {
         throw new KbObjectNotFoundException(
                 "Could not find the assertion: " + factSentence + " in Mt: " + ctx);
       } else {
-        // core = assertSentence(ctx,
-        // (CycFormulaSentence)factSentence.getCore());
-        core = assertSentence((FormulaSentence) factSentence.getCore(), ctx, null, null);
+        // setCore(assertSentence(ctx,
+        // (CycFormulaSentence)factSentence.getCore()));
+        setCore(assertSentence((FormulaSentence) factSentence.getCore(), ctx, null, null));
       }
-    } catch (Exception ex) {
+    } catch (KbTypeException | KbObjectNotFoundException ex) {
       throw new KbException(ex);
     }
   }
@@ -284,7 +284,7 @@ public class FactImpl extends AssertionImpl implements Fact {
    */
   @Deprecated
   public static FactImpl get(CycObject cycFact) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycFact, FactImpl.class);
+    return KbObjectImplFactory.get(cycFact, FactImpl.class);
   }
   
   @SuppressWarnings("deprecation")
@@ -295,12 +295,12 @@ public class FactImpl extends AssertionImpl implements Fact {
     // Also the get method here takes only hlid. For a factory method that takes String to 
     // find an assertion, see get(String formulaStr, String ctxStr)
     try {
-      result = DefaultCycObject.fromPossibleCompactExternalId(hlid, getStaticAccess());
+      result = DefaultCycObjectImpl.fromPossibleCompactExternalId(hlid, getStaticAccess());
     } catch (CycConnectionException e){
       throw new KbRuntimeException(e.getMessage(), e);
     }
     if (result instanceof CycObject) {
-      return KbObjectFactory.get((CycObject)result, FactImpl.class);
+      return KbObjectImplFactory.get((CycObject)result, FactImpl.class);
     } else {
       String msg = "Could not find any Assertion with hlid: " + hlid + " in the KB.";
       throw new KbObjectNotFoundException(msg);
@@ -324,7 +324,7 @@ public class FactImpl extends AssertionImpl implements Fact {
   }
   
   @SuppressWarnings("deprecation")
-  public static FactImpl get(SentenceImpl formula, Context ctx) 
+  public static FactImpl get(Sentence formula, Context ctx) 
           throws KbTypeException, CreateException {
     final CycAssertion result
             = findAssertion(FormulaSentence.class.cast(formula.getCore()), ContextImpl.asELMt(ctx));
@@ -362,20 +362,42 @@ public class FactImpl extends AssertionImpl implements Fact {
   }
   
   @SuppressWarnings("deprecation")
-  public static FactImpl findOrCreate(Sentence formula, Context ctx, Strength s, Direction d) 
+  public static FactImpl findOrCreate(
+          Sentence formula, Context ctx, Strength s, Direction d, boolean verbose)
+          throws KbTypeException, CreateException {
+    try {
+      final CycAssertion result
+              = assertSentence(FormulaSentence.class.cast(formula.getCore()), ctx, s, d);
+      return convertToFoundOrCreatedAssertion(result, formula, ctx, FactImpl.class);
+    } catch (CycApiException ex) {
+      return throwAssertException(formula, ctx, ex, verbose);
+    }
+  }
+  
+  public static FactImpl findOrCreate(
+          Sentence formula, Context ctx, Strength s, Direction d)
+          throws KbTypeException, CreateException {
+    return FactImpl.findOrCreate(formula, ctx, s, d, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static FactImpl findOrCreate(Sentence formula, Context ctx, boolean verbose) 
       throws KbTypeException, CreateException {
-    final CycAssertion result 
-            = assertSentence(FormulaSentence.class.cast(formula.getCore()), ctx, s, d);
-    return convertToFoundOrCreatedAssertion(result, formula, ctx, FactImpl.class);  
+    return FactImpl.findOrCreate(formula, ctx, Strength.AUTO, Direction.AUTO, verbose);
   }
   
   public static FactImpl findOrCreate(Sentence formula, Context ctx) 
-      throws KbTypeException, CreateException {
-    return FactImpl.findOrCreate(formula, ctx, Strength.AUTO, Direction.AUTO);
+          throws KbTypeException, CreateException {
+    return FactImpl.findOrCreate(formula, ctx, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static FactImpl findOrCreate(Sentence formula, boolean verbose) 
+          throws KbTypeException, CreateException {
+	  return FactImpl
+            .findOrCreate(formula, KbConfiguration.getDefaultContext().forAssertion(), verbose);
   }
   
   public static FactImpl findOrCreate(Sentence formula) throws KbTypeException, CreateException {
-	  return FactImpl.findOrCreate(formula, KbConfiguration.getDefaultContext().forAssertion());
+	  return FactImpl.findOrCreate(formula, VERBOSE_ASSERT_ERRORS_DEFAULT);
   }
   
   @Override
@@ -388,7 +410,7 @@ public class FactImpl extends AssertionImpl implements Fact {
   
   @Override
   public void delete() throws DeleteException {
-    final CycAssertion ca = (CycAssertion) core;
+    final CycAssertion ca = (CycAssertion) getCore();
     final FormulaSentence sentence = ca.getGaf();
     final CycObject mt = ca.getMt();
     try {
@@ -397,7 +419,7 @@ public class FactImpl extends AssertionImpl implements Fact {
       setIsValid(false);
     } catch (CycConnectionException ex) {
       throw new KbRuntimeException(
-              "Couldn't delete the fact: " + core.toString(), ex);
+              "Couldn't delete the fact: " + getCore().toString(), ex);
     }
     try {
       if (findAssertion(
@@ -408,7 +430,7 @@ public class FactImpl extends AssertionImpl implements Fact {
       }
     } catch (CycConnectionException | CycApiException ex) {
       throw new KbRuntimeException(
-              "Couldn't delete the fact: " + core.toString(), ex);
+              "Couldn't delete the fact: " + getCore().toString(), ex);
     }
   }
 
@@ -416,13 +438,13 @@ public class FactImpl extends AssertionImpl implements Fact {
   // "(ist ctx fact")
   @Override
   public String toString() {
-    final CycAssertion ca = (CycAssertion) core;
+    final CycAssertion ca = (CycAssertion) getCore();
     final String result;
     if (ca.isGaf()) {
       result = "(ist " + ca.getMt().toString() + " " + ca.getGaf().toString() + ")";
       LOG.trace("String API value of CycAssertion: {}", ca.stringApiValue());
     } else {
-      result = core.toString();
+      result = getCore().toString();
     }
     return result;
   }

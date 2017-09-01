@@ -26,28 +26,34 @@ import com.cyc.base.annotation.CycObjectLibrary;
 import com.cyc.base.annotation.CycTerm;
 import com.cyc.kb.BinaryPredicate;
 import com.cyc.kb.Context;
+import com.cyc.kb.FirstOrderCollection;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbFunction;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.LogicalConnective;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A convenience class for frequently accessed Cyc constants. It should be rare
  * to use this class in application making use of the KB API.
  * 
  * @author Vijay Raj
- * @version $Id: Constants.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: Constants.java 173072 2017-07-27 01:21:15Z nwinant $
  * @since 1.0
  */
 @CycObjectLibrary(accessor="getInstance")
 public class Constants {
-
+  
+  private static final Logger LOG = LoggerFactory.getLogger(Constants.class);
   private static Constants instance;
   
+  //====|    Contexts (& related)    |============================================================//
+  
   @CycTerm(cycl="#$DataMicrotheory")
-  public final KbCollection DATA_MT = KbCollectionImpl.get("DataMicrotheory");
+  public final FirstOrderCollection DATA_MT = FirstOrderCollectionImpl.get("DataMicrotheory");
   
   @CycTerm(cycl="#$BaseKB")
   public final Context BASE_KB_CTX = ContextImpl.get("BaseKB");
@@ -61,20 +67,22 @@ public class Constants {
   @CycTerm(cycl="#$EverythingPSC")
   public final Context EVERYTHING_PSC_CTX = ContextImpl.get("EverythingPSC");
   
+  //====|    KbPredicates & BinaryPredicates    |=================================================//
+  
   @CycTerm(cycl="#$isa")
-  public final KbPredicate ISA_PRED  = KbPredicateImpl.get("isa");
+  public final BinaryPredicate ISA_PRED  = BinaryPredicateImpl.get("isa");
   
   @CycTerm(cycl="#$different")
   public final KbPredicate DIFFERENT = KbPredicateImpl.get("different");
   
   @CycTerm(cycl="#$genls")
-  public final KbPredicate GENLS_PRED = KbPredicateImpl.get("genls");
+  public final BinaryPredicate GENLS_PRED = BinaryPredicateImpl.get("genls");
   
   @CycTerm(cycl="#$genlMt")
-  public final KbPredicate GENLMT_PRED = KbPredicateImpl.get("genlMt");
+  public final BinaryPredicate GENLMT_PRED = BinaryPredicateImpl.get("genlMt");
   
   @CycTerm(cycl="#$genlPreds")
-  public final KbPredicate GENLPREDS_PRED = KbPredicateImpl.get("genlPreds");
+  public final BinaryPredicate GENLPREDS_PRED = BinaryPredicateImpl.get("genlPreds");
   
   @CycTerm(cycl="#$genlInverse")
   public final KbPredicate GENLINVERSEPREDS_PRED = KbPredicateImpl.get("genlInverse");
@@ -92,10 +100,10 @@ public class Constants {
   public final BinaryPredicate ARITY_PRED = BinaryPredicateImpl.get("arity");
   
   @CycTerm(cycl="#$resultIsa")
-  public final KbPredicate RESULTISA_PRED = KbPredicateImpl.get("resultIsa");
+  public final BinaryPredicate RESULTISA_PRED = BinaryPredicateImpl.get("resultIsa");
   
   @CycTerm(cycl="#$resultGenl")
-  public final KbPredicate RESULTGENL_PRED = KbPredicateImpl.get("resultGenl");
+  public final BinaryPredicate RESULTGENL_PRED = BinaryPredicateImpl.get("resultGenl");
   
   @CycTerm(cycl="#$mtMonad")
   public final KbPredicate MTMONAD_PRED = KbPredicateImpl.get("mtMonad");
@@ -103,29 +111,8 @@ public class Constants {
   @CycTerm(cycl="#$mtTimeIndex")
   public final KbPredicate MTTIMEIDX_PRED = KbPredicateImpl.get("mtTimeIndex");
   
-  @CycTerm(cycl="#$ReifiableFunction")
-  public final KbCollection REIFIABLE_FUNC = KbCollectionImpl.get("ReifiableFunction");
-  
   @CycTerm(cycl="#$comment")
   public final BinaryPredicate COMMENT_PRED = BinaryPredicateImpl.get("comment");
-  
-  @CycTerm(cycl="#$Quote")
-  public final KbFunction QUOTE_FUNC = KbFunctionImpl.get("Quote");
-  
-  @CycTerm(cycl="#$VariableArityFunction")
-  public final KbCollection VAR_ARITY_COL = KbCollectionImpl.get("VariableArityFunction");
-  
-  @CycTerm(cycl="#$VariableArityPredicate")
-  public final KbCollection VAR_ARITY_PRED = KbCollectionImpl.get("VariableArityPredicate");
-
-  @CycTerm(cycl="#$UnreifiableFunction")
-  public final KbCollection UNREIFIABLE_FUNC_COL = KbCollectionImpl.get("UnreifiableFunction");
-  
-  @CycTerm(cycl="#$TheList")
-  public final KbFunction THELIST_FUNC = KbFunctionImpl.get("TheList");
-  
-  @CycTerm(cycl="#$TheSet")
-  public final KbFunction THESET_FUNC = KbFunctionImpl.get("TheSet");
   
   @CycTerm(cycl="#$interArgDifferent")
   public final KbPredicate INTER_ARG_DIFF_PRED = KbPredicateImpl.get("interArgDifferent");
@@ -136,11 +123,39 @@ public class Constants {
   @CycTerm(cycl="#$checkSentence")
   public final KbPredicate CHECK_SENT_PRED = KbPredicateImpl.get("checkSentence");
 
+  @CycTerm(cycl="#$unknownSentence")
+  public final KbPredicate UNKNOWN_SENT_PRED = KbPredicateImpl.get("unknownSentence");
+  
+  //====|    KbFunctions    |=====================================================================//
+  
+  @CycTerm(cycl="#$Quote")
+  public final KbFunction QUOTE_FUNC = KbFunctionImpl.get("Quote");
+  
+  @CycTerm(cycl="#$TheList")
+  public final KbFunction THELIST_FUNC = KbFunctionImpl.get("TheList");
+  
+  @CycTerm(cycl="#$TheSet")
+  public final KbFunction THESET_FUNC = KbFunctionImpl.get("TheSet");
+  
+  //====|    LogicalConnectives    |==============================================================//
+  
   @CycTerm(cycl="#$not")
   public final LogicalConnective NOT_LC = LogicalConnectiveImpl.get("not");
   
-  @CycTerm(cycl="#$unknownSentence")
-  public final KbPredicate UNKNOWN_SENT_PRED = KbPredicateImpl.get("unknownSentence");
+  //====|    KbCollections    |===================================================================//
+  
+  @CycTerm(cycl="#$ReifiableFunction")
+  public final KbCollection REIFIABLE_FUNC = KbCollectionImpl.get("ReifiableFunction");
+  
+  @CycTerm(cycl="#$VariableArityFunction")
+  public final KbCollection VAR_ARITY_COL = KbCollectionImpl.get("VariableArityFunction");
+  
+  @CycTerm(cycl="#$VariableArityPredicate")
+  public final KbCollection VAR_ARITY_PRED = KbCollectionImpl.get("VariableArityPredicate");
+
+  @CycTerm(cycl="#$UnreifiableFunction")
+  public final KbCollection UNREIFIABLE_FUNC_COL = KbCollectionImpl.get("UnreifiableFunction");
+  
   // There is no way to get to these variables
   // Preferred way is to get them from their respective classes using getType or getClassType
   /*
@@ -160,9 +175,7 @@ public class Constants {
   private final KBCollection GAF_COL = new KBCollectionImpl("#$CycLGAFAssertion");
   private final KBCollection VARIABLE_COL = new KBCollectionImpl("#$CycLVariable");
   private final KBCollection SYMBOL_COL = new KBCollectionImpl("#$CycLSubLSymbol");
-*/
-  
-  
+  */
   
   private Constants() throws KbException {
     super();
@@ -192,21 +205,26 @@ public class Constants {
   public static Constants getInstance() throws KbRuntimeException {
     try {
       if (instance == null) {
+        LOG.info("Instantiating...");
         instance = new Constants();
+        LOG.info("... Instantiated.");
       }
       return instance;
     } catch (KbException e) {
-      throw new KbRuntimeException(
-          "One of the private final fields in com.cyc.kb.Constants could not be instantiated, can not proceed further.",
-          e);
+      final String msg
+              = "One of the private final fields in " + Constants.class.getCanonicalName()
+              + " could not be instantiated, cannot proceed further.";
+      LOG.error(msg, e);
+      throw new KbRuntimeException(msg, e);
     }
   }
-
-  // Main contexts
+  
+  //====|    Main contexts    |===================================================================//
+  
   /**
-   * @return KbCollectionImpl.get("DataMicrotheory")
+   * @return FirstOrderCollectionImpl.get("DataMicrotheory")
    */
-  public static KbCollection dataMt() {
+  public static FirstOrderCollection dataMt() {
     return getInstance().DATA_MT;
   }
 
@@ -238,11 +256,12 @@ public class Constants {
     return getInstance().UV_MT_CTX;
   }
 
-  // Main predicates
+  ///====|    Main predicates    |================================================================//
+  
   /**
    * @return KbPredicateImpl.get("isa")
    */
-  public static KbPredicate isa() {
+  public static BinaryPredicate isa() {
     return getInstance().ISA_PRED;
   }
   
@@ -256,21 +275,21 @@ public class Constants {
   /**
    * @return KbPredicateImpl.get("genls")
    */
-  public static KbPredicate genls() {
+  public static BinaryPredicate genls() {
     return getInstance().GENLS_PRED;
   }
   
   /**
    * @return KbPredicateImpl.get("genlMt")
    */
-  public static KbPredicate genlMt() {
+  public static BinaryPredicate genlMt() {
     return getInstance().GENLMT_PRED;
   }
 
   /**
    * @return KbPredicateImpl.get("genlPreds")
    */
-  public static KbPredicate genlPreds() {
+  public static BinaryPredicate genlPreds() {
     return getInstance().GENLPREDS_PRED;
   }
   
@@ -305,14 +324,14 @@ public class Constants {
   /**
    * @return KbPredicateImpl.get("resultIsa")
    */
-  public static KbPredicate resultIsa() {
+  public static BinaryPredicate resultIsa() {
     return getInstance().RESULTISA_PRED;
   }
 
   /**
    * @return KbPredicateImpl.get("resultGenl")
    */
-  public static KbPredicate resultGenl() {
+  public static BinaryPredicate resultGenl() {
     return getInstance().RESULTGENL_PRED;
   }
 
@@ -329,7 +348,7 @@ public class Constants {
   public static KbPredicate mtTimeIndex() {
     return getInstance().MTTIMEIDX_PRED;
   }
-
-  // Main collections
-
+  
+  ///====|    Main collections    |===============================================================//
+  
 }

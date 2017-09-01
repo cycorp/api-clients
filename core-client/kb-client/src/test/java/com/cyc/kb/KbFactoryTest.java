@@ -17,7 +17,7 @@ package com.cyc.kb;
 
 import com.cyc.base.cycobject.CycNumber;
 import com.cyc.core.service.CoreServicesLoader;
-import com.cyc.kb.spi.KbFactoryServices;
+import com.cyc.kb.spi.KbApiService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class KbFactoryTest {
   
   @Test
   public void testGetKbFactoryServices() {
-    KbFactoryServices result = KbFactory.getInstance();
+    KbApiService result = KbFactory.getInstance();
     assertNotNull(result);
     assertNotNull(result.toString());
     assertEquals(CoreServicesLoader.getKbFactoryServices(), result);

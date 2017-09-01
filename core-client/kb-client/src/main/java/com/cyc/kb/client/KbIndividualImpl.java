@@ -39,12 +39,8 @@ import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <code>KBIndividual</code> object is a facade for a <code>#$Individual</code> 
@@ -55,13 +51,15 @@ import org.slf4j.LoggerFactory;
  * and even groups are individuals. An individual can have parts but not
  * elements or subsets.
  * 
+ * @param <T> type of CycObject core
+ * 
  * @author Vijay Raj
- * @version $Id: KbIndividualImpl.java 172724 2017-06-30 01:13:25Z nwinant $
+ * @version $Id: KbIndividualImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
 
-public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
+public class KbIndividualImpl<T extends DenotationalTerm> extends KbTermImpl<T> implements KbIndividual {
 
-  static final Logger log = LoggerFactory.getLogger(KbIndividualImpl.class.getName());
+  //private static final Logger LOG = LoggerFactory.getLogger(KbIndividualImpl.class.getName());
   private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("Individual", new Guid("bd58da02-9c29-11b1-9dad-c379636f7270"));
 
@@ -87,6 +85,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * A copy constructor to allow higher level APIs to construct
    * subclass objects using super class objects, when appropriate.
    * 
+   * @param c
    * @param ind the KBIndividual to be copied
    */
   protected KbIndividualImpl (DefaultContext c, KbIndividual ind) {
@@ -132,36 +131,46 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * 
    * @throws KbTypeException if cycObject is not an #$Individual
    */
-  KbIndividualImpl(CycObject cycObject) throws KbTypeException  {
+  KbIndividualImpl(DenotationalTerm cycObject) throws KbTypeException {
     super(cycObject);
   }
 
-  /**
+  /* *
    * EXPERIMENTAL!!! NOT PART OF THE KB API
-   */
+   * @param cycIndStr
+   * @param l
+   * @throws com.cyc.kb.exception.KbTypeException
+   * @throws com.cyc.kb.exception.CreateException
+   * /
   protected KbIndividualImpl(String cycIndStr, List<Object> l) throws KbTypeException, CreateException  {
     super(cycIndStr, l);
   }
+  */
   
-  /**
+  /* *
    * EXPERIMENTAL!!! NOT PART OF THE KB API
-   */
+   * @return 
+   * @throws com.cyc.kb.exception.KbException
+   * /
   public static KbIndividual some() throws KbException {
-    List<Object> l = new ArrayList<Object>();
+    List<Object> l = new ArrayList<>();
     l.add(QuantifierImpl.get("thereExists"));
     KbIndividual o = new KbIndividualImpl("?IND", l);
     return o;
   }
   
-  /**
+  /* *
    * EXPERIMENTAL!!! NOT PART OF THE KB API
-   */
+   * @return 
+   * @throws com.cyc.kb.exception.KbException
+   * /
   public static KbObject all() throws KbException {
-    List<Object> l = new ArrayList<Object>();
+    List<Object> l = new ArrayList<>();
     l.add(QuantifierImpl.get("forAll"));
     KbIndividualImpl o = new KbIndividualImpl("?IND", l);
     return o;
   }
+  */
   
   /**
    * This not part of the public, supported KB API. finds or creates an individual represented
@@ -219,7 +228,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * @throws CreateException 
    */
   public static KbIndividualImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, KbIndividualImpl.class);
+    return KbObjectImplFactory.get(nameOrId, KbIndividualImpl.class);
   }
 
   /**
@@ -239,7 +248,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    */
   @Deprecated
   public static KbIndividualImpl get(CycObject cycObject) throws KbTypeException, CreateException  {
-    return KbObjectFactory.get(cycObject, KbIndividualImpl.class);
+    return KbObjectImplFactory.get(cycObject, KbIndividualImpl.class);
   }
 
   /**
@@ -267,7 +276,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * @throws CreateException 
    */
   public static KbIndividualImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, KbIndividualImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, KbIndividualImpl.class);
   }
 
   /**
@@ -296,7 +305,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    */
   @Deprecated
   public static KbIndividualImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(cycObject, KbIndividualImpl.class);
+    return KbObjectImplFactory.findOrCreate(cycObject, KbIndividualImpl.class);
   }
 
   /**
@@ -332,7 +341,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * @throws CreateException 
    */
   public static KbIndividualImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, KbIndividualImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, KbIndividualImpl.class);
   }
 
   /**
@@ -369,7 +378,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * @throws CreateException 
    */
   public static KbIndividualImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, KbIndividualImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, KbIndividualImpl.class);
   }
 
   /**
@@ -407,7 +416,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    */
   public static KbIndividualImpl findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx) 
       throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, KbIndividualImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, KbIndividualImpl.class);
   }
 
   /**
@@ -446,7 +455,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    */
   public static KbIndividualImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) 
       throws CreateException, KbTypeException  {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbIndividualImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, KbIndividualImpl.class);
   }
 
   /**
@@ -486,7 +495,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId)  {
-    return KbObjectFactory.getStatus(nameOrId, KbIndividualImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, KbIndividualImpl.class);
 
   }
 
@@ -499,20 +508,14 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject)  {
-    return KbObjectFactory.getStatus(cycObject, KbIndividualImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, KbIndividualImpl.class);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBIndividual#instanceOf()
-   */
+  
   @Override
   public Collection<KbCollection> instanceOf() {
     return instanceOf(KbConfiguration.getDefaultContext().forQuery());
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.KBIndividual#instanceOf(java.lang.String)
-   */
+  
   @Override
   public Collection<KbCollection> instanceOf(String ctxStr) {
     return instanceOf(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
@@ -520,7 +523,7 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
    
   @Override
   public Collection<KbCollection> instanceOf(Context ctx) {
-    return (this.<KbCollection>getValues(Constants.isa(), 1, 2, ctx));
+    return Constants.isa().getValuesForArgPosition(this, 1, 2, ctx);
   }
 
   /**
@@ -565,5 +568,17 @@ public class KbIndividualImpl extends KbTermImpl implements KbIndividual {
     return "#$Individual";
   }
   
+  @Override
+  public boolean isQuoted() throws KbTypeException, CreateException {
+    return (getArity() == 1) && (getArgument(0) == Constants.getInstance().QUOTE_FUNC);
+  }
+  
+  @Override
+  public <O> O unquote() throws KbTypeException, CreateException {
+    if (!isQuoted()) {
+      return (O) super.unquote();
+    }
+    return getArgument(1);
+  }
   
 }

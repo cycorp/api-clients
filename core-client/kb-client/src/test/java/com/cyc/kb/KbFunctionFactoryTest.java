@@ -62,7 +62,7 @@ public class KbFunctionFactoryTest {
     KbFunctionService instance = KbFunctionFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getFunctionService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().function(), instance);
   }
   
 }

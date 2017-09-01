@@ -22,23 +22,21 @@ package com.cyc.baseclient.util;
  */
 
 //// External Imports
-import com.cyc.baseclient.exception.CycTaskInterruptedException;
-import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.CycAccess;
+import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.exception.CycTimeOutException;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import static com.cyc.baseclient.cycobject.DefaultCycObjectImpl.stringApiValue;
+import com.cyc.baseclient.exception.CycTaskInterruptedException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-
-//// Internal Imports
-import com.cyc.base.exception.CycApiException;
-import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.base.cycobject.DenotationalTerm;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
-import static com.cyc.baseclient.cycobject.DefaultCycObject.stringApiValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * <P>PasswordManager is designed to handle password encryption, authentication ,etc.
  *
  * @author baxter, Jul 27, 2009, 3:10:59 PM
- * @version $Id: PasswordManager.java 170971 2017-03-16 01:34:00Z nwinant $
+ * @version $Id: PasswordManager.java 173021 2017-07-21 18:36:21Z nwinant $
  */
 public class PasswordManager {
 
@@ -112,7 +110,7 @@ public class PasswordManager {
           final char[] unencryptedPassword) {
     final String encryptedPassword = encryptPassword(unencryptedPassword, user);
     final String command = "(SPECIFY-AUTHENTICATION-INFO-FOR-USER " + user.stringApiValue() +
-            " " + DefaultCycObject.stringApiValue(encryptedPassword) +
+            " " + DefaultCycObjectImpl.stringApiValue(encryptedPassword) +
             " " + applicationTerm.stringApiValue() + ")";
     try {
       final boolean success = CommUtils.convertResponseToBoolean(CommUtils.performApiCommand(command, cycAccess));

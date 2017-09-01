@@ -31,15 +31,16 @@ import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.inference.params.OpenCycInferenceParameterEnum;
 import com.cyc.kb.Assertion;
 import com.cyc.kb.Assertion.Direction;
 import com.cyc.kb.Assertion.Strength;
 import com.cyc.kb.Context;
+import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.Sentence;
 import static com.cyc.kb.client.KbContentLogger.KB_FIND_LOGGER;
@@ -66,11 +67,11 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 172952 2017-07-19 17:02:56Z nwinant $
+ * @version $Id: AssertionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  * @since 1.0
  */
-public class AssertionImpl extends StandardKbObject implements Assertion {
-
+public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> implements Assertion {
+  
   /**
    * In some cases, the act of asserting a formula may be successful <em>without actually 
    * creating an assertion in the KB.</em> For example, a <code>#$SKSIContentMicrotheory</code>
@@ -86,6 +87,8 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   
   private static final Logger LOG = LoggerFactory.getLogger(AssertionImpl.class.getCanonicalName());
   private static final KbContentLogger KB_LOG = KbContentLogger.getInstance();
+  
+  public static boolean VERBOSE_ASSERT_ERRORS_DEFAULT = true;
   
   /**
    * This not part of the public, supported KB API. default constructor, calls the default
@@ -117,7 +120,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   // We have made this public for the reflection mechanism to see this class.
   // If made package private, reflection of getConstructor(CycObject.class) fails
   @Deprecated
-  AssertionImpl(CycObject cycAssert) throws KbTypeException {
+  AssertionImpl(CycAssertion cycAssert) throws KbTypeException {
     super(cycAssert);
   }
   
@@ -136,7 +139,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
    */
   @Deprecated
   public static Assertion get(CycObject cycAssert) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycAssert, AssertionImpl.class);
+    return KbObjectImplFactory.get(cycAssert, AssertionImpl.class);
   }
   
   @SuppressWarnings("deprecation")
@@ -147,13 +150,13 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
     // find an assertion, see get(String formulaStr, String ctxStr)
     final Object result;
     try {
-      result = DefaultCycObject.fromPossibleCompactExternalId(hlid, getStaticAccess());
+      result = DefaultCycObjectImpl.fromPossibleCompactExternalId(hlid, getStaticAccess());
     } catch (CycConnectionException e){
       throw new KbRuntimeException(e.getMessage(), e);
     }
     if (result instanceof CycAssertion) {
       LOG.debug("Found assertion: {} using HLID: {}", result, hlid);
-      return KbObjectFactory.get((CycObject)result, AssertionImpl.class);
+      return KbObjectImplFactory.get((CycObject)result, AssertionImpl.class);
     } else {
       String msg = "Could not find any Assertion with hlid: " + hlid + " in the KB.";
       LOG.error(msg);
@@ -183,6 +186,20 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
           throws KbTypeException, CreateException {
     final CycAssertion result = findAssertion(formulaStr, ctxStr);
     return convertToFoundAssertion(result, formulaStr, ctxStr, AssertionImpl.class);
+  }
+    
+  protected static <O extends AssertionImpl> O throwAssertException(
+          Sentence formula, Context ctx, Exception ex, boolean verbose) {
+    if (ex instanceof KbRuntimeException) {
+      throw (KbRuntimeException) ex;
+    }
+    final String msg = "Could not assert " + formula + " in " + ctx;
+    if (verbose) {
+      final String explanations = formula.notAssertibleExplanation(ctx);
+      throw new KbRuntimeException(msg + ":\n" + explanations, ex);
+    } else {
+      throw new KbRuntimeException(msg, ex);
+    }
   }
   
   @SuppressWarnings("deprecation")
@@ -214,27 +231,47 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   }
   
   @SuppressWarnings("deprecation")
-  public static Assertion findOrCreate(Sentence formula, Context ctx, Strength s, Direction d) 
+  public static Assertion findOrCreate(
+          Sentence formula, Context ctx, Strength s, Direction d, boolean verbose) 
       throws KbTypeException, CreateException {
-    final CycAssertion result 
-            = assertSentence(FormulaSentence.class.cast(formula.getCore()), ctx, s, d);
-    return convertToFoundOrCreatedAssertion(result, formula, ctx, AssertionImpl.class);
+    try {
+      final CycAssertion result 
+              = assertSentence(FormulaSentence.class.cast(formula.getCore()), ctx, s, d);
+        return convertToFoundOrCreatedAssertion(result, formula, ctx, AssertionImpl.class);
+    } catch (CycApiException ex) {
+      return throwAssertException(formula, ctx, ex, verbose);
+    }
+  }
+  
+  @SuppressWarnings("deprecation")
+  public static Assertion findOrCreate(Sentence formula, Context ctx, Strength s, Direction d)
+          throws KbTypeException, CreateException {
+    return findOrCreate(formula, ctx, s, d, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static Assertion findOrCreate(Sentence formula, Context ctx, boolean verbose) 
+          throws KbTypeException, CreateException {
+	  return findOrCreate(formula, ctx, Strength.AUTO, Direction.AUTO, verbose);
   }
   
   public static Assertion findOrCreate(Sentence formula, Context ctx) 
           throws KbTypeException, CreateException {
-	  return findOrCreate(formula, ctx, Strength.AUTO, Direction.AUTO);
+	  return findOrCreate(formula, ctx, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static Assertion findOrCreate(Sentence formula, boolean verbose) 
+          throws KbTypeException, CreateException {
+	  return findOrCreate(formula, KbConfiguration.getDefaultContext().forAssertion(), verbose);
   }
   
   public static Assertion findOrCreate(Sentence formula) throws KbTypeException, CreateException {
-	  return findOrCreate(formula, KbConfiguration.getDefaultContext().forAssertion());
+	  return findOrCreate(formula, VERBOSE_ASSERT_ERRORS_DEFAULT);
   }
   
   @Override
   public Sentence getFormula() {
     try {
-      final FormulaSentence assertionFormula
-              = ((CycAssertion)this.getCore()).getELFormula(getAccess());
+      final FormulaSentence assertionFormula = getCore().getELFormula(getAccess());
       return new SentenceImpl(assertionFormula);
     } catch (CycApiException | CycConnectionException | KbTypeException | CreateException ex) {
       LOG.error(ex.getMessage());
@@ -245,7 +282,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   @Override
   @SuppressWarnings("deprecation")
   public Context getContext() {
-    final CycAssertion ca = (CycAssertion) core;
+    final CycAssertion ca = getCore();
     final ContextImpl ctx;
     try {
       ctx = ContextImpl.get(ca.getMt());
@@ -290,7 +327,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   public Boolean isDeducedAssertion() {
     try {
       final String command 
-              = SublConstants.getInstance().deducedAssertionQ.buildCommand(this.getCore());
+              = SublConstants.getInstance().deducedAssertionQ.buildCommand(getCore());
       return getAccess().converse().converseBoolean(command);
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e);
@@ -306,7 +343,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   public Boolean isAssertedAssertion() {
     try {
       final String command 
-              = SublConstants.getInstance().assertedAssertionQ.buildCommand(this.getCore());
+              = SublConstants.getInstance().assertedAssertionQ.buildCommand(getCore());
       return getAccess().converse().converseBoolean(command);
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e);
@@ -317,7 +354,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   public Direction getDirection() {
     try {
       final String command
-              = SublConstants.getInstance().assertionDirection.buildCommand(this.getCore());
+              = SublConstants.getInstance().assertionDirection.buildCommand(getCore());
       final CycObject co = getAccess().converse().converseCycObject(command);
       if (co instanceof CycSymbol) {
         final CycSymbol cs = (CycSymbol) co;
@@ -364,47 +401,6 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e.getMessage(), e);
     }
-  }
-  
-  @Deprecated
-  public void delete(boolean force) throws DeleteException {
-    if (!force) {
-      delete();
-    } else {
-      try {
-        getAccess().getUnassertTool().blastAssertion(
-                (CycAssertion) this.getCore(),
-                true,
-                KbConfiguration.getShouldTranscriptOperations());
-        setIsValid(false);
-      } catch (CycConnectionException | CycApiException ex) {
-        LOG.warn("Unable to forcefully delete assertion {}", this);
-        throw new KbRuntimeException("Couldn't forcefully delete fact: " + core.toString(), ex);
-      }
-    }
-  }
-  
-  @Override
-  public void delete() throws DeleteException {
-    CycAssertion ca = (CycAssertion) core;
-    try {
-      getAccess().getUnassertTool()
-              .unassertAssertion(ca, true, KbConfiguration.getShouldTranscriptOperations());
-      setIsValid(false);
-    } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(
-              "Couldn't delete the fact: " + core.toString(), ex);
-    }
-    try {
-      if (findAssertion(
-              ca.getELFormula(getAccess()),
-              getAccess().getObjectTool().makeElMt(ca.getMt())) instanceof CycAssertion) {
-        LOG.error("Unable to delete assertion: {}", ca);
-        throw new DeleteException("Unable to delete assertion: " + ca);
-      }
-    } catch (CycConnectionException ex) {
-      throw new KbRuntimeException("Couldn't delete the fact: " + core.toString(), ex);
-    } 
   }
   
   /**
@@ -517,7 +513,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
     try {
       final CycAccess cyc = getStaticAccess();
       final FormulaSentence factFormulaSentence 
-              = CycFormulaSentence.makeCycSentence(cyc, factSentenceStr);
+              = FormulaSentenceImpl.makeCycSentence(cyc, factSentenceStr);
       return findAssertion(
               factFormulaSentence, 
               cyc.getObjectTool().makeElMt(cyc.cyclifyString(ctxStr)));
@@ -663,7 +659,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
           throws KbTypeException, CreateException {
     try {
       final FormulaSentence factSentence
-              = CycFormulaSentence.makeCycSentence(getStaticAccess(), factStr);
+              = FormulaSentenceImpl.makeCycSentence(getStaticAccess(), factStr);
       final Context ctx = ContextImpl.get(ctxStr);
       return createAssertion(factSentence, ctx, s, d);
     } catch (CycConnectionException exception) {
@@ -696,7 +692,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
       throws KbTypeException, CreateException {
     try {
       final FormulaSentence factSentence
-              = CycFormulaSentence.makeCycSentence(getStaticAccess(), factStr);
+              = FormulaSentenceImpl.makeCycSentence(getStaticAccess(), factStr);
       final Context ctx = ContextImpl.get(ctxStr);
       return assertSentence(factSentence, ctx, s, d);
     } catch (CycConnectionException exception) {
@@ -734,7 +730,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
   static boolean isSentenceKnown(String formulaStr, String ctxStr)
           throws KbTypeException, CreateException {
     try {
-      final FormulaSentence formulaSentence = CycFormulaSentence
+      final FormulaSentence formulaSentence = FormulaSentenceImpl
               .makeCycSentence(getStaticAccess(), formulaStr);
       final Context ctx = ContextImpl.get(ctxStr);
       return AssertionImpl.isSentenceTriviallyProvable(formulaSentence, ContextImpl.asELMt(ctx));
@@ -765,7 +761,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
           boolean treatExternalSksKnowledgeAsAssertions) 
           throws KbObjectNotFoundException, KbTypeException, CreateException {
     if (result != null) {
-      return KbObjectFactory.get(result, resultClazz);
+      return KbObjectImplFactory.get(result, resultClazz);
     }
     if (!treatExternalSksKnowledgeAsAssertions 
             || !AssertionImpl.isSentenceKnown(formula, context)) {
@@ -793,7 +789,7 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
           boolean treatExternalSksKnowledgeAsAssertions)
           throws InvalidFormulaInContextException, KbTypeException, CreateException {
     if (result != null) {
-      return KbObjectFactory.get(result, resultClazz);
+      return KbObjectImplFactory.get(result, resultClazz);
     }
     if (!treatExternalSksKnowledgeAsAssertions
             || !AssertionImpl.isSentenceKnown(formula, context)) {
@@ -812,5 +808,79 @@ public class AssertionImpl extends StandardKbObject implements Assertion {
     return convertToFoundOrCreatedAssertion(
             result, formula, context, resultClazz, TREAT_EXTERNAL_SKS_KNOWLEDGE_AS_ASSERTIONS);
   }
+  
+  @Override
+  public Assertion addQuotedIsa(KbCollection coll, Context ctx) throws KbTypeException, CreateException {
+    super.addQuotedIsa(coll, ctx);
+    return this;
+  }
+  
+  @Deprecated
+  public void delete(boolean force) throws DeleteException {
+    if (!force) {
+      delete();
+    } else {
+      try {
+        getAccess().getUnassertTool().blastAssertion(
+                (CycAssertion) this.getCore(),
+                true,
+                KbConfiguration.getShouldTranscriptOperations());
+        setIsValid(false);
+      } catch (CycConnectionException | CycApiException ex) {
+        LOG.warn("Unable to forcefully delete assertion {}", this);
+        throw new KbRuntimeException("Couldn't forcefully delete fact: " + getCore().toString(), ex);
+      }
+    }
+  }
+  
+  @Override
+  public void delete() throws DeleteException {
+    final CycAssertion ca = getCore();
+    try {
+      getAccess().getUnassertTool()
+              .unassertAssertion(ca, true, KbConfiguration.getShouldTranscriptOperations());
+      setIsValid(false);
+    } catch (CycConnectionException ex) {
+      throw new KbRuntimeException(
+              "Couldn't delete the fact: " + getCore().toString(), ex);
+    }
+    try {
+      if (findAssertion(
+              ca.getELFormula(getAccess()),
+              getAccess().getObjectTool().makeElMt(ca.getMt())) instanceof CycAssertion) {
+        LOG.error("Unable to delete assertion: {}", ca);
+        throw new DeleteException("Unable to delete assertion: " + ca);
+      }
+    } catch (CycConnectionException ex) {
+      throw new KbRuntimeException("Couldn't delete the fact: " + getCore().toString(), ex);
+    }
+  }
+  
+  /*
+  @Override
+  public void delete() throws DeleteException {
+    try {
+      if (core instanceof Fort) {
+        getAccess().getUnassertTool().kill((Fort) core, true, KbConfiguration.getShouldTranscriptOperations());
+        setIsValid(false);
+      } / *
+       * else if (core instanceof CycAssertion) { CycAssertion ca =
+       * (CycAssertion) core; if (ca.isGaf()){
+       * cyc.unassertGaf(ca.getGaf(), ca.getMt()); } else { throw new
+       * Exception ("Couldn't delete the fact: " + getCore().toString()); } }
+       * / else {
+        throw new DeleteException("Couldn't kill: "
+                + getCore().toString()
+                + ". It was not a Fort.");
+      }
+    } catch (CycConnectionException e) {
+      throw new KbRuntimeException(
+              "Couldn't kill the constant " + getCore().toString(), e);
+    } catch (CycApiException cae) {
+      throw new KbRuntimeException("Could not kill the constant: " + core
+              + " very likely because it is not in the KB. " + cae.getMessage(), cae);
+    }
+  }
+  */
   
 }

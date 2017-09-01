@@ -24,7 +24,6 @@ package com.cyc.baseclient.ui;
 
 
 //// External Imports
-import com.cyc.baseclient.ui.CycWorker;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -32,10 +31,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * <P>CycWorkerQueue is designed to execute multiple CycWorker instances serially,
  * in first-in, first-out order. Each worker will run until its thread dies.
  *
- * <P>Copyright (c) 2008 Cycorp, Inc.  (Copyright is assigned to the United States Government under DFARS 252.227-7020).
- *
  * @author baxter
- * @version $Id: CycWorkerQueue.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: CycWorkerQueue.java 173079 2017-07-28 00:13:46Z nwinant $
  * @date March 27, 2008, 12:19 PM
  */
 public class CycWorkerQueue {
@@ -51,6 +48,7 @@ public class CycWorkerQueue {
   
   /**
    * Creates a new instance of CycWorkerQueue whose thread has the given name.
+   * @param name
    */
   public CycWorkerQueue(final String name) {
     thread.setName(name);
@@ -59,7 +57,8 @@ public class CycWorkerQueue {
   
   //// Public Area
   
-  /** Set <tt>worker</tt> to be started as soon as all previously enqueued workers are done. */
+  /** Set <tt>worker</tt> to be started as soon as all previously enqueued workers are done.
+   * @param worker */
   public void enqueue(CycWorker worker) {
     workerQueue.add(worker);
   }
@@ -93,8 +92,9 @@ public class CycWorkerQueue {
   }
   
   //// Internal Rep
-  private BlockingQueue<CycWorker> workerQueue = new LinkedBlockingQueue<CycWorker>();
+  private final BlockingQueue<CycWorker> workerQueue = new LinkedBlockingQueue<>();
   private final Thread thread = new Thread() {
+    @Override
     public void run() {
       processQueue();
     }

@@ -23,31 +23,28 @@ package com.cyc.baseclient.examples;
 
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.session.exception.SessionException;
 import com.cyc.base.cycobject.CycConstant;
-import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.ElMt;
-import com.cyc.query.parameters.InferenceParameters;
+import com.cyc.base.cycobject.FormulaSentence;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.inference.InferenceResultSet;
-import com.cyc.query.InferenceStatus;
-import com.cyc.query.InferenceSuspendReason;
 import com.cyc.base.inference.InferenceWorker;
 import com.cyc.base.inference.InferenceWorkerListener;
 import com.cyc.base.inference.InferenceWorkerSynch;
-
 import static com.cyc.baseclient.CommonConstants.*;
-import static com.cyc.baseclient.testing.TestConstants.*;
-
 import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.inference.DefaultInferenceWorker;
 import com.cyc.baseclient.inference.KbQueryFactory;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-
+import static com.cyc.baseclient.testing.TestConstants.*;
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
+import com.cyc.query.parameters.InferenceParameters;
+import com.cyc.session.exception.SessionException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +65,7 @@ public class BaseClientOverview {
     final CycAccess access = getCyc();
     
     final CycVariableImpl var1 = new CycVariableImpl("?var");
-    final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence query = FormulaSentenceImpl.makeCycFormulaSentence(
             ISA, var1, DOG);
     
     final DefaultInferenceParameters params = new DefaultInferenceParameters(access);
@@ -148,7 +145,7 @@ public class BaseClientOverview {
     final CycAccess access = getCyc();
     
     final CycVariableImpl var1 = new CycVariableImpl("?var");
-    final FormulaSentence query = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence query = FormulaSentenceImpl.makeCycFormulaSentence(
             ISA, var1, DOG);
     
     final InferenceParameters params = new DefaultInferenceParameters(access);
@@ -227,7 +224,7 @@ public class BaseClientOverview {
     
     final CycVariable eventVar = new CycVariableImpl(":EVENT");
     final CycVariable locVar = new CycVariableImpl(":LOCATION");
-    final FormulaSentence sentenceTemplate = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence sentenceTemplate = FormulaSentenceImpl.makeCycFormulaSentence(
             access.getLookupTool().getConstantByName("eventOccuredAtPlace"),
             eventVar,
             locVar

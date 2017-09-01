@@ -36,11 +36,10 @@ package com.cyc.km.query.export;
  * #L%
  */
 
-import com.cyc.baseclient.export.PrintWriterExporter;
-import com.cyc.query.explanations.ProofViewImpl;
 import com.cyc.query.ProofView;
 import com.cyc.query.ProofViewNode;
 import com.cyc.query.ProofViewNode.ProofViewNodePath;
+import com.cyc.query.client.explanations.ProofViewImpl;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;

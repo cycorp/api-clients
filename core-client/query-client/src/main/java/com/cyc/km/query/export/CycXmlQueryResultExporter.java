@@ -25,12 +25,11 @@ package com.cyc.km.query.export;
  * #L%
  */
 import com.cyc.base.CycAccessManager;
-import com.cyc.query.InferenceIdentifier;
 import com.cyc.baseclient.connection.SublApiHelper;
 import com.cyc.baseclient.exception.ExportException;
 import com.cyc.baseclient.export.PrintStreamExporter;
-import com.cyc.query.QueryImpl;
-
+import com.cyc.query.InferenceIdentifier;
+import com.cyc.query.client.QueryImpl;
 import java.io.PrintStream;
 
 /**

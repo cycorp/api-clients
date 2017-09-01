@@ -47,9 +47,8 @@ import java.lang.reflect.Field;
 
 /**
  * This class locates and loads classes cycFieldotated as
- {@link com.cyc.base.annotation.CycObjectLibrary}, and provides methods to 
- * access their fields. This is useful for verifying that a Cyc server's KB 
- * meets your code's requirements.
+ * {@link com.cyc.base.annotation.CycObjectLibrary}, and provides methods to access their fields. 
+ * This is useful for verifying that a Cyc server's KB meets your code's requirements.
  * 
  * @author nwinant
  */
@@ -86,7 +85,7 @@ public class CycObjectLibraryLoader {
    * @return all classes cycFieldotated as {@link com.cyc.base.annotation.CycObjectLibrary}
    */
   public Collection<Class> getAllLibraries() {
-    final Collection<Class> results = new ArrayList<Class>();
+    final Collection<Class> results = new ArrayList<>();
     for (Class clazz : ClassIndex.getAnnotated(CycObjectLibrary.class)) {
       results.add(clazz);
     }
@@ -106,7 +105,7 @@ public class CycObjectLibraryLoader {
    * are instances of classFilter
    */
   public <E extends Object> Collection<E> getAllObjectsForClass(Class libraryClass, Class<E> classFilter) {
-    final Collection<E> results = new ArrayList<E>();
+    final Collection<E> results = new ArrayList<>();
     final Collection<CycLibraryField> annfields = getAllCycLibraryFields(libraryClass);
     for (CycLibraryField ann : annfields) {
       try {
@@ -116,7 +115,10 @@ public class CycObjectLibraryLoader {
             results.add((E) o);
           }
         }
-      } catch (Exception ex) {
+      } catch (NoSuchMethodException 
+              | IllegalAccessException 
+              | IllegalArgumentException 
+              | InvocationTargetException ex) {
         handleException(ann, ex);
       }
     }
@@ -150,7 +152,7 @@ public class CycObjectLibraryLoader {
    * {@link com.cyc.base.annotation.CycObjectLibrary} classes
    */
   public <E extends Object> Collection<E> getAllObjects(Class<E> classFilter) {
-    final Collection<E> results = new ArrayList<E>();
+    final Collection<E> results = new ArrayList<>();
     for (Class lib : getAllLibraries()) {
       logger.warn("Loading library class " + lib.getName());
       results.addAll(getAllObjectsForClass(lib, classFilter));
@@ -191,7 +193,10 @@ public class CycObjectLibraryLoader {
         try {
           processCycTerm(libraryClass, cycField, handler);
           processedFields.add(cycField);
-        } catch (Exception ex) {
+        } catch (IllegalAccessException 
+                | NoSuchMethodException 
+                | IllegalArgumentException 
+                | InvocationTargetException ex) {
           handler.onException(cycField, ex);
         }
       }
@@ -213,7 +218,7 @@ public class CycObjectLibraryLoader {
    */
   public <E extends CycObject> Collection<E> findMissingCycObjects(Collection<E> objects)
           throws CycConnectionException, CycApiException {
-    final Collection<E> results = new ArrayList<E>();
+    final Collection<E> results = new ArrayList<>();
     for (E obj : objects) {
       if (!isCycObjectInKB(obj)) {
         results.add(obj);
@@ -265,7 +270,7 @@ public class CycObjectLibraryLoader {
    * @return a collection of CycLibraryFields for a given class
    */
   public Collection<CycLibraryField> getAllCycLibraryFields(Class<?> clazz) {
-    final Collection<CycLibraryField> results = new ArrayList<CycLibraryField>();
+    final Collection<CycLibraryField> results = new ArrayList<>();
     Field[] fields = clazz.getDeclaredFields();
     for (Field field : fields) {
       CycLibraryField cycField = new CycLibraryField(field);

@@ -22,34 +22,34 @@ package com.cyc.km.modeling.task;
  */
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.ElMt;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Fort;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.kbtool.ObjectTool;
 import com.cyc.kb.ArgPosition;
-import com.cyc.kb.client.Constants;
 import com.cyc.kb.Fact;
-import com.cyc.kb.KbObject;
 import com.cyc.kb.KbIndividual;
+import com.cyc.kb.KbObject;
 import com.cyc.kb.Sentence;
+import com.cyc.kb.client.Constants;
 import com.cyc.kb.client.KbIndividualImpl;
 import com.cyc.kb.client.KbObjectImpl;
 import com.cyc.kb.exception.CreateException;
-import com.cyc.query.Query;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbTypeException;
-import com.cyc.query.QueryConstants;
+import com.cyc.query.Query;
 import com.cyc.query.QueryFactory;
-import com.cyc.query.exception.QueryRuntimeException;
+import com.cyc.query.client.QueryConstants;
 import com.cyc.query.exception.QueryConstructionException;
-import com.cyc.session.exception.SessionException;
+import com.cyc.query.exception.QueryRuntimeException;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
-
+import com.cyc.session.exception.SessionException;
+import com.cyc.session.exception.UnsupportedCycOperationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,18 +63,21 @@ import java.util.Map;
  *
  * @author baxter
  * @todo consider adding a way to make up a new task
- * @todo explain what pieces of information need to be asserted on a task for it
- * to be useful (e.g. via sharedNotes in KB).
- * @todo consider adding assignCyclist to add a cyclist to a task (and reflect
- * immediately into the KB).
+ * @todo explain what pieces of information need to be asserted on a task for it to be useful 
+ *       (e.g. via sharedNotes in KB).
+ * @todo consider adding assignCyclist to add a cyclist to a task 
+ *       (and reflect immediately into the KB).
  * @todo Make a static method to find out what tasks a user is assigned to.
  */
 public class CycBasedTask {
-
-  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> CYC_BASED_TASK_REQUIREMENTS = CycSessionRequirementList.fromList(
-          NotOpenCycRequirement.NOT_OPENCYC
-  );
   
+  //====|    Statics    |=========================================================================//
+  
+  public static final CycSessionRequirementList<OpenCycUnsupportedFeatureException> CYC_BASED_TASK_REQUIREMENTS
+          = CycSessionRequirementList.fromList(
+                  NotOpenCycRequirement.NOT_OPENCYC
+          );
+
   /**
    * Returns a collection of all known Cyc-based tasks.
    *
@@ -83,7 +86,8 @@ public class CycBasedTask {
    * @throws com.cyc.kb.exception.CreateException
    * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException
    */
-  static public Collection<CycBasedTask> getAll() throws KbTypeException, CreateException, OpenCycUnsupportedFeatureException {
+  static public Collection<CycBasedTask> getAll() 
+          throws KbTypeException, CreateException, OpenCycUnsupportedFeatureException {
     final Collection<CycBasedTask> tasks = new HashSet<>();
     for (final KbIndividual task : QueryConstants.getInstance().CAE_ANALYSIS_TASK.
             <KbIndividual>getInstances(Constants.everythingPSCMt())) {
@@ -91,20 +95,36 @@ public class CycBasedTask {
     }
     return tasks;
   }
-
+  
+  static private CycAccess getCyc() throws SessionException {
+    return CycAccessManager.getCurrentAccess();
+  }
+  
+  //====|    Fields    |==========================================================================//
+  
+  private final KbIndividual taskTerm;
+  private final Collection<KbIndividual> cyclists = new HashSet<>(Arrays.asList((KbIndividual) null));
+  private final Collection<KbObject> concepts = new HashSet<>(Arrays.asList((KbObject) null));
+  private ElMt guidanceMt = null;
+  
+  //====|    Construction    |====================================================================//
+  
   /**
    * Constructs a new task, backed by the specified term. Note that this does
    * not create a new task in the KB, but just creates a new CycBasedTask object
    * based on an existing <code>KBIndividual</code> in the Knowledge Base.
    *
    * @param taskTerm the KBIndividual representing this task.
-   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an OpenCyc server.
+   * @throws com.cyc.session.exception.OpenCycUnsupportedFeatureException when run against an
+   *         OpenCyc server.
    */
   public CycBasedTask(KbIndividual taskTerm) throws OpenCycUnsupportedFeatureException {
     CYC_BASED_TASK_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     this.taskTerm = taskTerm;
   }
-
+  
+  //====|    Methods    |=========================================================================//
+  
   /**
    * Returns the KBIndividual representing this task.
    *
@@ -113,12 +133,7 @@ public class CycBasedTask {
   public KbIndividual getTaskTerm() {
     return taskTerm;
   }
-
-  @Override
-  public String toString() {
-    return "TASK " + getTaskTerm();
-  }
-
+  
   /**
    * Returns a text description of the task. This description, derived from the
    * KBIndividual underlying the task, is typically about one sentence, but
@@ -129,8 +144,10 @@ public class CycBasedTask {
    * @throws KbException
    */
   public String getDescription() throws KbException {
-    final Collection<Fact> facts = taskTerm.getFacts(QueryConstants.getInstance().SPECIFICATION_DESCRIPTION,
-            1, Constants.everythingPSCMt());
+    //final Collection<Fact> facts = taskTerm.getFacts(QueryConstants.getInstance().SPECIFICATION_DESCRIPTION,
+    //        1, Constants.everythingPSCMt());
+    final Collection<Fact> facts = QueryConstants.getInstance().SPECIFICATION_DESCRIPTION
+            .getFacts(taskTerm, 1, Constants.everythingPSCMt());
     if (facts != null && !facts.isEmpty()) {
       return facts.iterator().next().<String>getArgument(2);
     } else {
@@ -146,7 +163,9 @@ public class CycBasedTask {
    * @throws com.cyc.kb.exception.CreateException
    */
   public String getSummary() throws KbTypeException, CreateException {
-    final ArrayList names = new ArrayList(taskTerm.getValues(QueryConstants.getInstance().NAMESTRING, 1, 2, Constants.inferencePSCMt()));
+    ///final ArrayList names = new ArrayList(taskTerm.getValues(QueryConstants.getInstance().NAMESTRING, 1, 2, Constants.inferencePSCMt()));
+    final ArrayList names = new ArrayList(QueryConstants.getInstance().NAMESTRING
+            .getValuesForArgPosition(taskTerm, 1, 2, Constants.inferencePSCMt()));
     return (names.isEmpty()) ? null : (String) names.get(0);
   }
 
@@ -160,7 +179,9 @@ public class CycBasedTask {
     synchronized (cyclists) {
       if (cyclists.contains(null)) {
         cyclists.clear();
-        for (final Fact fact : taskTerm.getFacts(QueryConstants.getInstance().ALLOTTED_AGENTS, 1, Constants.everythingPSCMt())) {
+        //for (final Fact fact : taskTerm.getFacts(QueryConstants.getInstance().ALLOTTED_AGENTS, 1, Constants.everythingPSCMt())) {
+        for (final Fact fact : QueryConstants.getInstance().ALLOTTED_AGENTS
+                .getFacts(taskTerm, 1, Constants.everythingPSCMt())) {
           cyclists.add(fact.<KbIndividual>getArgument(2));
         }
       }
@@ -175,12 +196,16 @@ public class CycBasedTask {
    * @throws com.cyc.kb.exception.KbTypeException
    * @throws com.cyc.kb.exception.CreateException
    */
-  public Collection<KbObject> getKeyConcepts() throws KbTypeException, CreateException, KbException {
+  public Collection<KbObject> getKeyConcepts()
+          throws KbTypeException, CreateException, KbException {
     synchronized (concepts) {
       if (concepts.contains(null)) {
-        for (final Fact fact : taskTerm.getFacts(QueryConstants.getInstance().TOPIC_OF_INDIVIDUAL, 1, Constants.everythingPSCMt())) {
+        //for (final Fact fact : taskTerm.getFacts(QueryConstants.getInstance().TOPIC_OF_INDIVIDUAL, 1, Constants.everythingPSCMt())) {
+        for (final Fact fact : QueryConstants.getInstance().TOPIC_OF_INDIVIDUAL
+                .getFacts(taskTerm, 1, Constants.everythingPSCMt())) {
           final KbObject concept = fact.getArgument(2);
-          if (!(concept instanceof KbIndividual && getAssignedCyclists().contains((KbIndividual) concept))) {
+          if (!(concept instanceof KbIndividual
+                  && getAssignedCyclists().contains((KbIndividual) concept))) {
             concepts.add(concept);
           }
         }
@@ -202,8 +227,8 @@ public class CycBasedTask {
   public List<Object> getCandidateReplacements(Sentence querySentence,
           ArgPosition argPosition) throws RuntimeException, OpenCycUnsupportedFeatureException {
     try {
-      final List<Object> bapiAnswer = ((FormulaSentence) querySentence.getCore()).getCandidateReplacements(argPosition, getGuidanceMt(),
-              getCyc());
+      final List<Object> bapiAnswer = ((FormulaSentence) querySentence.getCore())
+              .getCandidateReplacements(argPosition, getGuidanceMt(), getCyc());
       final List<Object> answer = new ArrayList<>(bapiAnswer.size());
       for (final Object cycObject : bapiAnswer) {
         if (cycObject instanceof CycObject) {
@@ -213,13 +238,12 @@ public class CycBasedTask {
         }
       }
       return answer;
-    } catch (KbException | SessionException | QueryConstructionException | CycConnectionException ex) {
+    } catch (KbException
+            | SessionException
+            | QueryConstructionException
+            | CycConnectionException ex) {
       throw new QueryRuntimeException(ex);
     }
-  }
-
-  static private CycAccess getCyc() throws SessionException {
-    return CycAccessManager.getCurrentAccess();
   }
 
   private Fort getFort() throws CycConnectionException, SessionException {
@@ -231,28 +255,34 @@ public class CycBasedTask {
           final Object defaultAnswer) throws KbException,
           SessionException, QueryConstructionException {
     try {
-      Map<KbObject, Object> substitutions = new HashMap<>();
+      final Map<KbObject, Object> substitutions = new HashMap<>();
       final Fort taskTermFort = getFort();
-      substitutions.put(KbObjectImpl.get(QueryConstants.getInstance().taskIndexical), KbIndividualImpl.get(taskTermFort));
+      substitutions.put(
+              KbObjectImpl.get(QueryConstants.getInstance().taskIndexical),
+              KbIndividualImpl.get(taskTermFort));
       final Query query = QueryFactory.getQuery(kbQuery, substitutions);
       query.setMaxAnswerCount(1);
       return query.getAnswerCount() >= 1
               ? query.getAnswer(0).getBindings().values().iterator().next()
               : defaultAnswer;
-    } catch (CycConnectionException ex) {
-      throw new QueryConstructionException(ex);
-    } catch (Exception ex) {
+    } catch (CycConnectionException
+            | SessionException 
+            | QueryConstructionException 
+            | KbException
+            | UnsupportedCycOperationException ex) {
       throw new QueryConstructionException(ex);
     }
   }
-
+  
   private synchronized ElMt getGuidanceMt() throws KbException, CycConnectionException,
           SessionException, QueryConstructionException {
     if (guidanceMt == null) {
       try {
-        guidanceMt = getObjectTool().makeElMt(QueryConstants.getInstance().CURRENT_WORLD_DATA_COLLECTOR_MT_NON_HOMOCENTRIC.getCore());
+        guidanceMt = getObjectTool().makeElMt(QueryConstants
+                .getInstance().CURRENT_WORLD_DATA_COLLECTOR_MT_NON_HOMOCENTRIC.getCore());
         final KbIndividual guidanceMtQuery = QueryConstants.getInstance().CAE_GUIDANCE_MT_QUERY;
-        guidanceMt = getObjectTool().makeElMt(getSingleAnswerQueryValue(guidanceMtQuery, guidanceMt));
+        guidanceMt = getObjectTool().makeElMt(
+                getSingleAnswerQueryValue(guidanceMtQuery, guidanceMt));
       } catch (KbObjectNotFoundException ex) {
         //Just use default.
       } 
@@ -263,8 +293,10 @@ public class CycBasedTask {
   private ObjectTool getObjectTool() throws SessionException {
     return getCyc().getObjectTool();
   }
-  private final KbIndividual taskTerm;
-  private final Collection<KbIndividual> cyclists = new HashSet<>(Arrays.asList((KbIndividual) null));
-  private final Collection<KbObject> concepts = new HashSet<>(Arrays.asList((KbObject) null));
-  private ElMt guidanceMt = null;
+  
+  @Override
+  public String toString() {
+    return "TASK " + getTaskTerm();
+  }
+  
 }

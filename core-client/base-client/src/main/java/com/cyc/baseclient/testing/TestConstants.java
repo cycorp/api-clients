@@ -22,16 +22,15 @@ package com.cyc.baseclient.testing;
  */
 
 import com.cyc.base.annotation.CycObjectLibrary;
-import com.cyc.base.cycobject.CycConstant;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.GuidImpl;
 import com.cyc.base.annotation.CycTerm;
-import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycVariable;
 import com.cyc.base.cycobject.ElMt;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
-import com.cyc.baseclient.cycobject.ElMtConstant;
+import com.cyc.baseclient.cycobject.ElMtConstantImpl;
+import com.cyc.baseclient.cycobject.GuidImpl;
 
 /**
  *
@@ -450,7 +449,7 @@ public class TestConstants {
           new GuidImpl("c10052d1-9c29-11b1-9dad-c379636f7270"));
   
   @CycTerm(cycl="#$HistoricalPeopleDataMt")
-  public static final ElMt HISTORICAL_PEOPLE_DATA_MT = ElMtConstant.makeElMtConstant(
+  public static final ElMt HISTORICAL_PEOPLE_DATA_MT = ElMtConstantImpl.makeElMtConstant(
           new CycConstantImpl("HistoricalPeopleDataMt", new GuidImpl(
                           "c0852ac3-9c29-11b1-9dad-c379636f7270")));
   

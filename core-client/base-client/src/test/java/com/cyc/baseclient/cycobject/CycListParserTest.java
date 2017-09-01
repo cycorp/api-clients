@@ -106,6 +106,7 @@ public class CycListParserTest {
   
   @Test
   public void testReadKeywords() {
+    // FIXME: parsing of piped key is indeed broken, and should be fixed - nwinant, 2017-07-27
     System.out.println("testReadKeywords");
     final CycArrayList result = new CycListParser(cycAccess).read("(:KEY :|PIPEDKEY|)");
     System.out.println(result);

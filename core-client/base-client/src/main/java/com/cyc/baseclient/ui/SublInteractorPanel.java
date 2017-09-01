@@ -23,6 +23,8 @@ package com.cyc.baseclient.ui;
 
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
+import static com.cyc.baseclient.cycobject.DefaultCycObjectImpl.cyclify;
+import static com.cyc.baseclient.cycobject.DefaultCycObjectImpl.isCycLObject;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -37,8 +39,6 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import static com.cyc.baseclient.cycobject.DefaultCycObject.isCycLObject;
-import static com.cyc.baseclient.cycobject.DefaultCycObject.cyclify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

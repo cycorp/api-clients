@@ -23,21 +23,20 @@ package com.cyc.baseclient.connection;
 
 //// Internal Imports
 //// External Imports
-import com.cyc.baseclient.exception.CycApiServerSideException;
-import com.cyc.baseclient.exception.CycApiClosedConnectionException;
-import com.cyc.base.exception.BaseClientRuntimeException;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.baseclient.DefaultSublWorker;
-import com.cyc.baseclient.CycClient;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.conn.Worker;
-import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CommonConstants;
+import com.cyc.baseclient.CycClient;
 import com.cyc.baseclient.CycClientManager;
-//import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.DefaultSublWorker;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.exception.CycApiClosedConnectionException;
+import com.cyc.baseclient.exception.CycApiServerSideException;
 import com.cyc.session.CycServerAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +45,14 @@ import org.slf4j.LoggerFactory;
  * <P>SubLAPIHelper is designed to...
  *
  * @author tbrussea, Nov 4, 2010, 11:33:24 AM
- * @version $Id: SublApiHelper.java 170971 2017-03-16 01:34:00Z nwinant $
+ * @version $Id: SublApiHelper.java 173021 2017-07-21 18:36:21Z nwinant $
  */
 public class SublApiHelper {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(SublApiHelper.class);
 
   private static String getAPIString(Object param) {
-    return (param instanceof AsIsTerm) ? ((AsIsTerm) param).toString() : DefaultCycObject.stringApiValue(param);
+    return (param instanceof AsIsTerm) ? ((AsIsTerm) param).toString() : DefaultCycObjectImpl.stringApiValue(param);
   }
 
   //// Constructors
@@ -112,7 +111,7 @@ public class SublApiHelper {
   public static String wrapVariableBinding(String command, CycSymbol variable, Object value) {
     try {
       // @todo consider setting *ke-purpose*
-      return "(clet ((" + DefaultCycObject.cyclifyWithEscapeChars(variable, true) + " " + getAPIString(value) + ")) " + command + ")";
+      return "(clet ((" + DefaultCycObjectImpl.cyclifyWithEscapeChars(variable, true) + " " + getAPIString(value) + ")) " + command + ")";
     } catch (Exception e) {
       return command;
     }
@@ -158,7 +157,7 @@ public class SublApiHelper {
       }
     }
     synchronized (System.out) { // @hack for tomcat in netbeans issue
-      LOGGER.debug("Got result: {0}", DefaultCycObject.cyclify(result));
+      LOGGER.debug("Got result: {0}", DefaultCycObjectImpl.cyclify(result));
     }
     return result;
   }
@@ -245,7 +244,7 @@ public class SublApiHelper {
 
     @Override
     public String toString() {
-      return "(quote " + DefaultCycObject.stringApiValue(obj) + ")";
+      return "(quote " + DefaultCycObjectImpl.stringApiValue(obj) + ")";
     }
   }
   

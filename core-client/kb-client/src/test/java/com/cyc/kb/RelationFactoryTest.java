@@ -62,7 +62,7 @@ public class RelationFactoryTest {
     RelationService instance = RelationFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getRelationService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().relation(), instance);
   }
   
 }

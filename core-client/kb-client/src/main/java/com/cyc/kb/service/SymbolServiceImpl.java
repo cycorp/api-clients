@@ -36,19 +36,20 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.SymbolService;
+import com.cyc.kb.Symbol;
 import com.cyc.kb.client.SymbolImpl;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.kb.spi.SymbolService;
 
 /**
  *
  * @author nwinant
  */
-public class SymbolServiceImpl<T extends SymbolImpl> implements SymbolService<T> {
+public class SymbolServiceImpl implements SymbolService {
   
   @Override
-  public T get(String symStr) throws KbTypeException {
-    return (T) new SymbolImpl(symStr);
+  public Symbol get(String symStr) throws KbTypeException {
+    return new SymbolImpl(symStr);
   }
   
 }

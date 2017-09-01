@@ -32,7 +32,7 @@ import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.query.parameters.InferenceAnswerLanguage;
 import com.cyc.query.parameters.InferenceParameter;
 import com.cyc.query.parameters.InferenceParameterValue;
@@ -130,7 +130,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
     for (Iterator i = ((List) val).iterator(); i.hasNext();) {
       final Object item = i.next();
       if (item instanceof String) {
-        buf.append(DefaultCycObject.stringApiValue(item));
+        buf.append(DefaultCycObjectImpl.stringApiValue(item));
       } else {
         buf.append(item);
       }
@@ -452,7 +452,7 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
           final Object val) {
     final Object cycListApiValue = parameterValueCycListApiValue(key, val);
     if (val instanceof InferenceParameterValue) {
-      return DefaultCycObject.cyclify(val);
+      return DefaultCycObjectImpl.cyclify(val);
     } else if (isProblemStoreSpecification(key, cycListApiValue)) {
       return problemStoreStringApiValue((List) cycListApiValue);
     } else if (cycListApiValue instanceof CycObject) {
@@ -460,10 +460,10 @@ public class DefaultInferenceParameters extends SpecifiedInferenceParameters {
     } else if (cycListApiValue instanceof DefaultInferenceParameterValueDescription) {
       DefaultInferenceParameterValueDescription param = (DefaultInferenceParameterValueDescription) cycListApiValue;
       Object value = param.getValue();
-      String ret = DefaultCycObject.stringApiValue(value);
+      String ret = DefaultCycObjectImpl.stringApiValue(value);
       return (ret);
     } else {
-      return (DefaultCycObject.stringApiValue(cycListApiValue));
+      return (DefaultCycObjectImpl.stringApiValue(cycListApiValue));
     }
   }
   

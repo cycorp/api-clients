@@ -62,7 +62,7 @@ public class BinaryPredicateFactoryTest {
     BinaryPredicateService instance = BinaryPredicateFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getBinaryPredicateService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().binaryPredicate(), instance);
   }
   
 }

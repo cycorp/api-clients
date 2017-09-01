@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author baxter
  */
-public class ArgPositionImpl extends DefaultCycObject implements ArgPosition {
+public class ArgPositionImpl extends DefaultCycObjectImpl implements ArgPosition {
 
   protected final List<Integer> path = new ArrayList<Integer>();
 

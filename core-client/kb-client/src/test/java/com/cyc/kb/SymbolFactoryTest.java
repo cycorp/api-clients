@@ -62,7 +62,7 @@ public class SymbolFactoryTest {
     SymbolService instance = SymbolFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getSymbolService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().symbol(), instance);
   }
   
 }

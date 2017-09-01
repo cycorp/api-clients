@@ -36,15 +36,16 @@ package com.cyc.kb.service;
  * #L%
  */
 
+import com.cyc.kb.Variable;
 import com.cyc.kb.client.TestConstants;
 import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.exception.KbException;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -87,7 +88,7 @@ public class VariableServiceImplTest {
   public void testGet() throws KbException {
     System.out.println("get");
     VariableImpl expResult = new VariableImpl("?VAR");
-    VariableImpl result = instance.get("?VAR");
+    Variable result = instance.get("?VAR");
     assertEquals(expResult, result);
     System.out.println(result);
   }

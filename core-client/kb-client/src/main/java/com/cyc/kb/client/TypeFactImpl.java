@@ -26,18 +26,18 @@ package com.cyc.kb.client;
  */
 
 import com.cyc.base.cycobject.CycAssertion;
-import com.cyc.base.cycobject.CycObject;
 import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.Quantifier;
 import com.cyc.kb.TypeFact;
-import com.cyc.kb.exception.KbException;
 import com.cyc.kb.client.quant.ForAllQuantifiedInstanceRestrictedVariable;
 import com.cyc.kb.client.quant.QuantifiedInstanceRestrictedVariable;
 import com.cyc.kb.client.quant.ThereExistsQuantifiedInstanceRestrictedVariable;
-
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KbException;
+import com.cyc.kb.exception.KbTypeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
  */
 public class TypeFactImpl extends FactImpl implements TypeFact {
 
-  private static final Logger log = LoggerFactory.getLogger(TypeFactImpl.class.getCanonicalName());
+  private static final Logger LOG = LoggerFactory.getLogger(TypeFactImpl.class.getCanonicalName());
   
-  List<Object> modifiedTypeLevelArguments = new ArrayList<Object>();
+  List<Object> modifiedTypeLevelArguments = new ArrayList<>();
 
   private static KbPredicate relationAllExists = null;
   private static KbPredicate relationExistsAll = null;
@@ -62,25 +62,25 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
     try {
       relationAllExists = KbPredicateImpl.get("relationAllExists");
       relationExistsAll = KbPredicateImpl.get("relationExistsAll");
-    } catch (Exception e){
+    } catch (KbTypeException | CreateException e){
     }
   }
 
   @Deprecated
-  public TypeFactImpl(CycObject cycAssert) throws KbException {
+  public TypeFactImpl(CycAssertion cycAssert) throws KbException {
     super(cycAssert);
     try {
       KbPredicate p = this.<KbPredicate>getArgument(0);
       if (!p.isInstanceOf(KbCollectionImpl.get("RuleMacroPredicate"))) {
         String msg = "The predicate \"" + ((CycAssertion)cycAssert).getGaf().getOperator().toString() 
                 + "\" is not an instance of #$RuleMacroPredicate.";
-        log.trace(msg);
+        LOG.trace(msg);
         throw new KbException(msg);
       }
     } catch (Exception e) {
       throw new KbException(e.getMessage(), e);
     }
-    identifyTypeObjectsFromAssertion((CycAssertion)core);
+    identifyTypeObjectsFromAssertion(getCore());
   }
 
   public TypeFactImpl(Context ctx, Object... argList) throws KbException {
@@ -89,7 +89,7 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
   
   private TypeFactImpl(Context ctx, PredAndArgs content) throws KbException {
     super(false, ctx, content.getPredicate(), content.getArgs());
-    identifyTypeObjectsFromAssertion((CycAssertion)core);
+    identifyTypeObjectsFromAssertion((CycAssertion)getCore());
   }
   
   private void identifyTypeObjectsFromAssertion(CycAssertion ca) throws KbException {
@@ -108,8 +108,7 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
   }
   
   private static PredAndArgs identifyRelationForQuantifiers(Object... argList) throws KbException {
-
-    List<Object> argInputList = new ArrayList<Object>();
+    List<Object> argInputList = new ArrayList<>();
     argInputList.addAll(Arrays.asList(argList));
     
     String helpMessage = "The TypeFact constructor can handle the following formats:\n"
@@ -120,7 +119,7 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
               + helpMessage);
     } else if (argInputList.size() == 4) {
       Object isItRMP = argInputList.get(0);
-      KbPredicateImpl rmp = null;
+      final KbPredicateImpl rmp;
       if (isItRMP instanceof KbPredicate){
         rmp = KbPredicateImpl.class.cast(isItRMP);
         if (!rmp.isInstanceOf(KbCollectionImpl.get("RuleMacroPredicate"))) {
@@ -166,7 +165,7 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
       count++;
     }
     
-    List<Object> argOutputList = new ArrayList<Object>();
+    List<Object> argOutputList = new ArrayList<>();
 
     Quantifier forAll = new QuantifierImpl("forAll");
     Quantifier thereExists = new QuantifierImpl("thereExists");
@@ -225,10 +224,7 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
 
     return new PredAndArgs(argOutputList);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.TypeFact#getTypeArgument(int, java.lang.Class)
-   */
+  
   @Override
   public <O> O getTypeArgument (int getPos, Class<O> retType) throws KbException {
     Object o = this.getModifiedTypeLevelArguments().get(getPos);
@@ -241,26 +237,17 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
     } 
     return null;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.TypeFact#getModifiedTypeLevelArguments()
-   */
+  
   @Override
   public List<Object> getModifiedTypeLevelArguments() {
     return modifiedTypeLevelArguments;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.TypeFact#setModifiedTypeLevelArguments(java.util.List)
-   */
+  
   @Override
   public void setModifiedTypeLevelArguments(List<Object> modifiedTypeLevelArguments) {
     this.modifiedTypeLevelArguments = modifiedTypeLevelArguments;
   }
   
-  /* (non-Javadoc)
-   * @see com.cyc.kb.TypeFact#addModifiedTypeLevelArguments(java.lang.Object)
-   */
   @Override
   public void addModifiedTypeLevelArguments(Object modifiedTypeLevelArgument) {
     this.modifiedTypeLevelArguments.add(modifiedTypeLevelArgument);

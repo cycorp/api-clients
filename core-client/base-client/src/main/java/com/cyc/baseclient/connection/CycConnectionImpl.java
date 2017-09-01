@@ -22,17 +22,34 @@ package com.cyc.baseclient.connection;
  */
 
 //// External Imports
-import com.cyc.baseclient.exception.CycApiServerSideException;
-import com.cyc.baseclient.exception.CycApiClosedConnectionException;
-import com.cyc.baseclient.exception.CfaslInputStreamClosedException;
 import com.cyc.base.CycAccess;
-import com.cyc.baseclient.CycObjectFactory;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.baseclient.CycClient;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.conn.WorkerStatus;
+import com.cyc.base.conn.CycConnection;
+import com.cyc.base.conn.LeaseManager;
+import com.cyc.base.conn.Timer;
 import com.cyc.base.conn.Worker;
+import com.cyc.base.conn.WorkerStatus;
+import static com.cyc.base.conn.WorkerStatus.*;
+import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.base.exception.CycTimeOutException;
+import com.cyc.baseclient.CycClient;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.comm.Comm;
+import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
+import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.exception.CfaslInputStreamClosedException;
+import com.cyc.baseclient.exception.CommException;
+import com.cyc.baseclient.exception.CycApiClosedConnectionException;
+import com.cyc.baseclient.exception.CycApiServerSideException;
+import com.cyc.baseclient.util.Log;
+import com.cyc.baseclient.util.TimerImpl;
 import com.cyc.session.CycServer;
+import com.cyc.session.CycServerAddress;
+import com.cyc.session.ServerAddress;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,26 +57,6 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-//// Internal Imports
-import static com.cyc.base.conn.WorkerStatus.*;
-import com.cyc.base.cycobject.CycList;
-import com.cyc.baseclient.comm.Comm;
-import com.cyc.baseclient.exception.CommException;
-import com.cyc.base.cycobject.CycObject;
-import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
-import com.cyc.baseclient.util.Log;
-import com.cyc.base.exception.CycTimeOutException;
-import com.cyc.base.conn.CycConnection;
-import com.cyc.base.conn.LeaseManager;
-import com.cyc.base.conn.Timer;
-import com.cyc.baseclient.util.TimerImpl;
-import com.cyc.session.CycServerAddress;
-import com.cyc.session.ServerAddress;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,7 +65,6 @@ import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
 
 /**
  * Provides a binary connection and an ascii connection to the OpenCyc server. The ascii connection
@@ -82,7 +78,7 @@ import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
  api responses received from Cyc.
  </p>
  *
- * @version $Id: CycConnectionImpl.java 170971 2017-03-16 01:34:00Z nwinant $
+ * @version $Id: CycConnectionImpl.java 173021 2017-07-21 18:36:21Z nwinant $
  * @author Stephen L. Reed <p><p><p><p><p>
  */
 public class CycConnectionImpl implements CycConnection {
@@ -956,7 +952,7 @@ public class CycConnectionImpl implements CycConnection {
               df.format(new Date()) + "\n    Sending request: " + message + " to connection: " + this);
     }
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("sendBinary: {}", DefaultCycObject.stringApiValue(message));
+      LOGGER.debug("sendBinary: {}", DefaultCycObjectImpl.stringApiValue(message));
     }
     
     if (this.comm == null) {

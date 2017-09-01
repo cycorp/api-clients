@@ -33,7 +33,7 @@ import com.cyc.base.cycobject.Guid;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.kb.Assertion.Direction;
 import com.cyc.kb.Assertion.Strength;
 import com.cyc.kb.Context;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * variables.
  *
  * @author vijay
- * @version $Id: RuleImpl.java 171787 2017-05-04 23:16:40Z nwinant $
+ * @version $Id: RuleImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  * @since 1.0
  */
 public class RuleImpl extends AssertionImpl implements Rule {
@@ -89,7 +89,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
    * #$implies operator
    */
   @Deprecated
-  RuleImpl(CycObject cycAssert) throws KbTypeException {
+  RuleImpl(CycAssertion cycAssert) throws KbTypeException {
     super(cycAssert);
   }
 
@@ -108,7 +108,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
    */
   @Deprecated
   public static Rule get(CycObject cycAssert) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycAssert, RuleImpl.class);
+    return KbObjectImplFactory.get(cycAssert, RuleImpl.class);
   }
   
   @SuppressWarnings("deprecation")
@@ -119,13 +119,13 @@ public class RuleImpl extends AssertionImpl implements Rule {
     // Also the get method here takes only hlid. For a factory method that takes String to 
     // find an assertion, see get(String formulaStr, String ctxStr)
     try {
-      result = DefaultCycObject.fromPossibleCompactExternalId(hlid, getStaticAccess());
+      result = DefaultCycObjectImpl.fromPossibleCompactExternalId(hlid, getStaticAccess());
     } catch (CycConnectionException e) {
       throw new KbRuntimeException(e.getMessage(), e);
     }
     if (result instanceof CycAssertion) {
       LOG.debug("Found assertion: {} using HLID: {}", result, hlid);
-      return KbObjectFactory.get((CycObject) result, RuleImpl.class);
+      return KbObjectImplFactory.get((CycObject) result, RuleImpl.class);
     } else {
       String msg = "Could not find any Assertion with hlid: " + hlid + " in the KB.";
       LOG.error(msg);
@@ -190,25 +190,53 @@ public class RuleImpl extends AssertionImpl implements Rule {
   }
   
   @SuppressWarnings("deprecation")
+  public static Rule findOrCreate(
+          Sentence formula, Context ctx, Strength s, Direction d, boolean verbose)
+          throws KbTypeException, CreateException {
+    try {
+      final CycAssertion result 
+              = assertSentence(FormulaSentence.class.cast(formula.getCore()), ctx, s, d);
+      return convertToFoundOrCreatedAssertion(result, formula, ctx, RuleImpl.class);
+    } catch (CycApiException ex) {
+      return throwAssertException(formula, ctx, ex, verbose);
+    }
+  }
+  
+  @SuppressWarnings("deprecation")
   public static Rule findOrCreate(Sentence formula, Context ctx, Strength s, Direction d)
           throws KbTypeException, CreateException {
-    final CycAssertion result 
-            = assertSentence(FormulaSentence.class.cast(formula.getCore()), ctx, s, d);
-    return convertToFoundOrCreatedAssertion(result, formula, ctx, RuleImpl.class);
+    return RuleImpl.findOrCreate(formula, ctx, s, d, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static Rule findOrCreate(Sentence formula, Context ctx, boolean verbose)
+          throws KbTypeException, CreateException {
+    return RuleImpl.findOrCreate(formula, ctx, Strength.AUTO, Direction.BACKWARD, verbose);
   }
   
   public static Rule findOrCreate(Sentence formula, Context ctx)
           throws KbTypeException, CreateException {
-    return RuleImpl.findOrCreate(formula, ctx, Strength.AUTO, Direction.BACKWARD);
+    return RuleImpl.findOrCreate(formula, ctx, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static Rule findOrCreate(Sentence formula, boolean verbose) 
+          throws KbTypeException, CreateException {
+    return RuleImpl
+            .findOrCreate(formula, KbConfiguration.getDefaultContext().forAssertion(), verbose);
   }
   
   public static Rule findOrCreate(Sentence formula) throws KbTypeException, CreateException {
-    return RuleImpl.findOrCreate(formula, KbConfiguration.getDefaultContext().forAssertion());
+    return RuleImpl.findOrCreate(formula, VERBOSE_ASSERT_ERRORS_DEFAULT);
+  }
+  
+  public static Rule findOrCreate(
+          Sentence antecedent, Sentence consequent, Context ctx, boolean verbose)
+          throws KbTypeException, CreateException {
+    return RuleImpl.findOrCreate(SentenceImpl.implies(antecedent, consequent), ctx, verbose);
   }
   
   public static Rule findOrCreate(Sentence antecedent, Sentence consequent, Context ctx)
           throws KbTypeException, CreateException {
-    return RuleImpl.findOrCreate(SentenceImpl.implies(antecedent, consequent), ctx);
+    return RuleImpl.findOrCreate(antecedent, consequent, ctx, VERBOSE_ASSERT_ERRORS_DEFAULT);
   }
   
   @Override
@@ -217,7 +245,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
     try {
       final FormulaSentence result = (FormulaSentence) ca.getELFormula(getAccess()).getArg1();
       return KbObjectImpl.<Sentence>checkAndCastObject(result);
-    } catch (Exception ex) {
+    } catch (CycApiException | CycConnectionException | CreateException ex) {
       throw new KbRuntimeException(ex.getMessage(), ex);
     }
   }
@@ -228,7 +256,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
     try {
       final FormulaSentence result = (FormulaSentence) ca.getELFormula(getAccess()).getArg2();
       return KbObjectImpl.<Sentence>checkAndCastObject(result);
-    } catch (Exception ex) {
+    } catch (CycApiException | CycConnectionException | CreateException ex) {
       throw new KbRuntimeException(ex.getMessage(), ex);
     }
   }
@@ -241,6 +269,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
    * Internally this method checks if the the <code>cycObject</code> is an instance of CycAssertion
    * and the operator is #$implies.
    *
+   * @return 
    * @see StandardKBObject#StandardKBObject(CycObject) for more comments
    */
   @Override
@@ -255,4 +284,5 @@ public class RuleImpl extends AssertionImpl implements Rule {
     }
     return false;
   }
+  
 }

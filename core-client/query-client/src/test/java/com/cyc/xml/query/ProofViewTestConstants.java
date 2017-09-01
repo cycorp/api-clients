@@ -30,8 +30,8 @@ import com.cyc.kb.Context;
 import com.cyc.kb.client.Constants;
 import com.cyc.kb.exception.KbException;
 import com.cyc.query.QueryAnswer;
-import com.cyc.query.QueryImpl;
-import com.cyc.query.QueryTestConstants;
+import com.cyc.query.client.QueryImpl;
+import com.cyc.query.client.QueryTestConstants;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.exception.SessionException;
 

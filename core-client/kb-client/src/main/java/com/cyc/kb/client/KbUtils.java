@@ -23,13 +23,17 @@ package com.cyc.kb.client;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.Fort;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
+import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
+import com.cyc.kb.exception.KbTypeException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,7 +53,7 @@ import org.slf4j.LoggerFactory;
 // KBCollectionUtils will have: minCols, maxCols etc..
 public class KbUtils {
 
-  private static final Logger log = LoggerFactory.getLogger(KbObjectImpl.class.getCanonicalName());
+  private static final Logger LOG = LoggerFactory.getLogger(KbObjectImpl.class.getCanonicalName());
 
   /**
    * This method takes a Map<KBObject, Object> instance and converts it to a
@@ -59,11 +63,11 @@ public class KbUtils {
    * @return kboToCoMap
    */
   public static Map<CycObject, Object> convertKBObjectMapToCoObjectMap(Map<KbObject, Object> mapToConvert) {
-    Map<CycObject, Object> kboToCoMap = new HashMap<CycObject, Object>();
+    Map<CycObject, Object> kboToCoMap = new HashMap<>();
     for (Map.Entry<KbObject, Object> i : mapToConvert.entrySet()) {
       KbObject key = i.getKey();
       Object val = i.getValue();
-      Object typedVal = null;
+      final Object typedVal;
       if (val instanceof KbObject) {
         typedVal = ((KbObject) val).getCore();
       } else {
@@ -78,13 +82,12 @@ public class KbUtils {
     CycList l = new CycArrayList();
     for (KbObject col : cols) {
       l.add(col.getCore());
-    };
+    }
     return l;
   }
 
-
   private static <O extends KbObject> Collection<O> cycListToKBObjectList (CycList cl) {
-    List<O> kboList = new ArrayList<O>();
+    List<O> kboList = new ArrayList<>();
     for (Object o : cl) {
       try {
         kboList.add(KbObjectImpl.<O>checkAndCastObject(o));
@@ -101,17 +104,15 @@ public class KbUtils {
    * 
    * @param <O>     The type of KBObject to be built
    * @param kboStr  The input string turned to a KBObject
-   * @param retType Cast type of the returned object, same as <O>
+   * @param retType Cast type of the returned object, same as O
    * 
    * @return find a KBObject and throw IllegalArgumentException if one is not found
    */
   public static <O extends KbObjectImpl> O getKBObjectForArgument(String kboStr, Class<O> retType) {
     try {
-      return KbObjectFactory.get(kboStr, retType);
-    } catch (KbException kae) {
+      return KbObjectImplFactory.get(kboStr, retType);
+    } catch (KbException | ClassCastException kae) {
       throw new IllegalArgumentException(kae.getMessage(), kae);
-    } catch (ClassCastException cce) {
-      throw new IllegalArgumentException(cce.getMessage(), cce);
     }
   }
   
@@ -139,10 +140,10 @@ public class KbUtils {
       CycList l = KbUtils.listKBObjectToCycList(cols);
       Fort cycCol = getStaticAccess().getLookupTool().getMinCol(l, ContextImpl.asELMt(ctx));
       return KbCollectionImpl.get(cycCol);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException | KbTypeException | CreateException e) {
       // This is truely exceptional. The input collections will always result
       // in a single collection being returned.
-      log.error(e.getMessage());
+      LOG.error(e.getMessage());
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
@@ -162,10 +163,10 @@ public class KbUtils {
       CycList l = KbUtils.listKBObjectToCycList(cols);
       Fort cycCol = getStaticAccess().getLookupTool().getMinCol(l);
       return KbCollectionImpl.get(cycCol);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException | KbTypeException | CreateException e) {
       // This is truely exceptional. The input collections will always result
       // in a single collection being returned.
-      log.error(e.getMessage());
+      LOG.error(e.getMessage());
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
@@ -190,7 +191,7 @@ public class KbUtils {
       CycList l = KbUtils.listKBObjectToCycList(cols);
       CycList cycCols = getStaticAccess().getLookupTool().getMinCols(l,  ContextImpl.asELMt(ctx));
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException e) {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
@@ -210,7 +211,7 @@ public class KbUtils {
       CycList l = KbUtils.listKBObjectToCycList(cols);
       CycList cycCols = getStaticAccess().getLookupTool().getMinCols(l);
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException e) {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
@@ -236,7 +237,7 @@ public class KbUtils {
       CycList l = KbUtils.listKBObjectToCycList(cols);
       CycList cycCols = getStaticAccess().getLookupTool().getMaxCols(l,  ContextImpl.asELMt(ctx));
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException e) {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
@@ -257,7 +258,7 @@ public class KbUtils {
       CycList l = KbUtils.listKBObjectToCycList(cols);
       CycList cycCols = getStaticAccess().getLookupTool().getMaxCols(l);
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException e) {
       throw new KbRuntimeException(e.getMessage(), e);
     }
   }
@@ -273,9 +274,9 @@ public class KbUtils {
   public static boolean isTermNameAvailable(String termName) {
     try {
       boolean available = getStaticAccess().getInspectorTool().isConstantNameAvailable(termName);
-      log.debug("Term name: " + termName + " is available.");
+      LOG.debug("Term name: " + termName + " is available.");
       return available;
-    } catch (Exception e) {
+    } catch (CycConnectionException | CycApiException e) {
       // Don't want to return true, we actually couldn't find out for exceptional reasons
       throw new KbRuntimeException(e.getMessage(), e);
     }

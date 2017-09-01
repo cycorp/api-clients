@@ -62,7 +62,7 @@ public class AssertionFactoryTest {
     AssertionService instance = AssertionFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getAssertionService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().assertion(), instance);
   }
   
 }

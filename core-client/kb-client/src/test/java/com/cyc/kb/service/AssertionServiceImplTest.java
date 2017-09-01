@@ -193,7 +193,7 @@ public class AssertionServiceImplTest {
     System.out.println("findOrCreate");
     createTestConstant();
     String formulaStr = "(isa " + nameOrId + " CommercialAircraft)";
-    AssertionImpl result = instance.findOrCreate(formulaStr);
+    Assertion result = instance.findOrCreate(formulaStr);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
   }
@@ -206,7 +206,7 @@ public class AssertionServiceImplTest {
     System.out.println("findOrCreate");
     createTestConstant();
     String formulaStr = "(isa " + nameOrId + " CommercialAircraft)";
-    AssertionImpl result = instance.findOrCreate(formulaStr, CTX_STR);
+    Assertion result = instance.findOrCreate(formulaStr, CTX_STR);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
   }
@@ -220,7 +220,7 @@ public class AssertionServiceImplTest {
     createTestConstant();
     String formulaStr = "(isa " + nameOrId + " CommercialAircraft)";
     // TODO: flesh out testing of Strength and Direction - nwinant, 2015-11-09
-    AssertionImpl result = instance.findOrCreate(formulaStr, CTX_STR, Strength.AUTO, Direction.AUTO);
+    Assertion result = instance.findOrCreate(formulaStr, CTX_STR, Strength.AUTO, Direction.AUTO);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
   }
@@ -236,7 +236,7 @@ public class AssertionServiceImplTest {
             ISA,
             term,
             commercialAircraft);
-    AssertionImpl result = instance.findOrCreate(formula);
+    Assertion result = instance.findOrCreate(formula);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
   }
@@ -252,7 +252,7 @@ public class AssertionServiceImplTest {
             ISA,
             term,
             commercialAircraft);
-    AssertionImpl result = instance.findOrCreate(formula, CTX);
+    Assertion result = instance.findOrCreate(formula, CTX);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
   }
@@ -269,7 +269,7 @@ public class AssertionServiceImplTest {
             term,
             commercialAircraft);
     // TODO: flesh out testing of Strength and Direction - nwinant, 2015-11-09
-    AssertionImpl result = instance.findOrCreate(formula, CTX, Strength.AUTO, Direction.AUTO);
+    Assertion result = instance.findOrCreate(formula, CTX, Strength.AUTO, Direction.AUTO);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
   }

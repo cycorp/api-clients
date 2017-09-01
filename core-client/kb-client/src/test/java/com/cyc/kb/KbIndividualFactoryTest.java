@@ -62,6 +62,6 @@ public class KbIndividualFactoryTest {
     KbIndividualService instance = KbIndividualFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getIndividualService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().individual(), instance);
   }
 }

@@ -48,21 +48,28 @@ import org.junit.Test;
  */
 public class KbObjectFactoryTest {
   
-  // Tests
   
-  @Test
+  
+      // TODO: rename and/or reorganize w/ KbService? - nwinant, 2017-07-27
+
+  
+  
+  
+  // Tests
+  /*
+  //@Test
   public void testGetInstance() throws Exception {
     KbObjectFactory instance = KbObjectFactory.getInstance();
     assertNotNull(instance);
     assertNotNull(instance.toString());
   }
   
-  @Test
+  //@Test
   public void testGetService() throws Exception {
     KbObjectService instance = KbObjectFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getKbObjectService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().kbObject(), instance);
   }
-  
+  */
 }

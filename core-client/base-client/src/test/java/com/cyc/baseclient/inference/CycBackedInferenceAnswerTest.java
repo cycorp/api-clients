@@ -21,32 +21,26 @@ package com.cyc.baseclient.inference;
  * #L%
  */
 
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ElMt;
 import com.cyc.base.cycobject.InformationSource;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.inference.InferenceAnswer;
-import com.cyc.query.InferenceAnswerIdentifier;
-
-import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
-
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.CycClientManager;
 import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.ElMtCycNaut;
-
-import static com.cyc.baseclient.testing.TestUtils.getCyc;
-
+import com.cyc.baseclient.cycobject.ElMtCycNautImpl;
 import com.cyc.baseclient.cycobject.InformationSourceImpl;
 import static com.cyc.baseclient.testing.TestConstants.*;
 import static com.cyc.baseclient.testing.TestSentences.*;
 import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
+import static com.cyc.baseclient.testing.TestUtils.getCyc;
+import com.cyc.query.InferenceAnswerIdentifier;
+import java.util.Collection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
 /**
  *
@@ -79,7 +73,7 @@ public class CycBackedInferenceAnswerTest extends InferenceAnswerTest {
     assumeNotOpenCyc();
     final CycConstant WHH_WP = getCyc().getLookupTool().find("#$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison");
     // (#$ContextOfPCWFn #$TestFactEntrySource-WikipediaArticle-WilliamHenryHarrison)
-    final ElMt WHH_WP_MT = ElMtCycNaut.makeElMtCycNaut(
+    final ElMt WHH_WP_MT = ElMtCycNautImpl.makeElMtCycNaut(
             CycArrayList.makeCycList(CONTEXT_OF_PCW_FN, WHH_WP));
 
     InferenceAnswer inferenceAnswer = getFirstInferenceAnswer(ISA_WILLIAM_HENRY_HARRISON_US_PRESIDENT_STRING, WHH_WP_MT);

@@ -62,7 +62,7 @@ public class ContextFactoryTest {
     ContextService instance = ContextFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getContextService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().context(), instance);
   }
   
 }

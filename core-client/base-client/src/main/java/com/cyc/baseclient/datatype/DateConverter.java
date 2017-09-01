@@ -21,15 +21,13 @@ package com.cyc.baseclient.datatype;
  * #L%
  */
 
-import com.cyc.base.exception.CycApiException;
 import com.cyc.base.annotation.CycObjectLibrary;
 import com.cyc.base.annotation.CycTerm;
 import com.cyc.base.cycobject.CycList;
-import com.cyc.baseclient.cycobject.CycConstantImpl;
-import static com.cyc.baseclient.datatype.TimeGranularity.*;
-import com.cyc.base.cycobject.Naut;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.cycobject.Naut;
+import com.cyc.base.exception.CycApiException;
 import static com.cyc.baseclient.CommonConstants.DAY_FN;
 import static com.cyc.baseclient.CommonConstants.HOUR_FN;
 import static com.cyc.baseclient.CommonConstants.MILLISECOND_FN;
@@ -37,14 +35,16 @@ import static com.cyc.baseclient.CommonConstants.MINUTE_FN;
 import static com.cyc.baseclient.CommonConstants.MONTH_FN;
 import static com.cyc.baseclient.CommonConstants.SECOND_FN;
 import static com.cyc.baseclient.CommonConstants.YEAR_FN;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.GuidImpl;
+import com.cyc.baseclient.cycobject.NautImpl;
+import static com.cyc.baseclient.datatype.TimeGranularity.*;
+import com.cyc.baseclient.exception.CycParseException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import com.cyc.baseclient.exception.CycParseException;
-import com.cyc.baseclient.cycobject.GuidImpl;
-import com.cyc.baseclient.cycobject.NautImpl;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
  * <P>DateConverter is designed to convert java-style dates to their corresponding
@@ -54,21 +54,18 @@ import java.text.SimpleDateFormat;
  * @see java.util.Calendar
  * @see com.cyc.baseclient.cycobject.Naut
  *
- * <P>Copyright (c) 2007 Cycorp, Inc. (Copyright is assigned to the United States Government under DFARS 252.227-7020).
- *
- *
  * @author baxter
  * @date January 15, 2008, 5:33 PM
- * @version $Id: DateConverter.java 171480 2017-04-18 15:44:49Z daves $
+ * @version $Id: DateConverter.java 173079 2017-07-28 00:13:46Z nwinant $
  */
 @CycObjectLibrary
 public class DateConverter extends DataTypeConverter<Date> {
   
+  private static final DateConverter SHARED_INSTANCE = new DateConverter();
+  
   //// Constructors
   /** Creates a new instance of DateConverter. */
-  private DateConverter() {
-    SHARED_INSTANCE = this;
-  }
+  private DateConverter() {}
 
   //// Public Area
   /** Returns an instance of
@@ -616,6 +613,4 @@ public class DateConverter extends DataTypeConverter<Date> {
   
   
   private static CycConstantImpl[] CYC_MONTH_TERMS = null;
-  private static DateConverter SHARED_INSTANCE = null;
-  //// Main
 }

@@ -21,12 +21,12 @@ package com.cyc.baseclient.cycobject;
  * #L%
  */
 
-import com.cyc.baseclient.xml.XmlWriter;
+import com.cyc.base.cycobject.CycVariable;
+import com.cyc.baseclient.connection.SublApiHelper;
 import com.cyc.baseclient.xml.TextUtil;
 import com.cyc.baseclient.xml.XmlStringWriter;
-import com.cyc.base.cycobject.CycVariable;
+import com.cyc.baseclient.xml.XmlWriter;
 import java.io.*;
-import com.cyc.baseclient.connection.SublApiHelper;
 
 /**
  * Provides the behavior and attributes of a Base Client variable, typically used
@@ -35,7 +35,7 @@ import com.cyc.baseclient.connection.SublApiHelper;
  * @version $0.1$
  * @author Stephen L. Reed
  */
-public class CycVariableImpl extends DefaultCycObject implements CycVariable {
+public class CycVariableImpl extends DefaultCycObjectImpl implements CycVariable {
 
   public static final String META_VARIABLE_PREFIX = ":";
   public static final String NORMAL_VARIABLE_PREFIX = "?";

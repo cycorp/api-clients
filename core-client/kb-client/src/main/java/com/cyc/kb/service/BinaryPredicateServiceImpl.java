@@ -36,20 +36,23 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.BinaryPredicateService;
+import com.cyc.kb.client.AbstractKbObjectFactoryService;
 import com.cyc.kb.client.BinaryPredicateImpl;
+import com.cyc.kb.spi.BinaryPredicateService;
 
 /**
  *
  * @author nwinant
  */
-public class BinaryPredicateServiceImpl<T extends BinaryPredicateImpl> extends KbPredicateServiceImpl<T> implements BinaryPredicateService<T> {
+public class BinaryPredicateServiceImpl 
+        extends AbstractKbObjectFactoryService<BinaryPredicateImpl> 
+        implements BinaryPredicateService {
   
   // Protected
   
   @Override
-  protected Class<T> getObjectType() {
-    return (Class<T>) BinaryPredicateImpl.class;
+  protected Class<BinaryPredicateImpl> getObjectType() {
+    return (Class<BinaryPredicateImpl>) BinaryPredicateImpl.class;
   }
   
 }

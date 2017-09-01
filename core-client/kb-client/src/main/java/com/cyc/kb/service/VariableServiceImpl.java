@@ -36,19 +36,20 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.VariableService;
+import com.cyc.kb.Variable;
 import com.cyc.kb.client.VariableImpl;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.kb.spi.VariableService;
 
 /**
  *
  * @author nwinant
  */
-public class VariableServiceImpl<T extends VariableImpl> implements VariableService<T> {
+public class VariableServiceImpl implements VariableService {
   
   @Override
-  public T get(String varStr) throws KbTypeException {
-    return (T) new VariableImpl(varStr);
+  public Variable get(String varStr) throws KbTypeException {
+    return new VariableImpl(varStr);
   }
   
 }

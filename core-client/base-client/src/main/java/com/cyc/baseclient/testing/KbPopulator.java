@@ -22,13 +22,13 @@ package com.cyc.baseclient.testing;
  */
 
 import com.cyc.base.CycAccess;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.ElMt;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.ElMtConstant;
-import com.cyc.baseclient.cycobject.ElMtCycNaut;
+import com.cyc.baseclient.cycobject.ElMtConstantImpl;
+import com.cyc.baseclient.cycobject.ElMtCycNautImpl;
 import static com.cyc.baseclient.testing.TestConstants.CONTEXT_OF_PCW_FN;
 import com.cyc.session.CycServerAddress;
 import java.util.HashSet;
@@ -40,11 +40,11 @@ import java.util.Set;
  */
 public class KbPopulator {  
   
-  static private KbPopulator me = new KbPopulator();
+  private static final KbPopulator ME = new KbPopulator();
   
   synchronized public static void ensureKBPopulated(CycAccess access) throws CycConnectionException {
-    if (!me.isAlreadyCalledForKB(access)){
-      me.populate(access);
+    if (!ME.isAlreadyCalledForKB(access)){
+      ME.populate(access);
     }
   }
   // Public
@@ -74,7 +74,7 @@ public class KbPopulator {
                     "\"Wikipedia contributors, \\\"William Henry Harrison,\\\" <i>Wikipedia, The Free Encyclopedia,</i> http://en.wikipedia.org/w/index.php?title=William_Henry_Harrison&oldid=619200023 (accessed August 20, 2014).\")",
             TestConstants.HISTORICAL_PEOPLE_DATA_MT, cyc);
     makeSentence("'(#$isa #$WilliamHenryHarrison (#$FormerFn #$UnitedStatesPresident))",
-            ElMtCycNaut.makeElMtCycNaut(
+            ElMtCycNautImpl.makeElMtCycNaut(
                     CycArrayList.makeCycList(CONTEXT_OF_PCW_FN, WHH_WP_PCW)),
             cyc);
     
@@ -102,7 +102,7 @@ public class KbPopulator {
             "    (#$isa ?EVENT #$WorkingEvent) " +
             "    (#$performedBy ?EVENT ?AGENT)) " +
             "   (#$subjectivelyEvaluates ?AGENT ?EVENT #$Challenging))",
-            ElMtConstant.makeElMtConstant(TestConstants.HUMAN_ACTIVITIES_MT), cyc);
+            ElMtConstantImpl.makeElMtConstant(TestConstants.HUMAN_ACTIVITIES_MT), cyc);
     makeSentence(
             "'(#$salientAssertions #$performedBy " +
                     " (#$ist #$HumanActivitiesMt " +
@@ -115,8 +115,9 @@ public class KbPopulator {
     makeSentence(
             "'(#$isa #$TreatyOak #$Plant)",
             CommonConstants.UNIVERSAL_VOCABULARY_MT, cyc);
+    
     makeSentence(
-            "'(#$isa #$BurningBushOldTestament #$Plant)",
+            "'(#$isa #$BurningBush #$Plant)",    // TODO: update #$BurningBush - nwinant, 2017-07-27
             CommonConstants.UNIVERSAL_VOCABULARY_MT, cyc);
     
     populatedKBs.add(cyc.getCycServer());

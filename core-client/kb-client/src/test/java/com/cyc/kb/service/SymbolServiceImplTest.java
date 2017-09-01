@@ -36,15 +36,16 @@ package com.cyc.kb.service;
  * #L%
  */
 
+import com.cyc.kb.Symbol;
 import com.cyc.kb.client.SymbolImpl;
 import com.cyc.kb.client.TestConstants;
 import com.cyc.kb.exception.KbTypeException;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -88,7 +89,7 @@ public class SymbolServiceImplTest {
   public void testGet() throws KbTypeException {
     System.out.println("get");
     SymbolImpl expResult = new SymbolImpl(":CYCLIST");
-    SymbolImpl result = instance.get(":CYCLIST");
+    Symbol result = instance.get(":CYCLIST");
     assertEquals(expResult, result);
     System.out.println(result);
   }

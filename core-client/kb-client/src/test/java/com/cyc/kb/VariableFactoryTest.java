@@ -62,7 +62,7 @@ public class VariableFactoryTest {
     VariableService instance = VariableFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getVariableService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().variable(), instance);
   }
   
 }

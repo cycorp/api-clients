@@ -35,7 +35,8 @@ import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -236,7 +237,7 @@ public class KbTestConstants {
   @CycTerm(cycl="#$Event")
   public final KbCollection Event = KbCollectionImpl.get("Event");
 
-  private static Logger log = Logger.getLogger(KbTestConstants.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(KbTestConstants.class);
   private KbTestConstants() throws KbException {
     super();
   }
@@ -251,16 +252,17 @@ public class KbTestConstants {
    */
   public static KbTestConstants getInstance() throws KbRuntimeException {
     try {
-      log.info("Instantiating KBAPITestConstants..");
+      LOG.info("Instantiating KBAPITestConstants..");
       if (instance == null) {
         instance = new KbTestConstants();
       }
-      log.info("DONE: Instantiating KBAPITestConstants..");
+      LOG.info("DONE: Instantiating KBAPITestConstants..");
       return instance;
     } catch (KbException e) {
       throw new KbRuntimeException(
-          "One of the final fields in com.cyc.kb.client.KBAPITestConstants.java could not be instantiated, can not proceed further.",
-          e);
+              "One of the final fields in " + KbTestConstants.class.getSimpleName()
+              + " could not be instantiated, can not proceed further.", 
+              e);
     }
   }
 }

@@ -26,6 +26,7 @@ package com.cyc.kb.client;
  */
 
 import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.Symbol;
@@ -44,9 +45,9 @@ import com.cyc.kb.exception.KbTypeException;
  * rare, but the API supports it for completeness. 
  * 
  * @author Vijay Raj
- * @version $Id: SymbolImpl.java 169909 2017-01-11 23:21:20Z nwinant $  
+ * @version $Id: SymbolImpl.java 173072 2017-07-27 01:21:15Z nwinant $  
  */
-public class SymbolImpl extends StandardKbObject implements Symbol {
+public class SymbolImpl extends StandardKbObject<CycSymbol> implements Symbol {
 
   /**
    * Not part of the KB API. This default constructor only has the effect of
@@ -67,7 +68,7 @@ public class SymbolImpl extends StandardKbObject implements Symbol {
    * @throws KbTypeException if it is not an instance of CycSymbolImpl
    */
   @Deprecated
-  public SymbolImpl(CycObject cycObject) throws KbTypeException {
+  public SymbolImpl(CycSymbol cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -101,11 +102,7 @@ public class SymbolImpl extends StandardKbObject implements Symbol {
    */
   @Override
   protected boolean isValidCore(CycObject cycObject) {
-    if (cycObject instanceof CycSymbolImpl) {
-      return true;
-    } else {
-      return false;
-    }
+    return cycObject instanceof CycSymbol;
   }
     
   /**

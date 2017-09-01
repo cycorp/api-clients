@@ -22,37 +22,35 @@ package com.cyc.km.query.construction;
  */
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.CycSymbol;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.connection.SublApiHelper;
 import com.cyc.baseclient.connection.SublApiHelper.AsIsTerm;
 import com.cyc.baseclient.cycobject.NautImpl;
-import com.cyc.km.modeling.task.CycBasedTask;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.client.KbCollectionImpl;
 import com.cyc.kb.client.KbIndividualImpl;
 import com.cyc.kb.client.KbObjectImpl;
-import com.cyc.nl.Span;
 import com.cyc.kb.exception.KbException;
+import com.cyc.km.modeling.task.CycBasedTask;
+import com.cyc.nl.Span;
 import com.cyc.query.Query;
-import com.cyc.query.QueryReader;
-import com.cyc.query.exception.QueryRuntimeException;
+import com.cyc.query.client.QueryReader;
 import com.cyc.query.exception.QueryConstructionException;
-import com.cyc.session.exception.SessionException;
+import com.cyc.query.exception.QueryRuntimeException;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
+import com.cyc.session.exception.SessionException;
 import com.cyc.xml.query.CyclQuery;
 import com.cyc.xml.query.FormulaTemplate;
 import com.cyc.xml.query.FormulaTemplateUnmarshaller;
-
 import java.io.ByteArrayInputStream;
 import java.util.*;
-
 import javax.xml.bind.JAXBException;
 
 /**
@@ -66,7 +64,7 @@ import javax.xml.bind.JAXBException;
  * which defines filters, etc., to guide the search results to task-relevant
  * terms.
  *
- * @see com.cyc.query.QueryImpl
+ * @see com.cyc.query.client.QueryImpl
  * @author David Baxter
  *
  */
@@ -397,7 +395,7 @@ public class QuerySearch {
         for (final Object obj : getCycQuerySearchResults()) {
           processOneFolder((CycList) obj);
         }
-      } catch (Exception ex) {
+      } catch (CycApiException | SessionException | KbException | QueryConstructionException ex) {
         throw new RuntimeException(ex);
       }
     }

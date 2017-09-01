@@ -22,53 +22,52 @@ package com.cyc.baseclient.cycobject;
  */
 
 //// External Imports
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.kb.ArgPosition;
 import com.cyc.base.cycobject.CycConstant;
-import com.cyc.base.cycobject.CycObject;
-import com.cyc.base.cycobject.NonAtomicTerm;
-import com.cyc.base.cycobject.DenotationalTerm;
-import com.cyc.base.cycobject.Naut;
-import com.cyc.base.cycobject.CycVariable;
-import java.math.BigInteger;
-import java.util.*;
-import static org.junit.Assert.*;
-import org.junit.Test;
-import com.cyc.baseclient.CommonConstants;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.CycVariable;
+import com.cyc.base.cycobject.DenotationalTerm;
+import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.cycobject.Nart;
+import com.cyc.base.cycobject.Naut;
+import com.cyc.base.cycobject.NonAtomicTerm;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.baseclient.CommonConstants;
+import static com.cyc.baseclient.CommonConstants.*;
 import com.cyc.baseclient.CycObjectFactory;
 import static com.cyc.baseclient.CycObjectFactory.makeCycVariable;
 import com.cyc.baseclient.connection.SublApiHelper;
-import com.cyc.baseclient.testing.TestUtils;
-import static com.cyc.baseclient.testing.TestUtils.getCyc;
 import static com.cyc.baseclient.cycobject.ArgPositionImpl.*;
 import static com.cyc.baseclient.cycobject.CycArrayList.makeCycList;
-import static com.cyc.baseclient.CommonConstants.*;
-import com.cyc.baseclient.exception.CycApiServerSideException;
-import com.cyc.baseclient.datatype.DateConverter;
-import static com.cyc.baseclient.testing.TestConstants.*;
-import com.cyc.baseclient.util.CycUtils;
-import com.cyc.baseclient.util.MyStreamTokenizer;
 import com.cyc.baseclient.datatype.Span;
+import com.cyc.baseclient.exception.CycApiServerSideException;
 import com.cyc.baseclient.parser.InvalidConstantGuidException;
 import com.cyc.baseclient.parser.InvalidConstantNameException;
 import com.cyc.baseclient.parser.ParseException;
 import com.cyc.baseclient.parser.TokenMgrError;
 import com.cyc.baseclient.parser.UnsupportedVocabularyException;
 import com.cyc.baseclient.testing.TestConstants;
+import static com.cyc.baseclient.testing.TestConstants.*;
 import com.cyc.baseclient.testing.TestGuids;
 import com.cyc.baseclient.testing.TestSentences;
+import com.cyc.baseclient.testing.TestUtils;
 import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
+import static com.cyc.baseclient.testing.TestUtils.getCyc;
+import com.cyc.baseclient.util.CycUtils;
+import com.cyc.baseclient.util.MyStreamTokenizer;
 import com.cyc.baseclient.xml.Marshaller;
 import com.cyc.baseclient.xml.XmlStringWriter;
+import com.cyc.kb.ArgPosition;
 import com.cyc.session.exception.SessionException;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
+import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -239,7 +238,7 @@ public class CycObjectUnitTest {
   @Test
   public void testCycFormula() throws CycConnectionException {
     System.out.println("\n*** testCycFormula ***");
-    final FormulaSentence isaXThing = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence isaXThing = FormulaSentenceImpl.makeCycFormulaSentence(
             ISA, VAR_X, THING);
     assertEquals(isaXThing.getFirstArgPositionForTerm(isaXThing),
             ArgPositionImpl.TOP);
@@ -253,7 +252,7 @@ public class CycObjectUnitTest {
     assertTrue(isaXThing.contains(ISA));
     assertTrue(isaXThing.contains(VAR_X));
     assertTrue(isaXThing.contains(THING));
-    final FormulaSentence someXIsaThing = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence someXIsaThing = FormulaSentenceImpl.makeCycFormulaSentence(
             THERE_EXISTS, VAR_X, isaXThing);
     assertTrue(someXIsaThing.contains(isaXThing));
     assertTrue(someXIsaThing.treeContains(isaXThing));
@@ -267,14 +266,14 @@ public class CycObjectUnitTest {
       assertEquals(new ArrayList(Arrays.asList(VAR_X)),
               new ArrayList(isaXThing.findFreeVariables()));
       assertTrue(someXIsaThing.findFreeVariables().isEmpty());
-      final FormulaSentence everyXIsaThing = CycFormulaSentence.makeCycFormulaSentence(
+      final FormulaSentence everyXIsaThing = FormulaSentenceImpl.makeCycFormulaSentence(
               FOR_ALL, VAR_X, isaXThing);
       assertTrue(everyXIsaThing.findFreeVariables().isEmpty());
-      final FormulaSentence isaXY = CycFormulaSentence.makeCycFormulaSentence(
+      final FormulaSentence isaXY = FormulaSentenceImpl.makeCycFormulaSentence(
               ISA, VAR_X, VAR_Y);
       assertEquals(new ArrayList(Arrays.asList(VAR_X, VAR_Y)),
               new ArrayList(isaXY.findFreeVariables()));
-      final FormulaSentence conj = CycFormulaSentence.makeConjunction(
+      final FormulaSentence conj = FormulaSentenceImpl.makeConjunction(
               isaXThing, isaXY);
       assertEquals(new ArrayList(Arrays.asList(VAR_X, VAR_Y)),
               new ArrayList(conj.findFreeVariables()));
@@ -362,8 +361,8 @@ public class CycObjectUnitTest {
     System.out.println("\n*** testCompactExternalIds ***");
     final Object obj = CommonConstants.BASE_KB;
     final String id = "Mx4rvViBEZwpEbGdrcN5Y29ycA";
-    assertEquals(id, DefaultCycObject.toCompactExternalId(obj, getCyc()));
-    assertEquals(obj, DefaultCycObject.fromCompactExternalId(id, getCyc()));
+    assertEquals(id, DefaultCycObjectImpl.toCompactExternalId(obj, getCyc()));
+    assertEquals(obj, DefaultCycObjectImpl.fromCompactExternalId(id, getCyc()));
     System.out.println("*** testCompactExternalIds OK ***");
   }
 
@@ -1065,7 +1064,7 @@ public class CycObjectUnitTest {
     final CycList cycList19c = cycListParser.read(listAsString);
     assertTrue(cycList19c.cyclify().indexOf("330000000000") > -1);
     assertTrue(
-            DefaultCycObject.cyclify(cycList19c).indexOf("330000000000") > -1);
+            DefaultCycObjectImpl.cyclify(cycList19c).indexOf("330000000000") > -1);
     doTestCycListAdd();
 
     // subst
@@ -1439,23 +1438,23 @@ public class CycObjectUnitTest {
   }
 
   /**
-   * Tests the character support in the DefaultCycObject class.
+   * Tests the character support in the DefaultCycObjectImpl class.
    */
   @Test
   public void testCharacter() {
     System.out.println("\n*** testCharacter ***");
     final Character[] testChars = {'a', 'A', '\t', ' '};
     for (final Character character : testChars) {
-      final boolean testResult = DefaultCycObject.isCycLObject(character);
+      final boolean testResult = DefaultCycObjectImpl.isCycLObject(character);
       assertTrue("char test " + character, testResult);
     }
     for (final Character character : testChars) {
-      final String cyclified = DefaultCycObject.cyclify(character);
+      final String cyclified = DefaultCycObjectImpl.cyclify(character);
       final boolean testResult = cyclified.startsWith("#\\");
       assertTrue("char cyclify test " + character, testResult);
     }
     for (final Character character : testChars) {
-      final String cyclified = DefaultCycObject.cyclifyWithEscapeChars(character,
+      final String cyclified = DefaultCycObjectImpl.cyclifyWithEscapeChars(character,
               false);
       final boolean testResult = cyclified.startsWith("#\\\\");
       assertTrue("char escaped cyclify test " + character, testResult);
@@ -1464,33 +1463,33 @@ public class CycObjectUnitTest {
   }
 
   /**
-   * Tests the Unicode support in the DefaultCycObject class.
+   * Tests the Unicode support in the DefaultCycObjectImpl class.
    */
   @Test
   public void testUnicodeString() {
     System.out.println("\n*** testUnicodeString ***");
-    String result = DefaultCycObject.cyclifyWithEscapeChars("abc", false);
+    String result = DefaultCycObjectImpl.cyclifyWithEscapeChars("abc", false);
     //System.out.println("abc test |"+result+"|");
     assertTrue("abc test", "\"abc\"".equals(result));
 
 
 
-    result = DefaultCycObject.cyclifyWithEscapeChars("a\\b", false);
+    result = DefaultCycObjectImpl.cyclifyWithEscapeChars("a\\b", false);
     //System.out.println("a\\b test |"+result+"|");
     assertTrue("a\\\\b test", "\"a\\\\b\"".equals(result));
 
-    result = DefaultCycObject.cyclifyWithEscapeChars("a\"b", false);
+    result = DefaultCycObjectImpl.cyclifyWithEscapeChars("a\"b", false);
     //System.out.println("a\"b test |"+result+"|");
     assertTrue("a\"c test", "\"a\\\"b\"".equals(result));
 
     StringBuffer sb = new StringBuffer();
     sb.append('a');
     sb.append((char) (0x140));
-    result = DefaultCycObject.cyclifyWithEscapeChars(sb.toString(), false);
+    result = DefaultCycObjectImpl.cyclifyWithEscapeChars(sb.toString(), false);
     //System.out.println("a&u140 test |"+result+"|");
     assertEquals("(" + unicodeStringFn + " \"a&u140;\")", result);
 
-    result = DefaultCycObject.cyclifyWithEscapeChars(sb.toString(), true);
+    result = DefaultCycObjectImpl.cyclifyWithEscapeChars(sb.toString(), true);
     //System.out.println("a&u140 test |"+result+"|");
     assertEquals("(list " + unicodeStringFn + " \"a&u140;\")", result);
 

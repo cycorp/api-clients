@@ -25,14 +25,10 @@ package com.cyc.kb.quant;
  * #L%
  */
 
-import com.cyc.kb.client.quant.ForAllQuantifiedInstanceRestrictedVariable;
 import com.cyc.kb.client.KbCollectionImpl;
 import com.cyc.kb.client.TestConstants;
+import com.cyc.kb.client.quant.ForAllQuantifiedInstanceRestrictedVariable;
 import com.cyc.kb.exception.KbException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,12 +40,8 @@ import org.junit.Test;
  * @author vijay
  */
 public class ForAllQuantifiedInstanceLiteralTest {
-
-  private static Logger log = null;
-
+  
   public ForAllQuantifiedInstanceLiteralTest() throws Exception {
-    log = Logger.getLogger(ForAllQuantifiedInstanceLiteralTest.class.getName());
-    log.setLevel(Level.FINE);
     TestConstants.ensureInitialized();
   }
 

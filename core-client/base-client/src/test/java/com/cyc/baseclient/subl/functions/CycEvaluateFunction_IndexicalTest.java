@@ -26,7 +26,7 @@ import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.datatype.DateConverter;
 import static com.cyc.baseclient.subl.functions.CycEvaluateFunction.CYC_EVALUATE_INDEXICAL;
 import com.cyc.baseclient.subl.functions.CycEvaluateFunction.UnevaluatableExpressionException;
@@ -68,10 +68,9 @@ public class CycEvaluateFunction_IndexicalTest extends AbstractSublFunctionTest 
             access.getLookupTool().getConstantByName("#$TheCurrentKBNumber"));
     indexicalsResolvableToIntegers = Arrays.asList(
             access.getLookupTool().getConstantByName("#$SecondsSince1970-Indexical"));
-    unevaluatableIndexicals = Arrays.asList(
-            access.getLookupTool().getConstantByName("#$ThisProblemStore"),
+    unevaluatableIndexicals = Arrays.asList(access.getLookupTool().getConstantByName("#$ThisProblemStore"),
             access.getLookupTool().getConstantByName("#$ThisInference"),
-            CycFormulaSentence
+            FormulaSentenceImpl
             .makeCycSentence(access, "(TheNamedFn SetOrCollection \"indexical 1\")"));
     nonIndexicals = Arrays.asList(
             access.getLookupTool().getConstantByName("#$Dog"),

@@ -36,20 +36,23 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.SecondOrderCollectionService;
+import com.cyc.kb.client.AbstractKbObjectFactoryService;
 import com.cyc.kb.client.SecondOrderCollectionImpl;
+import com.cyc.kb.spi.SecondOrderCollectionService;
 
 /**
  *
  * @author nwinant
  */
-public class SecondOrderCollectionServiceImpl<T extends SecondOrderCollectionImpl> extends KbCollectionServiceImpl<T> implements SecondOrderCollectionService<T> {
+public class SecondOrderCollectionServiceImpl 
+        extends AbstractKbObjectFactoryService<SecondOrderCollectionImpl>
+        implements SecondOrderCollectionService {
   
   // Protected
   
   @Override
-  protected Class<T> getObjectType() {
-    return (Class<T>) SecondOrderCollectionImpl.class;
+  protected Class<SecondOrderCollectionImpl> getObjectType() {
+    return (Class<SecondOrderCollectionImpl>) SecondOrderCollectionImpl.class;
   }
   
 }

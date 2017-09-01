@@ -21,16 +21,16 @@ package com.cyc.baseclient;
  * #L%
  */
 
-import com.cyc.base.exception.BaseClientRuntimeException;
 import com.cyc.base.CommandTool;
 import com.cyc.base.CycAccess;
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Fort;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
@@ -119,7 +119,7 @@ public class CycCommandTool implements CommandTool {
   @Override
   public FormulaSentence converseSentence(Object command)
           throws CycConnectionException, CycApiException {
-    return new CycFormulaSentence(converseList(command));
+    return new FormulaSentenceImpl(converseList(command));
   }
 
   /**

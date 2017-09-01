@@ -23,37 +23,35 @@ package com.cyc.baseclient.examples;
 
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
-import java.util.List;
-import com.cyc.base.exception.CycApiException;
 import com.cyc.base.cycobject.CycList;
-import com.cyc.base.cycobject.FormulaSentence;
-
-//// Internal Imports
-import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
-import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.NartImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.base.cycobject.ElMt;
+import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Nart;
-import com.cyc.query.parameters.InferenceParameters;
-import com.cyc.query.InferenceStatus;
-import com.cyc.query.InferenceSuspendReason;
-import com.cyc.baseclient.CommonConstants;
-import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-import com.cyc.baseclient.inference.DefaultInferenceWorker;
-import com.cyc.baseclient.inference.DefaultInferenceWorkerSynch;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.inference.InferenceWorker;
 import com.cyc.base.inference.InferenceWorkerListener;
 import com.cyc.base.inference.InferenceWorkerSynch;
-import com.cyc.nl.ParaphraserFactory;
-import com.cyc.baseclient.parser.CyclParserUtil;
+import com.cyc.baseclient.CommonConstants;
 import static com.cyc.baseclient.CommonConstants.*;
+import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
+import com.cyc.baseclient.cycobject.NartImpl;
+import com.cyc.baseclient.inference.DefaultInferenceWorker;
+import com.cyc.baseclient.inference.DefaultInferenceWorkerSynch;
+import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
+import com.cyc.baseclient.parser.CyclParserUtil;
 import static com.cyc.baseclient.testing.TestConstants.*;
 import com.cyc.nl.Paraphraser;
+import com.cyc.nl.ParaphraserFactory;
+import com.cyc.query.InferenceStatus;
+import com.cyc.query.InferenceSuspendReason;
+import com.cyc.query.parameters.InferenceParameters;
 import com.cyc.session.exception.SessionException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +68,7 @@ import org.slf4j.LoggerFactory;
 
  Created on : May 1, 2009, 11:13:55 AM Author : tbrussea
  *
- * @version $Id: ApiExamples.java 171043 2017-03-23 00:56:58Z nwinant $
+ * @version $Id: ApiExamples.java 173021 2017-07-21 18:36:21Z nwinant $
  */
 public class ApiExamples {
 
@@ -144,7 +142,7 @@ public class ApiExamples {
       inferenceParameters.setMaxTime(10).setMaxAnswerCount(100).setMaxTransformationDepth(2);
       inferenceParameters.put(":ALLOW-INDETERMINATE-RESULTS?", Boolean.FALSE);
       ElMt inferencePSC = access.getObjectTool().makeElMt("InferencePSC");
-      CycFormulaSentence query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
+      FormulaSentenceImpl query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
               inferencePSC, inferenceParameters, access, 10000);
       List answers = null;
@@ -178,7 +176,7 @@ public class ApiExamples {
     System.out.println("Starting Cyc synchronous query examples.");
     try {
       ElMt inferencePSC = access.getObjectTool().makeElMt("InferencePSC");
-      CycFormulaSentence query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
+      FormulaSentenceImpl query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       InferenceWorkerSynch worker = new DefaultInferenceWorkerSynch(query,
               inferencePSC, null, access, 10000);
       try {
@@ -198,7 +196,7 @@ public class ApiExamples {
     System.out.println("Starting Cyc asynchronous query examples.");
     try {
       ElMt inferencePSC = access.getObjectTool().makeElMt("InferencePSC");
-      CycFormulaSentence query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
+      FormulaSentenceImpl query = CyclParserUtil.parseCycLSentence("(isa ?X Dog)", true, access);
       final InferenceWorker worker = new DefaultInferenceWorker(query,
               inferencePSC, null, access, 10000);
       worker.addInferenceListener(new InferenceWorkerListener() {
@@ -251,12 +249,12 @@ public class ApiExamples {
       // that begin with "assert" like assertIsa, assertIsas, assertGenls,
       // assertComment, etc. that are worth investigating
       // Creating a formula (local) for asserting
-      final FormulaSentence gaf = CycFormulaSentence.makeCycFormulaSentence(
+      final FormulaSentence gaf = FormulaSentenceImpl.makeCycFormulaSentence(
               access.getLookupTool().getKnownConstantByName("likesAsFriend"),
               access.getLookupTool().getKnownConstantByName("BillClinton"),
               access.getLookupTool().getKnownConstantByName("HillaryClinton"));
       // alternatvely, one could use the CycLParser
-      CycFormulaSentence gaf2 = CyclParserUtil.parseCycLSentence("(likesAsFriend BillClinton HillaryClinton)", true, access);
+      FormulaSentenceImpl gaf2 = CyclParserUtil.parseCycLSentence("(likesAsFriend BillClinton HillaryClinton)", true, access);
 
       assert gaf.equals(gaf2) : "Good grief! List parsing appears to be broken.";
 
@@ -296,7 +294,7 @@ public class ApiExamples {
       access.getOptions().setKePurpose(generalCycKE); // needed to maintain bookeeping information
 
       // find nart by external id (preferred lookup mechanism)
-      Nart apple = (Nart) DefaultCycObject.fromCompactExternalId("Mx8Ngh4rvVipdpwpEbGdrcN5Y29ycB4rvVjBnZwpEbGdrcN5Y29ycA",
+      Nart apple = (Nart) DefaultCycObjectImpl.fromCompactExternalId("Mx8Ngh4rvVipdpwpEbGdrcN5Y29ycB4rvVjBnZwpEbGdrcN5Y29ycA",
               access);
 
       // find nart by name (dispreferred because names in the KB can change)
@@ -305,7 +303,7 @@ public class ApiExamples {
       assert apple.equals(apple2) : "Lookup failed to produce equal results.";
 
       // getting the external id for a NART
-      String appleEID = DefaultCycObject.toCompactExternalId(apple, access);
+      String appleEID = DefaultCycObjectImpl.toCompactExternalId(apple, access);
 
       // creating a nart
       // There is no direct way of creating NARTs, they are an implementation detail
@@ -365,10 +363,10 @@ public class ApiExamples {
       access.getOptions().setKePurpose(generalCycKE); // needed to maintain bookeeping information
 
       // obtaining a constant from its external ID (preferred mechanism for lookup)
-      CycConstantImpl dog = (CycConstantImpl) DefaultCycObject.fromCompactExternalId("Mx4rvVjaoJwpEbGdrcN5Y29ycA", access);
+      CycConstantImpl dog = (CycConstantImpl) DefaultCycObjectImpl.fromCompactExternalId("Mx4rvVjaoJwpEbGdrcN5Y29ycA", access);
 
       // obtaining an external id from a CycObject
-      String externalId = DefaultCycObject.toCompactExternalId(dog, access);
+      String externalId = DefaultCycObjectImpl.toCompactExternalId(dog, access);
 
       // obtaining a constant from its name
       // Note: not preferred, because constant names can change in the KB
@@ -416,7 +414,7 @@ public class ApiExamples {
   public static final void helloWorldExample() {
     try {
 
-      CycConstantImpl planetInSolarSystem = (CycConstantImpl) DefaultCycObject.fromCompactExternalId("Mx4rWIie-jN6EduAAADggVbxzQ", access);
+      CycConstantImpl planetInSolarSystem = (CycConstantImpl) DefaultCycObjectImpl.fromCompactExternalId("Mx4rWIie-jN6EduAAADggVbxzQ", access);
       CycList planets = access.getLookupTool().getAllInstances(planetInSolarSystem);
       for (Object planet : planets) {
         System.out.println("Hello '"

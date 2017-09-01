@@ -23,14 +23,12 @@ package com.cyc.baseclient.cycobject;
 
 //// External Imports:
 import com.cyc.base.cycobject.CycSymbol;
-import java.io.IOException;
-import java.util.Locale;
-
-//// Internal Imports
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.xml.TextUtil;
 import com.cyc.baseclient.xml.XmlStringWriter;
 import com.cyc.baseclient.xml.XmlWriter;
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Provides the behavior and attributes of a Base Client symbol, typically used
@@ -39,7 +37,7 @@ import com.cyc.baseclient.xml.XmlWriter;
  * @version $0.1$
  * @author Stephen L. Reed
  */
-public class CycSymbolImpl extends DefaultCycObject implements CycSymbol {
+public class CycSymbolImpl extends DefaultCycObjectImpl implements CycSymbol {
 
   private boolean shouldQuote = true;
   private boolean isSpecialPackageName = false;

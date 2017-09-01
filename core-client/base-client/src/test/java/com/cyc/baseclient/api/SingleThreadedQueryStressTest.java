@@ -39,7 +39,7 @@ import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycArrayList;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.testing.TestUtils;
 import static com.cyc.baseclient.testing.TestUtils.*;
@@ -128,13 +128,13 @@ public class SingleThreadedQueryStressTest {
 
   @Test
   public void testIndexedByConstant() throws CycConnectionException {
-    runQueryRepeatedly(CycFormulaSentence.makeCycFormulaSentence(testPredicate,
+    runQueryRepeatedly(FormulaSentenceImpl.makeCycFormulaSentence(testPredicate,
             testConstant, var), testMt, CycArrayList.makeCycList(testString));
   }
 
   @Test
   public void testIndexedByString() throws CycConnectionException {
-    runQueryRepeatedly(CycFormulaSentence.makeCycFormulaSentence(testPredicate,
+    runQueryRepeatedly(FormulaSentenceImpl.makeCycFormulaSentence(testPredicate,
             var, testString), testMt, CycArrayList.makeCycList(testConstant));
   }
 

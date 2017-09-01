@@ -44,7 +44,8 @@ public class TestGuids {
   public static final String ANIMAL_GUID_STRING = "bd58b031-9c29-11b1-9dad-c379636f7270";
   public static final String APPLE_TREE_GUID_STRING = "bd58c19d-9c29-11b1-9dad-c379636f7270";
   public static final String BIOLIGICAL_SPECIES_GUID_STRING = "bd58caeb-9c29-11b1-9dad-c379636f7270";
-  public static final String BIOLOGY_VOCABULARY_MT_GUID_STRING = "bdd51776-9c29-11b1-9dad-c379636f7270";
+  //public static final String BIOLOGY_VOCABULARY_MT_GUID_STRING = "bdd51776-9c29-11b1-9dad-c379636f7270";
+  public static final String BIOLOGY_MT_GUID_STRING = "bd58da90-9c29-11b1-9dad-c379636f7270";
   public static final String BRAZIL_GUID_STRING = "bd588f01-9c29-11b1-9dad-c379636f7270";
   public static final String BURNING_BUSH_GUID_STRING = "be846866-9c29-11b1-9dad-c379636f7270";
   public static final String BUSH_DOG_GUID_STRING = "9cb46f54-ad16-11de-9e34-00219b49082c";

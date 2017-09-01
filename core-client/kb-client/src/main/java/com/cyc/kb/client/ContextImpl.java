@@ -21,8 +21,6 @@ package com.cyc.kb.client;
  * #L%
  */
 
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
@@ -31,6 +29,8 @@ import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.ElMt;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.cycobject.Guid;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycObjectFactory;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
@@ -38,25 +38,20 @@ import com.cyc.baseclient.datatype.TimeInterval;
 import com.cyc.baseclient.datatype.TimeIntervalConverter;
 import com.cyc.baseclient.exception.CycParseException;
 import com.cyc.kb.Context;
-import com.cyc.kb.client.LookupType;
+import com.cyc.kb.DefaultContext;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
-import com.cyc.kb.DefaultContext;
-import com.cyc.kb.client.config.KbDefaultContext;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
-import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
+import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeConflictException;
 import com.cyc.kb.exception.KbTypeException;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-
 
 /**
  * A <code>Context</code> object is a facade for a <code>#$Microtheory</code> 
@@ -64,102 +59,13 @@ import org.slf4j.LoggerFactory;
  * 
  * A context is a grouping of assertions that share a set of common assumptions. 
  * Each Assertion has to be explicitly stated to be true in at least one context.
- *
+ * 
  * @author Vijay Raj
- * @version $Id: ContextImpl.java 169955 2017-01-13 22:47:54Z daves $
+ * @version $Id: ContextImpl.java 173082 2017-07-28 15:36:55Z nwinant $
  */
-public class ContextImpl extends KbIndividualImpl implements Context {
-
-  private static final Logger log = LoggerFactory.getLogger(ContextImpl.class.getName());
-  private static final CycConstant MT_SPACE = new CycConstantImpl("MtSpace",
-          new Guid("abb96eb5-e798-11d6-8ac9-0002b3a333c3"));
-  private static final CycConstant MT_TIME_DIM_FN = new CycConstantImpl(
-          "MtTimeDimFn", new Guid("47537942-331d-11d7-922f-0002b3a333c3"));
-  private static final DenotationalTerm TYPE_CORE =
-          new CycConstantImpl("Microtheory", new Guid("bd5880d5-9c29-11b1-9dad-c379636f7270"));
-
-  static DenotationalTerm getClassTypeCore() {
-    return TYPE_CORE;
-  }
+public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
   
-  /**
-   * Not part of the KB API. This default constructor only has the effect of
-   * ensuring that there is access to a Cyc server.
-   */
-  ContextImpl () {
-    super();
-  }
-  
-  /**
-   * EXPERIMENTAL!!! NOT PART OF THE KB API
-   * 
-   * A copy constructor to allow higher level APIs to construct
-   * subclass objects using super class objects, when appropriate.
-   * 
-   * @param ctx the Context to be copied
-   */
-  protected ContextImpl (DefaultContext c, Context ctx) {
-	  super();
-	  this.setCore(ctx);
-  }
-  
-  /**
-   * Not part of the KB API. An implementation-dependent constructor.
-   * <p>
-   * It is used when the result of query is a CycObject and is known to be or
-   * requested to be cast as an instance of Context.
-   *
-   * @param cycObject the CycObject wrapped by <code>Context</code>. The constructor
-   * verifies that the CycObject is an instance of #$Microtheory
-   * 
-   * @throws KbTypeException if cycObject is not or could not be made 
-   * an instance of #$Microtheory
-   */
-  ContextImpl(CycObject cycObject) throws KbTypeException {
-    super(cycObject);
-  }
-
-  /**
-   * This not part of the public, supported KB API. finds or creates an instance of #$Microtheory represented
-   * by ctxStr in the underlying KB
-   * <p>
-   *
-   * @param ctxStr  the string representing an #$Microtheory in the KB
-   * 
-   * @throws CreateException if the #$Microtheory represented by ctxStr is not found
-   * and could not be created 
-   * @throws KbTypeException if the term represented by ctxStr is not an instance
-   * of #$Microtheory and cannot be made into one. 
-   */
-  ContextImpl(String ctxStr) throws KbTypeException, CreateException {
-    super(ctxStr);
-  }
-
-  /**
-   * This not part of the public, supported KB API. finds or creates; or finds an instance of #$Microtheory
-   * represented by ctxStr in the underlying KB based on input ENUM
-   * <p>
-   *
-   * @param ctxStr  the string representing an instance of #$Microtheory in the KB
-   * @param lookup the enum to specify LookupType: FIND or FIND_OR_CREATE
-   * 
-   * @throws CreateException 
-   * @throws KbTypeException 
-   *
-   * @throws KbObjectNotFoundException  if the #$Microtheory represented by ctxStr
-   * is not found and could not be created
-   * @throws InvalidNameException if the string ctxStr does not conform to Cyc constant-naming
-   * conventions
-   * 
-   * @throws KbTypeException  if the term represented by ctxStr is not an instance of #$Microtheory and lookup is
-   * set to find only {@link LookupType#FIND}
-   * @throws KbTypeConflictException if the term represented by ctxStr is not an instance of #$Microtheory,
-   * and lookup is set to find or create; and if the term cannot be made an instance #$Microtheory by asserting
-   * new knowledge.
-   */
-  ContextImpl(String ctxStr, LookupType lookup) throws KbTypeException, CreateException {
-    super(ctxStr, lookup);
-  }
+  //====|    Static methods    |==================================================================//
 
   /**
    * Get the
@@ -175,7 +81,7 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws CreateException 
    */
   public static ContextImpl get(String nameOrId) throws KbTypeException, CreateException{
-    return KbObjectFactory.get(nameOrId, ContextImpl.class);
+    return KbObjectImplFactory.get(nameOrId, ContextImpl.class);
   }
 
   /**
@@ -195,7 +101,7 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    */
   @Deprecated
   public static ContextImpl get(CycObject cycObject) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(cycObject, ContextImpl.class);
+    return KbObjectImplFactory.get(cycObject, ContextImpl.class);
   }
 
   /**
@@ -220,11 +126,12 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws CreateException 
    */
   @SuppressWarnings("deprecation")
-  public static Context get(CycObject monad, TimeInterval time) throws KbTypeException, CreateException {
+  public static Context get(CycObject monad, TimeInterval time) 
+          throws KbTypeException, CreateException {
     CycObject mtNat = new NautImpl(MT_SPACE,
             monad, new NautImpl(MT_TIME_DIM_FN,
             time.toCycTerm()));
-    return KbObjectFactory.get(mtNat, ContextImpl.class);
+    return KbObjectImplFactory.get(mtNat, ContextImpl.class);
   }
 
   /**
@@ -247,10 +154,11 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws KbTypeException
    * @throws CreateException 
    */
-  public static Context get(Context monad, TimeInterval time) throws KbTypeException, CreateException {
+  public static Context get(Context monad, TimeInterval time) 
+          throws KbTypeException, CreateException {
     return ContextImpl.get(ContextImpl.from(monad).getCore(), time);
   }
-
+  
   /**
    * Find or create a
    * <code>Context</code> object named
@@ -276,7 +184,7 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws CreateException 
    */
   public static ContextImpl findOrCreate(String nameOrId) throws CreateException, KbTypeException{
-    return KbObjectFactory.findOrCreate(nameOrId, ContextImpl.class);
+    return KbObjectImplFactory.findOrCreate(nameOrId, ContextImpl.class);
   }
 
   /**
@@ -304,8 +212,9 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws CreateException 
    */
   @Deprecated
-  public static ContextImpl findOrCreate(CycObject cycObject) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(cycObject, ContextImpl.class);
+  public static ContextImpl findOrCreate(CycObject cycObject)
+          throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(cycObject, ContextImpl.class);
   }
 
   /**
@@ -340,8 +249,9 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static ContextImpl findOrCreate(String nameOrId, KbCollection constraintCol) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ContextImpl.class);
+  public static ContextImpl findOrCreate(String nameOrId, KbCollection constraintCol) 
+          throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ContextImpl.class);
   }
 
   /**
@@ -377,8 +287,9 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static ContextImpl findOrCreate(String nameOrId, String constraintColStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ContextImpl.class);
+  public static ContextImpl findOrCreate(String nameOrId, String constraintColStr) 
+          throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ContextImpl.class);
   }
 
   /**
@@ -414,8 +325,9 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static ContextImpl findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintCol, ctx, ContextImpl.class);
+  public static ContextImpl findOrCreate(String nameOrId, KbCollection constraintCol, Context ctx)
+          throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintCol, ctx, ContextImpl.class);
   }
 
   /**
@@ -452,8 +364,9 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @throws KbTypeException 
    * @throws CreateException 
    */
-  public static ContextImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) throws CreateException, KbTypeException {
-    return KbObjectFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, ContextImpl.class);
+  public static ContextImpl findOrCreate(String nameOrId, String constraintColStr, String ctxStr) 
+          throws CreateException, KbTypeException {
+    return KbObjectImplFactory.findOrCreate(nameOrId, constraintColStr, ctxStr, ContextImpl.class);
   }
 
   /**
@@ -493,7 +406,7 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, ContextImpl.class);
+    return KbObjectImplFactory.getStatus(nameOrId, ContextImpl.class);
   }
 
   /**
@@ -505,69 +418,167 @@ public class ContextImpl extends KbIndividualImpl implements Context {
    * @return an enum describing the existential status of the entity in the KB
    */
   public static KbStatus getStatus(CycObject cycObject) {
-    return KbObjectFactory.getStatus(cycObject, ContextImpl.class);
+    return KbObjectImplFactory.getStatus(cycObject, ContextImpl.class);
+  }
+  
+  static DenotationalTerm getClassTypeCore() {
+    return TYPE_CORE;
+  }
+  
+  //====|    Fields    |==========================================================================//
+
+  private static final Logger LOG = LoggerFactory.getLogger(ContextImpl.class.getName());
+  
+  private static final CycConstant MT_SPACE = new CycConstantImpl(
+          "MtSpace", new Guid("abb96eb5-e798-11d6-8ac9-0002b3a333c3"));
+  private static final CycConstant MT_TIME_DIM_FN = new CycConstantImpl(
+          "MtTimeDimFn", new Guid("47537942-331d-11d7-922f-0002b3a333c3"));
+  private static final DenotationalTerm TYPE_CORE = new CycConstantImpl(
+          "Microtheory", new Guid("bd5880d5-9c29-11b1-9dad-c379636f7270"));
+  
+  //====|    Construction    |====================================================================//
+  
+  /**
+   * Not part of the KB API. This default constructor only has the effect of
+   * ensuring that there is access to a Cyc server.
+   */
+  ContextImpl () {
+    super();
+  }
+  
+  /**
+   * EXPERIMENTAL!!! NOT PART OF THE KB API
+   * 
+   * A copy constructor to allow higher level APIs to construct
+   * subclass objects using super class objects, when appropriate.
+   * 
+   * @param ctx the Context to be copied
+   */
+  protected ContextImpl (DefaultContext c, Context ctx) {
+	  super();
+	  setCore(ctx);
+  }
+  
+  /**
+   * Not part of the KB API. An implementation-dependent constructor.
+   * <p>
+   * It is used when the result of query is a CycObject and is known to be or
+   * requested to be cast as an instance of Context.
+   *
+   * @param cycObject the CycObject wrapped by <code>Context</code>. The constructor
+   * verifies that the CycObject is an instance of #$Microtheory
+   * 
+   * @throws KbTypeException if cycObject is not or could not be made 
+   * an instance of #$Microtheory
+   */
+  ContextImpl(DenotationalTerm cycObject) throws KbTypeException {
+    super(cycObject);
   }
 
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#getExtensions()
+  /**
+   * This not part of the public, supported KB API. finds or creates an instance of #$Microtheory 
+   * represented by ctxStr in the underlying KB.
+   * <p>
+   *
+   * @param ctxStr  the string representing an #$Microtheory in the KB
+   * 
+   * @throws CreateException if the #$Microtheory represented by ctxStr is not found
+   * and could not be created 
+   * @throws KbTypeException if the term represented by ctxStr is not an instance
+   * of #$Microtheory and cannot be made into one. 
    */
+  ContextImpl(String ctxStr) throws KbTypeException, CreateException {
+    super(ctxStr);
+  }
+
+  /**
+   * This not part of the public, supported KB API. finds or creates; or finds an instance of
+   * #$Microtheory represented by ctxStr in the underlying KB based on input ENUM.
+   * <p>
+   *
+   * @param ctxStr  the string representing an instance of #$Microtheory in the KB
+   * @param lookup the enum to specify LookupType: FIND or FIND_OR_CREATE
+   * 
+   * @throws CreateException 
+   * @throws KbTypeException 
+   *
+   * @throws KbObjectNotFoundException  if the #$Microtheory represented by ctxStr
+   * is not found and could not be created
+   * @throws InvalidNameException if the string ctxStr does not conform to Cyc constant-naming
+   * conventions
+   * 
+   * @throws KbTypeException  if the term represented by ctxStr is not an instance of #$Microtheory and lookup is
+   * set to find only {@link LookupType#FIND}
+   * @throws KbTypeConflictException if the term represented by ctxStr is not an instance of #$Microtheory,
+   * and lookup is set to find or create; and if the term cannot be made an instance #$Microtheory by asserting
+   * new knowledge.
+   */
+  ContextImpl(String ctxStr, LookupType lookup) throws KbTypeException, CreateException {
+    super(ctxStr, lookup);
+  }
+  
+  //====|    Methods    |=========================================================================//
+  
+  void setCore(CycObject cycObject) throws KbTypeException {
+    final ElMt newCore;
+    if (cycObject instanceof ElMt) {
+      newCore = (ElMt) cycObject;
+    } else {
+      try {
+        newCore = getAccess().getObjectTool().makeElMt(cycObject);
+      } catch (CycConnectionException e) {
+        throw new KbTypeException(
+                "The term \"" + cycObject.toString()
+                + "\" could not be converted to an " + ElMt.class.getSimpleName(), e);
+      }
+    }
+    super.setCore(newCore);
+  }
+  
   @Override
   public Collection<Context> getExtensions() {
-    return (this.<Context>getValues(Constants.genlMt(), 2, 1, null));
+    //return (this.<Context>getValues(Constants.genlMt(), 2, 1, null));
+    return Constants.genlMt().getValuesForArgPosition(this, 2, 1, null);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#addExtension(java.lang.String)
-   */
-  @Override
-  public Context addExtension(String moreSpecificStr) throws KbTypeException, CreateException {
-    Context c = ContextImpl.get(moreSpecificStr);
-    return addExtension(c);
-  }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#addExtension(com.cyc.kb.Context)
-   */
+  
   @Override
   public Context addExtension(Context moreSpecific) throws KbTypeException, CreateException {
-    addFact(Constants.baseKbMt(), Constants.genlMt(), 2, (Object) moreSpecific);
+    //addFact(Constants.baseKbMt(), Constants.genlMt(), 2, (Object) moreSpecific);
+    Constants.genlMt().addFact(Constants.baseKbMt(), moreSpecific, this);
     return this;
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#getInheritsFrom()
-   */
+  
+  @Override
+  public Context addExtension(String moreSpecificStr) throws KbTypeException, CreateException {
+    final Context c = ContextImpl.get(moreSpecificStr);
+    return addExtension(c);
+  }
+  
   @Override
   public Collection<Context> getInheritsFrom() {
-    return (this.<Context>getValues(Constants.genlMt(), 1, 2, null));
+    //return (this.<Context>getValues(Constants.genlMt(), 1, 2, null));
+    return Constants.genlMt().getValuesForArgPosition(this, 1, 2, null);
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#addInheritsFrom(java.lang.String)
-   */
+  
+  @Override
+  public Context addInheritsFrom(Context moreGeneral) throws KbTypeException, CreateException {
+    //addFact(Constants.baseKbMt(), Constants.genlMt(), 1, (Object) moreGeneral);
+    Constants.genlMt().addFact(Constants.baseKbMt(), this, moreGeneral);
+    return this;
+  }
+  
   @Override
   public Context addInheritsFrom(String moreGeneralStr) throws KbTypeException, CreateException  {
     return addInheritsFrom(KbUtils.getKBObjectForArgument(moreGeneralStr, ContextImpl.class));
   }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#addInheritsFrom(com.cyc.kb.Context)
-   */
-  @Override
-  public Context addInheritsFrom(Context moreGeneral) throws KbTypeException, CreateException {
-    addFact(Constants.baseKbMt(), Constants.genlMt(), 1, (Object) moreGeneral);
-    return this;
-  }
-
-  /* (non-Javadoc)
-   * @see com.cyc.kb.Context#getMonad()
-   */
+  
   @Override
   public Context getMonad() {
     try {
       final CycVariable var = CycObjectFactory.makeCycVariable("MONAD");
-      final FormulaSentence sentence = getAccess().getObjectTool().makeCycSentence("( " + Constants.mtMonad().stringApiValue() + " "
-              + this.getCore().cyclify() + " " + var.toCanonicalString() + ")");
+      final FormulaSentence sentence = getAccess().getObjectTool()
+              .makeCycSentence("( " + Constants.mtMonad().stringApiValue() + " "
+              + getCore().cyclify() + " " + var.toCanonicalString() + ")");
       final CycList<Object> result = getAccess().getInferenceTool().queryVariable(var, sentence,
               ContextImpl.asELMt(Constants.uvMt()));
       if (!result.isEmpty()) {
@@ -593,10 +604,11 @@ public class ContextImpl extends KbIndividualImpl implements Context {
   public TimeInterval getTimeInterval() {
     try {
       final CycVariable var = CycObjectFactory.makeCycVariable("INT");
-      final FormulaSentence sentence = getAccess().getObjectTool().makeCycSentence("(" + Constants.mtTimeIndex().stringApiValue() + " "
-              + core.cyclify() + " " + var.toCanonicalString() + ")");
+      final FormulaSentence sentence = getAccess().getObjectTool().makeCycSentence(
+              "(" + Constants.mtTimeIndex().stringApiValue()
+              + " " + getCore().cyclify() + " " + var.toCanonicalString() + ")");
       final CycList<Object> result = getAccess().getInferenceTool().queryVariable(var, sentence,
-          ContextImpl.asELMt(Constants.uvMt()));
+              ContextImpl.asELMt(Constants.uvMt()));
       if (!result.isEmpty()) {
         return TimeIntervalConverter.parseCycInterval((CycObject) result.get(0));
       }
@@ -610,20 +622,6 @@ public class ContextImpl extends KbIndividualImpl implements Context {
     } 
   }
 
-  /**
-   * Returns this context as an <code>ELMt</code>.
-   *
-   * @return this context as an ELMt
-   */
-  @Deprecated
-  public ElMt asELMt() {
-    try {
-      return getAccess().getObjectTool().makeElMt(core);
-    } catch (CycConnectionException e){
-      throw new KbRuntimeException(e.getMessage(), e);
-    }
-  }
-  
   @Deprecated
   public static ContextImpl from(Context ctx) {
     return (ContextImpl) ctx;
@@ -631,9 +629,9 @@ public class ContextImpl extends KbIndividualImpl implements Context {
   
   @Deprecated
   public static ElMt asELMt(Context ctx) {
-    return ContextImpl.from(ctx).asELMt();
+    return ContextImpl.from(ctx).getCore();
   }
-
+  
   /**
    * Return the KBCollection as a KBObject of the Cyc term that 
    * underlies this class. 

@@ -25,14 +25,11 @@ package com.cyc.kb.client;
  * #L%
  */
 
-import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Guid;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.kb.KbStatus;
-import com.cyc.kb.ScopingRelation;
-import com.cyc.kb.client.LookupType;
 import com.cyc.kb.KbObject;
+import com.cyc.kb.ScopingRelation;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
@@ -42,9 +39,12 @@ import com.cyc.kb.exception.KbTypeException;
 
 /**
  * This not part of the public, supported KB API 1.0.0.
+ * 
+ * @param <T> type of CycObject core
+ * 
  * @author vijay
  */
-public class ScopingRelationImpl extends RelationImpl implements ScopingRelation {
+public class ScopingRelationImpl<T extends DenotationalTerm> extends RelationImpl<T> implements ScopingRelation {
   
     private static final DenotationalTerm TYPE_CORE =
           new CycConstantImpl("LogicalConnective", new Guid("bd58b9f9-9c29-11b1-9dad-c379636f7270"));
@@ -55,15 +55,13 @@ public class ScopingRelationImpl extends RelationImpl implements ScopingRelation
   
   /**
    * default constructor, calls the default super constructor
-   *
-   * @throws Exception
    */
   protected ScopingRelationImpl() {
     super();
   }
 
   
-  protected ScopingRelationImpl(CycObject cycScopingRel) throws KbTypeException {
+  protected ScopingRelationImpl(DenotationalTerm cycScopingRel) throws KbTypeException {
     super(cycScopingRel);
   }
 
@@ -71,58 +69,11 @@ public class ScopingRelationImpl extends RelationImpl implements ScopingRelation
   public ScopingRelationImpl(String scopingRelStr) throws KbTypeException, CreateException {
     super(scopingRelStr);
   }
-
   
   public ScopingRelationImpl (String scopingRelStr, LookupType lookup) throws KbTypeException, CreateException {
     super(scopingRelStr, lookup);
   }
   
-  
-  public static ScopingRelationImpl get(String nameOrId) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(nameOrId, ScopingRelationImpl.class);
-  }
-
-  
-  @SuppressWarnings("deprecation")
-public static ScopingRelationImpl get(CycObject object) throws KbTypeException, CreateException {
-    return KbObjectFactory.get(object, ScopingRelationImpl.class);
-  }
-
-  
-  public static ScopingRelationImpl findOrCreate(String nameOrId) {
-    throw new UnsupportedOperationException("Creation of new Quantifiers is not allowed.  Please use a get method.");
-  }
-
-  /**
-   * The KBAPI does not support the creation of new quantifiers. The
-   * <code>get</code> methods on quantifiers should be used to retrieve existing quantifiers.
-   * @deprecated Creation of new quantifiers is not supported in the KBAPI.
-   */
-  public static ScopingRelationImpl findOrCreate(CycObject object) {
-    throw new UnsupportedOperationException("Creation of new Quantifiers is not allowed.  Please use a get method.");
-  }
-
-  
-  public static boolean existsAsType(String nameOrId) {
-    return getStatus(nameOrId).equals(KbStatus.EXISTS_AS_TYPE);
-  }
-
-  
-  public static boolean existsAsType(CycObject object) {
-    return getStatus(object).equals(KbStatus.EXISTS_AS_TYPE);
-  }
-
-  
-  public static KbStatus getStatus(String nameOrId) {
-    return KbObjectFactory.getStatus(nameOrId, ScopingRelationImpl.class);
-
-  }
-
-  
-  public static KbStatus getStatus(CycObject object) {
-    return KbObjectFactory.getStatus(object, ScopingRelationImpl.class);
-  }
-
   /**
    * Return the KBCollection as a KBObject of the Cyc term that 
    * underlies this class. 

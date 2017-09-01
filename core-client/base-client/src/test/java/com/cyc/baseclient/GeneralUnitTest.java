@@ -52,10 +52,10 @@ import com.cyc.baseclient.connection.SublWorkerSynch;
 import com.cyc.baseclient.cycobject.ByteArray;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.CycListParser;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.cycobject.GuidImpl;
 import com.cyc.baseclient.cycobject.NartImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
@@ -63,7 +63,7 @@ import com.cyc.baseclient.datatype.NonAsciiStrings;
 import com.cyc.baseclient.datatype.StringUtils;
 import com.cyc.baseclient.exception.CycApiClosedConnectionException;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
-import com.cyc.baseclient.kbtool.CycObjectTool;
+import com.cyc.baseclient.kbtool.ObjectToolImpl;
 import com.cyc.baseclient.parser.CyclParserUtil;
 import com.cyc.baseclient.testing.TestConstants;
 import static com.cyc.baseclient.testing.TestConstants.*;
@@ -76,6 +76,8 @@ import static com.cyc.baseclient.testing.TestUtils.isEnterpriseCyc;
 import static com.cyc.baseclient.testing.TestUtils.skipTest;
 import com.cyc.query.parameters.InferenceParameters;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
+import com.cyc.session.exception.SessionCommandException;
+import com.cyc.session.exception.SessionCommunicationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -233,106 +235,106 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   public void testCycAccessInitialization() {
     System.out.println("\n**** testCycAccessInitialization ****");
 
-    CycAccess cycAccess = null;
+    CycAccess cyc = null;
 
     System.out.println("CycAccess 1 closed, creating CycAccess 2");
     try {
-      cycAccess = getCycAccess();
-      assertNotNull(cycAccess.getServerInfo().getCycKbVersionString());
+      cyc = getCycAccess();
+      assertNotNull(cyc.getServerInfo().getCycKbVersionString());
     } catch (ConnectException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException | SessionCommunicationException | SessionCommandException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     } finally {
-      if (cycAccess != null) {
-        cycAccess.close();
-        cycAccess = null;
+      if (cyc != null) {
+        cyc.close();
+        cyc = null;
       }
     }
 
     System.out.println("CycAccess 2 closed, creating CycAccess 3");
     try {
-      cycAccess = getCycAccess();
-      assertNotNull(cycAccess.getServerInfo().getCycKbVersionString());
+      cyc = getCycAccess();
+      assertNotNull(cyc.getServerInfo().getCycKbVersionString());
     } catch (ConnectException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException | SessionCommunicationException | SessionCommandException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     } finally {
-      if (cycAccess != null) {
-        cycAccess.close();
-        cycAccess = null;
+      if (cyc != null) {
+        cyc.close();
+        cyc = null;
       }
     }
 
     System.out.println("CycAccess 3 closed, creating CycAccess 4");
     try {
-      cycAccess = getCycAccess();
-      assertNotNull(cycAccess.getServerInfo().getCycKbVersionString());
+      cyc = getCycAccess();
+      assertNotNull(cyc.getServerInfo().getCycKbVersionString());
     } catch (ConnectException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException | SessionCommunicationException | SessionCommandException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     } finally {
-      if (cycAccess != null) {
-        cycAccess.close();
-        cycAccess = null;
+      if (cyc != null) {
+        cyc.close();
+        cyc = null;
       }
     }
 
     System.out.println("CycAccess 4 closed, creating CycAccess 5");
     try {
-      cycAccess = getCycAccess();
-      assertNotNull(cycAccess.getServerInfo().getCycKbVersionString());
+      cyc = getCycAccess();
+      assertNotNull(cyc.getServerInfo().getCycKbVersionString());
     } catch (ConnectException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException | SessionCommunicationException | SessionCommandException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     } finally {
-      if (cycAccess != null) {
-        cycAccess.close();
-        cycAccess = null;
+      if (cyc != null) {
+        cyc.close();
+        cyc = null;
       }
     }
 
     System.out.println("CycAccess 5 closed, creating CycAccess 6");
     try {
-      cycAccess = getCycAccess();
-      assertNotNull(cycAccess.getServerInfo().getCycKbVersionString());
+      cyc = getCycAccess();
+      assertNotNull(cyc.getServerInfo().getCycKbVersionString());
     } catch (ConnectException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException | SessionCommunicationException | SessionCommandException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     } finally {
-      if (cycAccess != null) {
-        cycAccess.close();
-        cycAccess = null;
+      if (cyc != null) {
+        cyc.close();
+        cyc = null;
       }
     }
 
     System.out.println("CycAccess 6 closed, creating CycAccess 7");
     try {
-      cycAccess = getCycAccess();
-      assertNotNull(cycAccess.getServerInfo().getCycKbVersionString());
+      cyc = getCycAccess();
+      assertNotNull(cyc.getServerInfo().getCycKbVersionString());
     } catch (ConnectException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException | SessionCommunicationException | SessionCommandException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     } finally {
-      if (cycAccess != null) {
-        cycAccess.close();
+      if (cyc != null) {
+        cyc.close();
       }
     }
     System.out.println("CycAccess 7 closed");
@@ -356,7 +358,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     final CycConnection cycConnection = cycAccess.getCycConnection();
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -370,7 +372,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -398,7 +400,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -416,7 +418,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
 //      cycAccess.traceOn();
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -429,7 +431,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
     assertTrue(response[1].toString().contains("NIL"));
@@ -457,7 +459,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -471,7 +473,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -499,7 +501,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -519,7 +521,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       response = cycConnection.converse(command);
 
       //cycConnection.trace = false;
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -532,7 +534,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
     try {
       response = cycConnection.converse(command);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -562,8 +564,6 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
-   *
-   * @param cycAccess the server connection handler
    */
   @Test
   public void testBinaryCycAccess1() {
@@ -577,8 +577,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
       //cycAccess.traceOnDetailed();
       cycConstant = cycAccess.getLookupTool().getConstantByName(DOG.stringApiValue());
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -588,7 +588,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     // getConstantByGuid.
     try {
       cycConstant = cycAccess.getLookupTool().getConstantByGuid(makeGuid(DOG_GUID_STRING));
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -603,8 +603,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       CycConstant raindrop = cycAccess.getLookupTool().getKnownConstantByGuid(
               RAINDROP_GUID_STRING);
       comment = cycAccess.getLookupTool().getComment(raindrop);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -619,8 +619,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
       CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
       isas = cycAccess.getLookupTool().getIsas(dog);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -632,7 +632,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       CycConstant biologicalSpecies = cycAccess.getLookupTool().getKnownConstantByGuid(
               BIOLIGICAL_SPECIES_GUID_STRING);
       assertTrue(isas.contains(biologicalSpecies));
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -641,8 +641,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
       CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
       isas = cycAccess.getLookupTool().getIsas(dog);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -654,7 +654,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       CycConstant biologicalSpecies = cycAccess.getLookupTool().getKnownConstantByGuid(
               BIOLIGICAL_SPECIES_GUID_STRING);
       assertTrue(isas.contains(biologicalSpecies));
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -665,6 +665,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess2() throws CycConnectionException {
@@ -802,6 +803,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess3_1() throws CycConnectionException {
@@ -863,11 +865,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(minGenls.size() >= 1);
 
     // getMinGenls mt.
-    minGenls = null;
+    //minGenls = null;
 
-    // #$BiologyVocabularyMt
+    // This is no longer #$BiologyVocabularyMt, as that is no more.
+    // It is now: #$BiologyMt - nwinant, 2017-07-27
     minGenls = cycAccess.getLookupTool().getMinGenls(lion,
-            cycAccess.getLookupTool().getKnownConstantByGuid(BIOLOGY_VOCABULARY_MT_GUID_STRING));
+            cycAccess.getLookupTool().getKnownConstantByGuid(BIOLOGY_MT_GUID_STRING));
 
     assertNotNull(minGenls);
     assertTrue(minGenls instanceof CycArrayList);
@@ -918,7 +921,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
      assertTrue(siblings.contains(goatDomestic));
      }
      catch (Throwable e) {
-     e.printStackTrace();
+     e.printStackTrace(System.err);
      fail(e.toString());
      }
      // getSpecSiblings.
@@ -1039,6 +1042,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using a CycAccess connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess4_1() throws CycConnectionException {
@@ -1055,7 +1059,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       //cycAccess.traceOff();
 
     // getWhyGenl.
-    CycList whyGenl = null;
+    CycList whyGenl;
 
     CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
     // CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
@@ -1143,6 +1147,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using a CycAccess connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess4_2() throws CycConnectionException {
@@ -1250,7 +1255,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       cyc.getInferenceTool().queryVariable(what, query, EVERYTHING_PSC, null, 15000);
     } catch (CycApiClosedConnectionException e) {
       fail("Failed to recover from closed Cyc connection.");
-    } catch (Throwable e) {
+    } catch (CycApiException | CycConnectionException e) {
       fail(e.toString());
     }
   }
@@ -1315,7 +1320,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             "a unit test comment for the CycAccessTestMt microtheory.",
             microtheory, genlMts);
     assertNotNull(mt);
-    cycAccess.getUnassertTool().kill(VARIED_ORDER_COLLECTION);
+    // FIXME: Why are we *actually* testing by killing #$VariedOrderCollection?
+    //       It's a nuisance, so for now we'll just kill a dummy constant. - nwinant, 2017-07-27
+    //cycAccess.getUnassertTool().kill(VARIED_ORDER_COLLECTION);
+    cycAccess.getUnassertTool().kill(
+            cycAccess.getAssertTool().findOrCreateNewPermanent("NotVariedOrderCollection-Test"));
     cycAccess.getUnassertTool().kill(mt);
     assertNull(cycAccess.getLookupTool().getConstantByName("CycAccessTestMt"));
     
@@ -1329,6 +1338,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess5_2() throws CycConnectionException {
@@ -1362,7 +1372,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         if (res.equals(cycorp)) {
           findCycorp = true;
         }
-      } catch (Exception ex) {
+      } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException | ClassCastException ex) {
 
       }
     }
@@ -1429,7 +1439,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
    *
-   * @param cycAccess the server connection handler
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess6() throws CycConnectionException {
@@ -1552,6 +1562,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
    *
    * N O T E be sure that the test system is clean of the special symbols introduced in the test.
    * E.G. MY-MACRO, A, B, C
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess7_1() throws CycConnectionException {
@@ -1561,7 +1572,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     //cycAccess.traceOn();
     // SubL scripts
     //cycAccess.traceNamesOn();
-    String script = null;
+    String script;
     // Java ByteArray  and SubL byte-vector are used only in the binary api.
     script = "(csetq my-byte-vector (vector 0 1 2 3 4 255))";
 
@@ -2246,8 +2257,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     script = "(csetq a 2.14)";
     responseObject = cycAccess.converse().converseObject(script);
     assertTrue(responseObject instanceof Double);
-    assertTrue(((Double) responseObject).doubleValue() > 2.13999);
-    assertTrue(((Double) responseObject).doubleValue() < 2.14001);
+    assertTrue(((Double) responseObject) > 2.13999);
+    assertTrue(((Double) responseObject) < 2.14001);
     script = "(numberp a)";
     assertTrue(cycAccess.converse().converseBoolean(script));
     script = "(integerp a)";
@@ -2406,6 +2417,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess8_1() throws CycConnectionException {
@@ -2509,8 +2521,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(hashSet.contains(dog));
 
       CycConstant animal = cycAccess.getLookupTool().getKnownConstantByGuid(ANIMAL_GUID_STRING);
-      CycConstant biologyVocabularyMt = cycAccess.getLookupTool().getKnownConstantByGuid(
-              BIOLOGY_VOCABULARY_MT_GUID_STRING);
+      CycConstant biologyVocabularyMt = cycAccess.getLookupTool().getKnownConstantByGuid(BIOLOGY_MT_GUID_STRING);
       CycConstant performedBy = cycAccess.getLookupTool().getKnownConstantByGuid(
               PERFORMED_BY_GUID_STRING);
       CycConstant doneBy = cycAccess.getLookupTool().getKnownConstantByGuid(DONE_BY_GUID_STRING);
@@ -2588,8 +2599,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
        script = "(csetq all-narts nil)";
        cycAccess.converse().converseVoid(script);
        */
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -2610,7 +2621,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
       // demonstrate quoted strings
       //cycAccess.traceOn();
-      StringBuffer stringBuffer = new StringBuffer();
+      StringBuilder stringBuffer = new StringBuilder();
       stringBuffer.append("a");
       stringBuffer.append('"');
       stringBuffer.append("b");
@@ -2724,8 +2735,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
       Naut formula8 = cycAccess.getObjectTool().makeCycNaut("(" + PLUS_FN_STRING + " 1)");
       assertTrue(cycAccess.getInspectorTool().isCycLNonAtomicUnreifableTerm(formula8));
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -2749,8 +2760,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         String script = "(+ 1 2)";
         int answer = cycAccess.converse().converseInt(script);
         assertEquals(3, answer);
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
 //    cycAccess.getLookupTool().getCycLeaseManager().setLeaseDurationMilliseconds(100000);
@@ -2788,8 +2799,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               isCancelled = true;
               try {
                 apiRequestor.cancel();
-              } catch (Throwable e) {
-                e.printStackTrace();
+              } catch (CycApiException | CycConnectionException e) {
+                e.printStackTrace(System.err);
                 fail(e.getMessage());
               }
             }
@@ -2806,7 +2817,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
               "  " + (endMilliseconds - startMilliseconds) + " milliseconds");
 
     } catch (Throwable e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -2884,8 +2895,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
      *
      * @throws RuntimeException when wrong answer detected
      */
+    @Override
     public void run() {
-
       try {
         for (int i = 0; i < repeatCount; i++) {
           final String testPhrase = name + "-" + Integer.toString(i + 1);
@@ -2906,14 +2917,13 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             }
           }
         }
-      } catch (Throwable e) {
+      } catch (CycConnectionException | RuntimeException e) {
         System.out.println(
                 "ApiRequestor " + name + " exception: " + e.toString());
-        e.printStackTrace();
+        e.printStackTrace(System.err);
         done = true;
         return;
       }
-
       done = true;
     }
 
@@ -2921,7 +2931,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
      * Cancels this thread at the Cyc Server.
      *
      * @throws CycApiException when an api error occurs
-     * @throws IOException when a communication error occurs
+     * @throws com.cyc.base.exception.CycConnectionException
      */
     public void cancel() throws CycApiException, CycConnectionException {
       cycAccess.getCycConnection().cancelCommunication(worker);
@@ -2960,7 +2970,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertEquals(utf8String,
               cycAccess.converse().converseString("(identity \"" + utf8String + "\")"));
 
-      InputStreamReader inputStreamReader = null;
+      InputStreamReader inputStreamReader;
 
       try {
         inputStreamReader = new InputStreamReader(new FileInputStream(
@@ -2970,7 +2980,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         return;
       }
 
-      StringBuffer utf8StringBuffer = new StringBuffer();
+      StringBuilder utf8StringBuilder = new StringBuilder();
 
       while (true) {
         int ch = inputStreamReader.read();
@@ -2980,13 +2990,13 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         }
 
         if ((ch == '\n') || (ch == '\r')) {
-          utf8StringBuffer.append(' ');
+          utf8StringBuilder.append(' ');
         } else {
-          utf8StringBuffer.append((char) ch);
+          utf8StringBuilder.append((char) ch);
         }
       }
 
-      utf8String = utf8StringBuffer.toString();
+      utf8String = utf8StringBuilder.toString();
 
       PrintWriter utf8Output = new PrintWriter(new OutputStreamWriter(
               new FileOutputStream("utf8-sample-without-newlines.html"), "UTF8"));
@@ -3017,14 +3027,15 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
       myTerm = cycAccess.getLookupTool().findOrCreate("my-term");
       cycAccess.getAssertTool().assertComment(myTerm, utf8String, BASE_KB);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException | IOException e) {
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
   }
 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess13_1() throws CycConnectionException {
@@ -3103,13 +3114,13 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println("\n**** testBinaryCycAccess 13_2 ****");
 
     // getHLCycTerm
-    Object obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("1");
+    Object obj = ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm("1");
     assertTrue(obj instanceof Integer);
-    obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm("\"abc\"");
+    obj = ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm("\"abc\"");
     assertTrue(obj instanceof String);
     {
       CycConstant randomConstant = cycAccess.getLookupTool().getRandomConstant();
-      obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
+      obj = ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
       assertEquals(randomConstant, obj);
     }
     {
@@ -3119,15 +3130,15 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         while (randomNart == null || !(cycAccess.getInspectorTool().isGround(randomNart))) { //Non-ground NARTs can have canonicalization issues.
           randomNart = cycAccess.getLookupTool().getRandomNart();
         }
-        obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
+        obj = ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
         if (!randomNart.equalsAtEL(obj)) {
-          ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
+          ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
           randomNart.equalsAtEL(obj);
           ok = false;
         }
       }
-      assertTrue(randomNart.cyclify() + " is not equal (at EL) to " + obj,
-              ok);
+      final String randomNartCycl = (randomNart != null) ? randomNart.cyclify() : "null";
+      assertTrue(randomNartCycl + " is not equal (at EL) to " + obj, ok);
     }
 
     // getELCycTerm
@@ -3137,11 +3148,11 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     assertTrue(obj instanceof String);
 
     CycConstant randomConstant = cycAccess.getLookupTool().getRandomConstant();
-    obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
+    obj = ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm(randomConstant.cyclify());
     assertEquals(randomConstant, obj);
 
     Nart randomNart = cycAccess.getLookupTool().getRandomNart();
-    obj = ((CycObjectTool) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
+    obj = ((ObjectToolImpl) (cycAccess.getObjectTool())).getHLCycTerm(randomNart.cyclify());
     assertEquals(randomNart, obj);
 
     // canonicalizeList
@@ -3227,13 +3238,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       organization = cycAccess.getLookupTool().getConstantByGuid(organizationGuid);
       System.out.println("------------");
       cycAccess.traceOff();
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (CycConnectionException | CycApiException e) {
+      e.printStackTrace(System.err);
       fail(e.getMessage());
     }
 
-    List localDisjointWiths = null;
-
+    //List localDisjointWiths = null;
 
     /*
      // complete received objects immediately
@@ -3258,14 +3268,15 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
      }
      */
     // getLocalDisjointWith.
-    localDisjointWiths = null;
+    //localDisjointWiths = null;
 
     try {
+      List localDisjointWiths;
       CycConstant vegetableMatter = cycAccess.getLookupTool().getKnownConstantByGuid(
               VEGETABLE_MATTER_GUID_STRING);
       localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
       assertNotNull(localDisjointWiths);
-
+      
       //System.out.println("localDisjointWiths.toString()");
       //assertTrue(localDisjointWiths.toString().indexOf("AnimalBLO") > 0);
       //System.out.println("localDisjointWiths.toString()");
@@ -3273,7 +3284,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
       localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
       localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -3292,7 +3303,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       assertTrue(cycConstant3.getName().startsWith(constantName));
       assertTrue(!cycConstant3.getName().equals(cycConstant1.getName()));
       assertTrue(!cycConstant3.getName().equals(cycConstant2.getName()));
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
 
@@ -3326,22 +3337,22 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         System.out.println(
                 "embedded obj class: " + ((CycArrayList) result).first().getClass().toString());
         assertTrue(((CycArrayList) result).first() instanceof Nart);
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
 
       // getComment with NartImpl
-      Nart nart = null;
-      String comment = null;
+      Nart nart;
+      String comment;
       try {
         nart = (Nart) cycAccess.converse().converseObject(
                 "(find-nart '(" + JUVENILE_FN_STRING + " " + DOG_STRING + "))");
         comment = cycAccess.getLookupTool().getComment(nart);
         assertNotNull(comment);
         //assertEquals("", comment);
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
 
@@ -3350,23 +3361,23 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         command = "(nart-substitute \"first text line\nsecond text line\")";
         System.out.println("string with newlines: " + command);
         System.out.println(cycAccess.converse().converseObject(command));
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
 
       //cycAccess.traceOnDetailed();
       // getLocalDisjointWith.
-      List localDisjointWiths = null;
+      //List localDisjointWiths;
 
       try {
         CycConstant vegetableMatter = cycAccess.getLookupTool().getKnownConstantByGuid(
                 VEGETABLE_MATTER_GUID_STRING);
-        localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
+        List localDisjointWiths = cycAccess.getLookupTool().getDisjointWiths(vegetableMatter);
         assertNotNull(localDisjointWiths);
 
         //assertTrue(localDisjointWiths.toString().indexOf("AnimalBLO") > 0);
-      } catch (Throwable e) {
+      } catch (CycConnectionException | CycApiException e) {
         fail(e.toString());
       }
 
@@ -3382,8 +3393,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         if (constants.size() > 1 && constants.second() instanceof CycConstantImpl) {
           assertNotNull(((CycConstantImpl) constants.second()).name);
         }
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
 
@@ -3396,8 +3407,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         assertTrue(nart1.getArguments() instanceof CycArrayList);
 
         //System.out.println(nart1.cyclify());
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
 
@@ -3412,7 +3423,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         nartList.add(nart1);
         nartList.add(nart2);
 
-        Object object = null;
+        Object object;
         CycSymbolImpl a = makeCycSymbol("a");
         cycAccess.getObjectTool().setSymbolValue(a, nartList);
 
@@ -3451,8 +3462,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
         assertEquals(nart1.cyclify(), nart3.cyclify());
         assertEquals(nart1.cyclify(), nart4.cyclify());
-      } catch (Throwable e) {
-        e.printStackTrace();
+      } catch (CycConnectionException | CycApiException e) {
+        e.printStackTrace(System.err);
         fail(e.toString());
       }
     } finally {
@@ -3464,12 +3475,13 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   /**
    * Tests a portion of the CycAccess methods using the binary api connection. This test case
    * specifically is used to test soap service handling of an xml response from Cyc.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testBinaryCycAccess16() throws CycConnectionException {
     System.out.println("\n**** testBinaryCycAccess 16 ****");
-    List genls = null;
-    CycConstant carAccident = null;
+    List genls;
+    CycConstant carAccident;
     carAccident = cycAccess.getLookupTool().getKnownConstantByGuid(
             CAR_ACCIDENT_GUID_STRING);
     genls = cycAccess.getLookupTool().getGenls(carAccident);
@@ -3500,7 +3512,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
       CycList gafs = cycAccess.getLookupTool().getGafs(NartImpl.coerceToCycNart(nart), ISA);
       assertTrue(gafs.size() > 0);
-    } catch (Throwable e) {
+    } catch (CycApiException | CycConnectionException e) {
       fail(e.toString());
     }
 
@@ -3509,6 +3521,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests the getCycImageID() api method.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testGetCycImage() throws CycConnectionException {
@@ -3520,6 +3533,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests the ggetELCycTerm method.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testGetELCycTerm() throws CycConnectionException {
@@ -3543,7 +3557,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       String assertionString = ISA_CYC_ADMIN_PERSON.cyclify();
       ElMt mt = UNIVERSAL_VOCABULARY_MT;
       cycAccess.getAssertTool().assertWithTranscriptAndBookkeeping(assertionString, mt);
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(e.toString());
     }
     System.out.println("**** testAssertWithTranscriptAndBookkeeping OK ****");
@@ -3551,6 +3565,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests the getArg2 method.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testGetArg2() throws CycConnectionException {
@@ -3582,12 +3597,12 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     final CycObject mt = INFERENCE_PSC;
     final CycAccess cyc = CycAccessManager.getCurrentAccess();
     final InferenceParameters params = getOneShotQueryParams(cyc);
-    final FormulaSentence sentence = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence sentence = FormulaSentenceImpl.makeCycFormulaSentence(
             CommonConstants.ISA, TEXAS_STATE, var);
     final CycList answers = cyc.getInferenceTool().queryVariable(var, sentence, mt, params);
     assertFalse("Couldn't find any answers! Query: " + sentence, answers.isEmpty());
 
-    final FormulaSentence qSentenceTemplate = CycFormulaSentence.makeCycFormulaSentence(
+    final FormulaSentence qSentenceTemplate = FormulaSentenceImpl.makeCycFormulaSentence(
             CommonConstants.ISA, makeCycSymbol(":THING"), var);
     final int maxThreads = Runtime.getRuntime().availableProcessors();
     /*
@@ -3691,7 +3706,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       final long startTime = System.currentTimeMillis();
       lastResultCount = 0;
       final ExecutorService executorService = Executors.newFixedThreadPool(maxThreads);
-      final Deque<Future<List>> results = new LinkedList<Future<List>>();
+      final Deque<Future<List>> results = new LinkedList<>();
       for (final Object thing : inputs) {
         final Callable<List> task = new Callable<List>() {
           @Override
@@ -3785,7 +3800,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     System.out.println("\n**** testUnicodeCFASL ****");
     CFASLStringTest("abc", 15);
     CFASLStringTest("", 15);
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append("a");
     sb.append((char) 0x401);
     CFASLStringTest(sb.toString(), 53);
@@ -3877,7 +3892,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   private boolean HLIDGenerationTest(Object obj, CycAccess cyc) {
     try {
       String cmd = "(compact-hl-external-id-string "
-              + DefaultCycObject.stringApiValue(obj) + ")";
+              + DefaultCycObjectImpl.stringApiValue(obj) + ")";
       String cycId = cyc.converse().converseString(cmd);
       String apiId = null;
       if (obj instanceof String) {
@@ -3887,8 +3902,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
         apiId = CompactHlidConverter.converter().toCompactHLId((Number) obj);
         assertTrue(CompactHlidConverter.converter().isNumberCompactHLId(apiId));
       }
-      assertTrue(apiId.equals(cycId));
-    } catch (Throwable e) {
+      assertEquals(cycId, apiId);
+    } catch (CycConnectionException | CycApiException | IOException e) {
       fail(e.toString());
     }
     return true;
@@ -3938,7 +3953,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     try {
       Thread.sleep(6000);
     } catch (Throwable e) {
-      e.printStackTrace();
+      e.printStackTrace(System.err);
       fail(e.toString());
     }
 
@@ -3958,6 +3973,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests the CycLeaseManager.
+   * @throws java.lang.Exception
    */
   @Test
   public void testCycLeaseManager2() throws Exception {
@@ -3972,6 +3988,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
 
   /**
    * Tests inference problem store reuse.
+   * @throws com.cyc.base.exception.CycConnectionException
    */
   @Test
   public void testInferenceProblemStoreReuse() throws CycConnectionException {
@@ -4026,7 +4043,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
           final String command = "(list \"a\" 1 " + BRAZIL_STRING + " \"z\")";
           final CycList result = cycAccess.converse().converseList(command);
           assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
-        } catch (Throwable e) {
+        } catch (CycConnectionException | CycApiException e) {
           fail(StringUtils.getStringForException(e));
         }
       }
@@ -4045,7 +4062,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       final String command = "(list \"a\" 1 " + BRAZIL_STRING + " \"z\")";
       final CycList result = cycAccess.converse().converseList(command);
       assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(StringUtils.getStringForException(e));
     }
 
@@ -4063,7 +4080,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
       final String command = "(list \"a\" 1 " + BRAZIL_STRING + " \"z\")";
       final CycList result = cycAccess.converse().converseList(command);
       assertEquals(result.toString(), "(\"a\" 1 Brazil \"z\")");
-    } catch (Throwable e) {
+    } catch (CycConnectionException | CycApiException e) {
       fail(StringUtils.getStringForException(e));
     }
     System.out.println("**** testInvalidTerms OK ****");

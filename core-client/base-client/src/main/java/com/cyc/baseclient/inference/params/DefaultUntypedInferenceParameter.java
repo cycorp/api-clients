@@ -24,7 +24,6 @@ package com.cyc.baseclient.inference.params;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
 import com.cyc.query.parameters.StandardInferenceMetric;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,7 +37,7 @@ import java.util.Map;
  *
  * @author baxter
  * @date June 19, 2009
- * @version $Id: DefaultUntypedInferenceParameter.java 171043 2017-03-23 00:56:58Z nwinant $
+ * @version $Id: DefaultUntypedInferenceParameter.java 173021 2017-07-21 18:36:21Z nwinant $
  */
 class DefaultUntypedInferenceParameter extends AbstractInferenceParameter {
 

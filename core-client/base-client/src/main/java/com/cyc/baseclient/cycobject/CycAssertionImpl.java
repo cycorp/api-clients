@@ -23,22 +23,20 @@ package com.cyc.baseclient.cycobject;
 
 //// External Imports
 import com.cyc.base.CycAccess;
-import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.cycobject.CycAssertion;
-import com.cyc.base.cycobject.FormulaSentence;
-import com.cyc.base.cycobject.CycObject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-//// Internal Imports
-import com.cyc.base.exception.CycApiException;
 import com.cyc.base.cycobject.CycList;
+import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.FormulaSentence;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycObjectFactory;
 import static com.cyc.baseclient.connection.SublApiHelper.makeSubLStmt;
 import com.cyc.baseclient.xml.XmlStringWriter;
 import com.cyc.baseclient.xml.XmlWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Provides the behavior and attributes of Cyc assertions.<p>
@@ -47,11 +45,11 @@ import com.cyc.baseclient.xml.XmlWriter;
  * The associated formula, microtheory, truth-value, direction, and remaining attributes are
  * is fetched later.
  *
- * @version $Id: CycAssertionImpl.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: CycAssertionImpl.java 173021 2017-07-21 18:36:21Z nwinant $
  * @author Stephen L. Reed
  * @author Dan Lipofsky
  */
-public class CycAssertionImpl extends DefaultCycObject implements CycAssertion {
+public class CycAssertionImpl extends DefaultCycObjectImpl implements CycAssertion {
 
   /**
    * The name of the XML tag for this object.
@@ -96,10 +94,10 @@ public class CycAssertionImpl extends DefaultCycObject implements CycAssertion {
       }
       assert (newNegLits instanceof Iterable) : "hlFormula must contain lists of literals";
       for (final Object lit : (Iterable) newNegLits) {
-        if (lit instanceof CycFormulaSentence) {
-          this.negLits.add((CycFormulaSentence) lit);
+        if (lit instanceof FormulaSentenceImpl) {
+          this.negLits.add((FormulaSentenceImpl) lit);
         } else {
-          this.negLits.add(new CycFormulaSentence((Iterable<? extends Object>) lit));
+          this.negLits.add(new FormulaSentenceImpl((Iterable<? extends Object>) lit));
         }
       }
     }
@@ -110,10 +108,10 @@ public class CycAssertionImpl extends DefaultCycObject implements CycAssertion {
       }
       assert (newPosLits instanceof Iterable) : "hlFormula must contain lists of literals";
       for (final Object lit : (Iterable) newPosLits) {
-        if (lit instanceof CycFormulaSentence) {
-          this.posLits.add((CycFormulaSentence) lit);
+        if (lit instanceof FormulaSentenceImpl) {
+          this.posLits.add((FormulaSentenceImpl) lit);
         } else {
-          this.posLits.add(new CycFormulaSentence((Iterable<? extends Object>) lit));
+          this.posLits.add(new FormulaSentenceImpl((Iterable<? extends Object>) lit));
         }
       }
     }
@@ -377,14 +375,14 @@ public class CycAssertionImpl extends DefaultCycObject implements CycAssertion {
   public List getReferencedConstants() {
     List result = null;
     if (getFormula() != null) {
-      result = DefaultCycObject.getReferencedConstants(getFormula());
+      result = DefaultCycObjectImpl.getReferencedConstants(getFormula());
       if (getMt() != null) {
         result.addAll(getMt().getReferencedConstants());
       }
       return result;
     }
     if (getMt() != null) {
-      result = DefaultCycObject.getReferencedConstants(getMt());
+      result = DefaultCycObjectImpl.getReferencedConstants(getMt());
     }
     return (result == null) ? new ArrayList() : result;
   }

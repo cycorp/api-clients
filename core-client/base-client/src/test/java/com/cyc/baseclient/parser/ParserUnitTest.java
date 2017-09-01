@@ -21,19 +21,16 @@ package com.cyc.baseclient.parser;
  * #L%
  */
 //// Internal Imports
-import com.cyc.baseclient.testing.TestUtils;
-import com.cyc.baseclient.parser.CyclParser;
-import com.cyc.baseclient.parser.ParseException;
+import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
 import com.cyc.baseclient.cycobject.CycVariableImpl;
-import com.cyc.baseclient.cycobject.DefaultCycObject;
-import com.cyc.baseclient.cycobject.CycArrayList;
+import com.cyc.baseclient.cycobject.DefaultCycObjectImpl;
 import com.cyc.baseclient.datatype.NonAsciiStrings;
+import com.cyc.baseclient.testing.TestUtils;
 import java.io.*;
 import junit.framework.AssertionFailedError;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import com.cyc.baseclient.parser.ParserUnitTest;
 
 // FIXME: TestSentences - nwinant
 /**
@@ -236,7 +233,7 @@ public class ParserUnitTest {
                 System.out.println("Output: " + result);
               } else {
                 System.out.println("Output (" + result.getClass().getSimpleName()
-                        + "): " + DefaultCycObject.cyclify(result));
+                        + "): " + DefaultCycObjectImpl.cyclify(result));
               }
               if (expectSuccess) {
                 assertNotNull(result);

@@ -9,6 +9,41 @@ follow. Until the final 1.0.0 release, it is expected that future release candid
 backwards compatibility.
 
 
+1.0.0-rc7.0 - 2017-07-28
+------------------------
+
+Updated to reflect the changes to Cyc Core API 1.0.0-rc7.0. It is _not backwards-compatible_ with 
+earlier API releases.
+
+Other changes include:
+
+#### Java 1.7
+
+Now requires Java 7 or greater to run, and `JDK 1.7` or greater to build.
+
+#### KB Client
+
+* Cleans up some implementation code.
+* Strengthens some error checking and improves error messages, particularly for `Relation` methods 
+  which take varargs.
+* `KbObjectImpl#getCore()` can be more tightly typed via generics, and this is leveraged by 
+  subclasses. E.g., an `AssertionImpl` has a `CycAssertion`, a `SentenceImpl` has a 
+  `FormulaSentence`, a `KbTermImpl` has a `DenotationalTerm`, etc.
+* Some minor renamings for accuracy: `KbObjectFactory` is now `KbObjectImplFactory`, `KbObjectTest`
+  is now `KbObjectImplTest`, etc.
+
+#### Query Client
+
+* Query Client: implementation classes that were under `com.cyc.query` are now under
+  `com.cyc.query.client`.
+
+#### Base Client
+
+* `CycObject` & `KbTool` implementations are now named after their primary interface + "Impl". E.g.,
+  `CycFormulaSentence` is now `FormulaSentenceImpl`, `CycObjectTool` is now `ObjectToolImpl`, etc.
+* Fixes broken tests.
+
+
 1.0.0-rc6 - 2017-07-19
 ----------------------
 

@@ -25,7 +25,17 @@ package com.cyc.xml.query;
  * #L%
  */
 
-import com.cyc.query.explanations.ProofViewGeneratorImpl;
+import com.cyc.base.exception.CycApiException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.base.exception.CycTimeOutException;
+import com.cyc.kb.exception.CreateException;
+import com.cyc.kb.exception.KbException;
+import static com.cyc.query.client.TestUtils.assumeNotOpenCyc;
+import com.cyc.query.client.explanations.ProofViewGeneratorImpl;
+import com.cyc.query.exception.QueryConstructionException;
+import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
+import com.cyc.session.exception.SessionException;
+import static com.cyc.xml.query.ProofViewTestConstants.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -34,28 +44,13 @@ import java.net.UnknownHostException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-
 import javax.xml.bind.JAXBException;
-
 import org.junit.After;
 import org.junit.AfterClass;
-
-import static com.cyc.xml.query.ProofViewTestConstants.*;
 import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.cyc.base.exception.CycApiException;
-import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.exception.CycTimeOutException;
-import com.cyc.kb.exception.CreateException;
-import com.cyc.kb.exception.KbException;
-import static com.cyc.query.TestUtils.assumeNotOpenCyc;
-import com.cyc.query.exception.QueryConstructionException;
-import com.cyc.session.exception.SessionException;
-import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 
 /**
  *

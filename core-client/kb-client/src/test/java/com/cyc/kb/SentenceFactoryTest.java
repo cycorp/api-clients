@@ -62,7 +62,7 @@ public class SentenceFactoryTest {
     SentenceService instance = SentenceFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getSentenceService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().sentence(), instance);
   }
   
 }

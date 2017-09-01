@@ -36,20 +36,23 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.RelationService;
+import com.cyc.kb.client.AbstractKbObjectFactoryService;
 import com.cyc.kb.client.RelationImpl;
+import com.cyc.kb.spi.RelationService;
 
 /**
  *
  * @author nwinant
  */
-public class RelationServiceImpl<T extends RelationImpl> extends KbIndividualServiceImpl<T> implements RelationService<T> {
+public class RelationServiceImpl 
+        extends AbstractKbObjectFactoryService<RelationImpl> 
+        implements RelationService {
   
   // Protected
   
   @Override
-  protected Class<T> getObjectType() {
-    return (Class<T>) RelationImpl.class;
+  protected Class<RelationImpl> getObjectType() {
+    return (Class<RelationImpl>) RelationImpl.class;
   }
   
 }

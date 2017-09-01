@@ -36,63 +36,72 @@ package com.cyc.kb.service;
  * #L%
  */
 
-import com.cyc.kb.spi.SentenceService;
 import com.cyc.kb.Relation;
 import com.cyc.kb.Sentence;
 import com.cyc.kb.client.SentenceImpl;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.kb.spi.SentenceService;
 import java.util.Collection;
 
 /**
  *
  * @author nwinant
  */
-public class SentenceServiceImpl<T extends SentenceImpl> implements SentenceService<T> {
+public class SentenceServiceImpl implements SentenceService {
 
   @Override
-  public T get(String sentStr) throws KbTypeException, CreateException {
-    return (T) new SentenceImpl(sentStr);
+  public Sentence get(String sentStr) 
+          throws KbTypeException, CreateException {
+    return new SentenceImpl(sentStr);
   }
 
   @Override
-  public T get(Relation pred, Object... args) throws KbTypeException, CreateException {
-    return (T) new SentenceImpl(pred, args);
+  public Sentence get(Relation pred, Object... args) 
+          throws KbTypeException, CreateException {
+    return new SentenceImpl(pred, args);
   }
 
   @Override
-  public T get(Object... args) throws KbTypeException, CreateException {
-    return (T) new SentenceImpl(args);
+  public Sentence get(Object... args) 
+          throws KbTypeException, CreateException {
+    return new SentenceImpl(args);
   }
 
   @Override
-  public T and(Sentence... sentences) throws KbTypeException, CreateException {
-    return (T) SentenceImpl.and(sentences);
+  public Sentence and(Sentence... sentences) 
+          throws KbTypeException, CreateException {
+    return SentenceImpl.and(sentences);
   }
 
   @Override
-  public T and(Iterable<Sentence> sentences) throws KbTypeException, CreateException {
-    return (T) SentenceImpl.and(sentences);
+  public Sentence and(Iterable<Sentence> sentences) 
+          throws KbTypeException, CreateException {
+    return SentenceImpl.and(sentences);
   }
 
   @Override
-  public T implies(Collection<Sentence> posLiterals, Sentence negLiteral) throws KbTypeException, CreateException {
-    return (T) SentenceImpl.implies(posLiterals, negLiteral);
+  public Sentence implies(Collection<Sentence> posLiterals, Sentence negLiteral) 
+          throws KbTypeException, CreateException {
+    return SentenceImpl.implies(posLiterals, negLiteral);
   }
 
   @Override
-  public T implies(Sentence posLiteral, Sentence negLiteral) throws KbTypeException, CreateException {
-    return (T) SentenceImpl.implies(posLiteral, negLiteral);
+  public Sentence implies(Sentence posLiteral, Sentence negLiteral) 
+          throws KbTypeException, CreateException {
+    return SentenceImpl.implies(posLiteral, negLiteral);
   }
 
   @Override
-  public T or(Sentence... sentences) throws KbTypeException, CreateException {
-    return (T) SentenceImpl.or(sentences);
+  public Sentence or(Sentence... sentences)
+          throws KbTypeException, CreateException {
+    return SentenceImpl.or(sentences);
   }
 
   @Override
-  public T or(Iterable<Sentence> sentences) throws KbTypeException, CreateException {
-    return (T) SentenceImpl.or(sentences);
+  public Sentence or(Iterable<Sentence> sentences) 
+          throws KbTypeException, CreateException {
+    return SentenceImpl.or(sentences);
   }
   
 }

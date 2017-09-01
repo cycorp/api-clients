@@ -62,7 +62,7 @@ public class SecondOrderCollectionFactoryTest {
     SecondOrderCollectionService instance = SecondOrderCollectionFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getSecondOrderCollectionService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().secondOrderCollection(), instance);
   }
   
 }

@@ -62,7 +62,7 @@ public class FirstOrderCollectionFactoryTest {
     FirstOrderCollectionService instance = FirstOrderCollectionFactory.getInstance().getService();
     assertNotNull(instance);
     assertNotNull(instance.toString());
-    assertEquals(CoreServicesLoader.getKbFactoryServices().getFirstOrderCollectionService(), instance);
+    assertEquals(CoreServicesLoader.getKbFactoryServices().firstOrderCollection(), instance);
   }
   
 }

@@ -44,8 +44,8 @@ import com.cyc.base.cycobject.CycSymbol;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.baseclient.cycobject.CycAssertionImpl;
 import com.cyc.baseclient.cycobject.CycConstantImpl;
-import com.cyc.baseclient.cycobject.CycFormulaSentence;
 import com.cyc.baseclient.cycobject.CycSymbolImpl;
+import com.cyc.baseclient.cycobject.FormulaSentenceImpl;
 import com.cyc.baseclient.cycobject.GuidImpl;
 import static com.cyc.baseclient.testing.TestUtils.isEnterpriseCyc;
 import com.cyc.session.exception.SessionCommunicationException;
@@ -53,10 +53,10 @@ import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -153,7 +153,7 @@ public class InspectorToolTest {
     final CycObject ind = new CycConstantImpl("Individual", new GuidImpl("bd58da02-9c29-11b1-9dad-c379636f7270"));
     final CycObject thing = new CycConstantImpl("Thing", new GuidImpl("bd5880f4-9c29-11b1-9dad-c379636f7270"));
     
-    final FormulaSentence isaPredicate = CycFormulaSentence.makeCycSentence(access, "(#$isa #$isa #$Predicate)");
+    final FormulaSentence isaPredicate = FormulaSentenceImpl.makeCycSentence(access, "(#$isa #$isa #$Predicate)");
     final CycObject resultIsaPredicate = instance.categorizeTermWRTApi(isaPredicate);
     if (access.isOpenCyc() || isEnterpriseCyc()) {
       assertEquals(ind, resultIsaPredicate);

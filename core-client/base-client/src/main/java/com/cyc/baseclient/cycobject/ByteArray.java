@@ -21,8 +21,8 @@ package  com.cyc.baseclient.cycobject;
  * #L%
  */
 
-import com.cyc.baseclient.xml.XmlWriter;
 import com.cyc.baseclient.xml.XmlStringWriter;
+import com.cyc.baseclient.xml.XmlWriter;
 import java.io.*;
 
 /*****************************************************************************
@@ -34,10 +34,10 @@ import java.io.*;
  * The ByteArray object can only be used in the OpenCyc binary api because it does not
  * have a string representation in either SubL or java.
  *
- * @version $Id: ByteArray.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: ByteArray.java 173021 2017-07-21 18:36:21Z nwinant $
  * @author Bjorn Aldag
  */
-public class ByteArray extends DefaultCycObject implements Serializable {
+public class ByteArray extends DefaultCycObjectImpl implements Serializable {
 
     static final long serialVersionUID = -6247169945186440269L;
     
