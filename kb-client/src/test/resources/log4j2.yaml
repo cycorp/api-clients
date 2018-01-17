@@ -1,0 +1,161 @@
+###
+# #%L
+# File: log4j2.yaml
+# Project: KB Client
+# %%
+# Copyright (C) 2013 - 2017 Cycorp, Inc.
+# %%
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# #L%
+###
+# Copyright (c) 2011 Cycorp, Inc.  All rights reserved.
+# This software is the proprietary information of Cycorp, Inc.
+# Use is subject to license terms.
+
+
+##|  Log4j2 configuration
+ #|  ===================
+ #|  
+ #|  Provides logging for the Cyc APIs, and for anything else which uses either Log4j2 or SLF4J.
+ #|  
+ #|  See:
+ #|  * CycCoreAPI/pom.xml (comments on log4j & slf4j-log4j12 dependencies)
+ #|  * http://dev.cyc.com/api/
+ #|  * http://logging.apache.org/log4j/2.x/manual/index.html
+ #|  * http://logging.apache.org/log4j/2.0/manual/configuration.html#YAML
+ #|  * http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+ #|  * http://logging.apache.org/log4j/2.x/manual/appenders.html
+ #|  * http://logging.apache.org/log4j/2.x/manual/filters.html
+ #|  * http://www.yaml.org/spec/current.html
+ ##
+Configuration:
+  name: KbClient-Testing
+  
+  Properties:
+    Property:
+      - { name: proj_name      , value: "kb-client"                }
+      - { name: log_path       , value: "target/logs"              }
+      - { name: daily_log_path , value: "${log_path}/%d{yyyyMMdd}" }
+      - { name: timestamp      , value: "%d{yyyyMMdd-hhmm}"        }
+      - { name: daily_interval , value: 1440                       }
+      - { name: max_file_size  , value: 100 MB                     }
+  
+  Appenders:
+    Console:
+      - 
+        ##|  Logs to console.
+        name:          STDOUT
+        target:        SYSTEM_OUT
+        PatternLayout: { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+      - 
+        ##|  Logs verbosely to console. Useful for dev, where performance is less of an issue.
+        ##|  It should only be used for development & debugging, as generating some of this 
+        ##|  information is extremely slow.
+        name:          STDOUT_Verbose
+        target:        SYSTEM_OUT
+        PatternLayout: { pattern: "%-5p %d{ISO8601} [%t] %C{1}#%M:%L:  %m%n" }
+    
+    RollingFile:
+      - 
+        ##|  Logs to daily rolling file
+        name:                    DAILY_Log
+        fileName:                "${log_path}/${proj_name}.log"
+        filePattern:             "${daily_log_path}/${proj_name}-${timestamp}.log"
+        PatternLayout:           { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+        Policies:
+          TimeBasedTriggeringPolicy: { interval: "${daily_interval}" }
+          SizeBasedTriggeringPolicy: { size:     "${max_file_size}"  }
+      - 
+        ##|  Logs only errors
+        name:                    DAILY_Errors
+        ThresholdFilter:         { level: ERROR }
+        fileName:                "${log_path}/${proj_name}-errors.log"
+        filePattern:             "${daily_log_path}/${proj_name}-errors-${timestamp}.log"
+        PatternLayout:           { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+        Policies:
+          TimeBasedTriggeringPolicy: { interval: "${daily_interval}" }
+          SizeBasedTriggeringPolicy: { size:     "${max_file_size}"  }
+      - 
+        ##|  Logs INFO & up
+        name:                    DAILY_Info
+        ThresholdFilter:         { level: INFO }
+        fileName:                "${log_path}/${proj_name}-info.log"
+        filePattern:             "${daily_log_path}/${proj_name}-errors-${timestamp}.log"
+        PatternLayout:           { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+        Policies:
+          TimeBasedTriggeringPolicy: { interval: "${daily_interval}" }
+          SizeBasedTriggeringPolicy: { size:     "${max_file_size}"  }
+      - 
+        ##|  Logs all KB-related activity
+        name:                    DAILY_KbActivity
+        fileName:                "${log_path}/kb-activity.log"
+        filePattern:             "${daily_log_path}/kb-activity-${timestamp}.log"
+        PatternLayout:           { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+        Policies:
+          TimeBasedTriggeringPolicy: { interval: "${daily_interval}" }
+          SizeBasedTriggeringPolicy: { size:     "${max_file_size}"  }
+      - 
+        ##|  Logs all attempts to modify the KB
+        name:                    DAILY_KbChangeAttempts
+        fileName:                "${log_path}/kb-change-attempts.log"
+        filePattern:             "${daily_log_path}/kb-change-attempts-${timestamp}.log"
+        PatternLayout:           { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+        Policies:
+          TimeBasedTriggeringPolicy: { interval: "${daily_interval}" }
+          SizeBasedTriggeringPolicy: { size:     "${max_file_size}"  }
+      - 
+        ##|  Logs only successful KB changes
+        name:                    DAILY_KbChanges
+        ThresholdFilter:         { level: INFO, onMatch: ACCEPT, onMismatch: DENY }
+        fileName:                "${log_path}/kb-changes.log"
+        filePattern:             "${daily_log_path}/kb-changes-${timestamp}.log"
+        PatternLayout:           { pattern: "%-5p %d{ISO8601} [%t]  %m%n" }
+        Policies:
+          TimeBasedTriggeringPolicy: { interval: "${daily_interval}" }
+          SizeBasedTriggeringPolicy: { size:     "${max_file_size}"  }
+  
+  Loggers:
+    
+    Root:
+      level: INFO
+      AppenderRef:
+        - ref: STDOUT_Verbose
+        - ref: DAILY_Log
+        - ref: DAILY_Errors
+        - ref: DAILY_Info
+    
+    Logger:
+      - 
+        ##|  KB-related activity
+        name: com.cyc.kb.CONTENT
+        level: TRACE
+        additivity: false
+        AppenderRef: { ref: DAILY_KbActivity }
+      - 
+        ##|  KB modifications
+        name: com.cyc.kb.CONTENT.CHANGES
+        level: TRACE
+        additivity: false
+        AppenderRef:
+        - ref: DAILY_KbChangeAttempts
+        - ref: DAILY_KbChanges
+      
+      ##|  Base Client. These can be extremely verbose, but are useful for debugging. In particular:
+      ##|  
+      ##|  com.cyc.baseclient.CycCommandTool  :  Commands & responses to & from Cyc.
+      ##|  com.cyc.baseclient.connection      :  Low-level network traffic.
+      - { name: com.cyc.baseclient                                               , level: WARN  }
+      - { name: com.cyc.baseclient.CycCommandTool                                , level: WARN  }
+      - { name: com.cyc.baseclient.connection                                    , level: WARN  }
+      - { name: com.cyc.baseclient.connection.CycConnectionImpl                  , level: WARN  }
+      - { name: com.cyc.baseclient.connection.TaskProcessorBinaryResponseHandler , level: WARN  }

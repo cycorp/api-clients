@@ -13,65 +13,99 @@
     <groupId>com.cyc</groupId>
     <artifactId>cyc-default-config-parent</artifactId>
     <version>1.0.0-rc8.0</version>
-    <!--relativePath>../maven-resources/parent-poms/default-config-parent</relativePath-->
+    <!--relativePath>../../maven-resources/parent-poms/default-config-parent</relativePath-->
     <relativePath></relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
-  <artifactId>cyc-api-client-parent</artifactId>
+  <artifactId>cyc-core-client-parent</artifactId>
   <version>1.0.0-rc8.0</version>
   <packaging>pom</packaging>
   
-  <name>API Client Parent</name>
+  <name>Core Client Parent</name>
   
   <description>
-    Parent POM for reference implementations of Cyc Java APIs.
+    The parent project for the Core Client reference implementation of the Cyc Core API.
   </description>
   
   <!-- ====|    Configuration    |============================================================= -->
   
-  <modules>
-    <module>core-client-parent</module>
-    <!--
-    <module>nl-client</module>
-    <module>km-client</module>
-    -->
-  </modules>
-
-  <!--
   <properties>
     <cyc-core-api.version>1.0.0-rc8.0</cyc-core-api.version>
     <cyc-core-client-impl.version>${cyc-core-api.version}</cyc-core-client-impl.version>
-    <maven-site-plugin.stagingDirectory>/tmp/www/dev.cyc.com/api</maven-site-plugin.stagingDirectory>
+    <!--maven.compiler.debug>true</maven.compiler.debug-->
+    <!--maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel-->
+    <!--maven.compiler.verbose>true</maven.compiler.verbose-->
+    <!--maven-compiler-plugin.Xlint>all</maven-compiler-plugin.Xlint-->
+    <!--maven-compiler-plugin.Xlint>deprecation</maven-compiler-plugin.Xlint-->
+    <!--maven-compiler-plugin.Xlint>unchecked</maven-compiler-plugin.Xlint-->
+    <!--maven-javadoc-plugin.Xdoclint>all</maven-javadoc-plugin.Xdoclint-->
+    <maven-site-plugin.stagingDirectory>/tmp/www/dev.cyc.com/api/core</maven-site-plugin.stagingDirectory>
   </properties>
   
+  <modules>
+    <module>../session-client</module>
+    <module>../base-client</module>
+    <module>../kb-client</module>
+    <module>../query-client</module>
+    <module>../core-client-impl</module>
+  </modules>
+  
   <dependencies>
+    <dependency>
+      <groupId>com.cyc</groupId>
+      <artifactId>cyc-core-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <!-- Used to gather up all classes w/ annotations, especially CycObjectLibraries. -->
+      <groupId>org.atteo.classindex</groupId>
+      <artifactId>classindex</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!- - 
-        Enables test-scope logging of Cyc APIs via SLF4J & Log4J. (Cyc APIs use
-        SLF4J, which must be bound to a logging framework at deployment time.)
+    <!-- 
+        Enables test-scope logging of Cyc APIs via SLF4J & Log4j2. (Cyc APIs use SLF4J, which must
+        be bound to a logging framework at deployment time.)
         
         Note that each API project maintains its own log4j.properties file in
         its src/test/resources directory.
          
         See:
         * http://www.slf4j.org/manual.html
-        * [PROJECT]/src/test/resources/log4j.properties
-    - ->
+        * [PROJECT]/src/test/resources/log4j2.yaml
+    -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--
+        Testing
+    -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -80,89 +114,50 @@
   
   <dependencyManagement>
     <dependencies>
-      <!- - 
-          Core API
-      - ->
+      <!--
+          Child modules, so version numbers can be overridden at a slightly more granular level.
+      -->
       <dependency>
         <groupId>com.cyc</groupId>
-        <artifactId>cyc-core-api</artifactId>
-        <version>${cyc-core-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.cyc</groupId>
-        <artifactId>cyc-core-api</artifactId>
-        <classifier>jar-with-dependencies</classifier>
-        <version>${cyc-core-api.version}</version>
-      </dependency>
-      <!- - 
-          Core Client Impl
-      - ->
-      <dependency>
-        <groupId>com.cyc</groupId>
-        <artifactId>cyc-core-client-impl</artifactId>
+        <artifactId>cyc-session-client</artifactId>
         <version>${cyc-core-client-impl.version}</version>
       </dependency>
       <dependency>
         <groupId>com.cyc</groupId>
-        <artifactId>cyc-core-client-impl</artifactId>
-        <classifier>jar-with-dependencies</classifier>
+        <artifactId>cyc-base-client</artifactId>
+        <version>${cyc-core-client-impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-kb-client</artifactId>
+        <version>${cyc-core-client-impl.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cyc</groupId>
+        <artifactId>cyc-query-client</artifactId>
         <version>${cyc-core-client-impl.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
   
-  <profiles>
-    <profile>
-      <id>default-config</id>
-      <activation>
-        <property>
-          <name>!sonatype-oss-release</name>
-        </property>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <configuration>
-                <author>false</author>
-                <version>false</version>
-              </configuration>
-              <executions>
-                <execution>
-                  <id>default-cli</id>
-                  <phase>site</phase>
-                  <goals>
-                    <goal>aggregate</goal>
-                  </goals>
-                  <configuration>
-                  </configuration>
-                </execution>
-                <execution>
-                  <id>resource-bundles</id>
-                  <phase>package</phase>
-                  <goals>
-                    <!- - produce source artifact for main project sources - ->
-                    <goal>resource-bundle</goal>
-                  </goals>
-                  <configuration>
-                    <detectOfflineLinks>false</detectOfflineLinks>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-            <plugin>
-              <artifactId>maven-site-plugin</artifactId>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-  </profiles>
-  -->
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/BuildInfo.properties</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+  
   <!-- ====|    Metadata & contact info    |=================================================== -->
-
-  <url>http://dev.cyc.com/api/</url>
+  
+  <url>http://dev.cyc.com/api/core/</url>
   
   <scm>
     <connection>scm:git:git@github.com:cycorp/api-clients.git</connection>
@@ -175,7 +170,7 @@
     <system>GitHub Issues</system>
   </issueManagement>
   
-  <inceptionYear>2015</inceptionYear>
+  <inceptionYear>2013</inceptionYear>
   
   <licenses>
     <license>
@@ -197,12 +192,5 @@
       <organizationUrl>http://www.cyc.com</organizationUrl>
     </developer>
   </developers>
-  
-  <distributionManagement> 
-    <site> 
-      <id>cyc-dev-center</id> 
-      <url>http://dev.cyc.com/api</url> 
-    </site>
-  </distributionManagement>
   
 </project>

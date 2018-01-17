@@ -1,0 +1,163 @@
+package com.cyc.baseclient.cycobject;
+
+/*
+ * #%L
+ * File: CycListParserTest.java
+ * Project: Base Client
+ * %%
+ * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+import com.cyc.base.CycAccess;
+import com.cyc.base.cycobject.CycSymbol;
+import com.cyc.base.exception.BaseClientRuntimeException;
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.baseclient.CycObjectFactory;
+import com.cyc.baseclient.testing.TestUtils;
+import java.math.BigInteger;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+/**
+ *
+ * @author baxter
+ */
+public class CycListParserTest {
+
+  public CycListParserTest() {
+  }
+
+  @BeforeClass
+  public static void setUpClass() {
+  }
+
+  @AfterClass
+  public static void tearDownClass() {
+  }
+
+  @Before
+  public void setUp() throws CycConnectionException {
+    if (cycAccess == null || cycAccess.isClosed()) {
+      cycAccess = TestUtils.getCyc();
+    }
+  }
+
+  @After
+  public void tearDown() {
+  }
+
+  
+  // Fields
+  
+  private static CycAccess cycAccess;
+  
+  
+  // Tests
+  
+  @Test(expected=BaseClientRuntimeException.class)
+  public void testReadEmptyString() {
+    System.out.println("testReadEmptyString");
+    final CycArrayList result = new CycListParser(cycAccess).read("");
+    System.out.println(result);
+    fail("Expected an exception to be thrown.");
+  }
+  
+  @Test(expected=BaseClientRuntimeException.class)
+  public void testReadWhitespace() {
+    System.out.println("testReadEmptyString");
+    final CycArrayList result = new CycListParser(cycAccess).read("       ");
+    System.out.println(result);
+    fail("Expected an exception to be thrown.");
+  }
+  
+  @Test
+  public void testReadEmptyList() {
+    System.out.println("testReadEmptyList");
+    final CycArrayList result = new CycListParser(cycAccess).read("()");
+    System.out.println(result);
+    assertEquals(0, result.size());
+  }
+  
+  @Test
+  public void testReadSingleElement() {
+    System.out.println("testReadSingleElement");
+    final CycArrayList result = new CycListParser(cycAccess).read("(3)");
+    System.out.println(result);
+    assertEquals(1, result.size());
+    assertEquals(3, result.get(0));
+  }
+  
+  @Test
+  public void testReadKeyword() {
+    System.out.println("testReadKeyword");
+    final CycArrayList result = new CycListParser(cycAccess).read("(:KEY)");
+    System.out.println(result);
+    assertEquals(1, result.size());
+    assertTrue(result.get(0) instanceof CycSymbol);
+    assertEquals(CycObjectFactory.makeCycSymbol(":KEY"), result.get(0));
+    assertEquals("KEYWORD", ((CycSymbol)result.get(0)).getPackageName());
+  }
+  
+  @Test
+  public void testReadKeywords() {
+    System.out.println("testReadKeywords");
+    final CycArrayList result = new CycListParser(cycAccess).read("(:KEY :VALUE)");
+    System.out.println(result);
+    assertEquals(2, result.size());
+    assertTrue(result.get(0) instanceof CycSymbol);
+    assertEquals(CycObjectFactory.makeCycSymbol(":KEY"), result.get(0));
+    assertEquals("KEYWORD", ((CycSymbol)result.get(0)).getPackageName());
+    assertTrue(result.get(1) instanceof CycSymbol);
+    assertEquals(CycObjectFactory.makeCycSymbol(":VALUE"), result.get(1));
+    assertEquals("KEYWORD", ((CycSymbol)result.get(1)).getPackageName());
+  }
+  
+  @Test
+  public void testReadPipedKeywords() {
+    // FIXME: parsing of piped key is indeed broken, and should be fixed - nwinant, 2017-07-27
+    System.out.println("testReadPipedKeywords");
+    final CycArrayList result = new CycListParser(cycAccess).read("(:KEY :|PIPEDKEY|)");
+    System.out.println(result);
+    assertEquals(2, result.size());
+    assertTrue(result.get(0) instanceof CycSymbol);
+    assertEquals("KEYWORD", ((CycSymbol)result.get(0)).getPackageName());
+    assertTrue(result.get(1) instanceof CycSymbol);
+    assertEquals("KEYWORD", ((CycSymbol)result.get(1)).getPackageName());
+  }
+  
+  @Test
+  public void testScanNumber_BigInt() {
+    System.out.println("testScanNumber");
+    final String intString = "40114214521980734688215";
+    final CycArrayList result = new CycListParser(cycAccess).read(
+            "(list #$DecimalFractionFn " + intString + " 12)");
+    System.out.println(result);
+    assertEquals(4, result.size());
+    
+    final Object arg2 = result.get(2);
+    final BigInteger expected = new BigInteger(intString);
+    System.out.println("[" + expected + "]");
+    assertTrue(arg2 instanceof BigInteger);
+    assertEquals(expected, arg2);
+  }
+
+}

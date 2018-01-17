@@ -1,0 +1,99 @@
+package com.cyc.query.client;
+
+/*
+ * #%L
+ * File: TestSetTest.java
+ * Project: Query Client
+ * %%
+ * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+import com.cyc.base.exception.CycConnectionException;
+import com.cyc.kb.KbCollection;
+import com.cyc.kb.KbIndividual;
+import com.cyc.kb.exception.KbException;
+import com.cyc.query.exception.QueryConstructionException;
+import com.cyc.session.exception.UnsupportedCycOperationException;
+import java.util.Collection;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static com.cyc.Cyc.Constants.INFERENCE_PSC;
+
+/**
+ * Runs the tests defined in {@link #testSet}.
+ *
+ * @author baxter
+ */
+public class TestSetTest {
+
+  private static KbCollection testSet = null;
+  private KbCollection multipleChoiceTest = null;
+  private boolean mctChecked = false;
+  private static final int MAX_TESTS_TO_RUN = 4;
+
+  @BeforeClass
+  public static void setupClass() {
+  }
+
+  public TestSetTest() {
+    try {
+      testSet = KbCollection.get("QueryAPIKBQTest");
+    } catch (KbException ex) {
+      System.out.println("No QueryAPIKBQTest collection defined in this KB.");
+    }
+  }
+
+  @Test
+  public void testTestSet() 
+          throws QueryConstructionException, KbException, 
+          UnsupportedCycOperationException, CycConnectionException {
+    if (testSet == null) {
+      System.out.println("No tests to run.");
+      return;
+    }
+    final Collection<KbIndividual> tests = testSet.<KbIndividual>getInstances(INFERENCE_PSC);
+    if (tests.isEmpty()) {
+      System.out.println("No tests to run.");
+      return;
+    }
+    System.out.println("Testing instances of " + testSet);
+    int runCount = 0;
+    for (final KbIndividual test : tests) {
+      if (runCount < MAX_TESTS_TO_RUN && !isMultipleChoice(test)) {
+        new KbContentTestTester(test).test();
+        runCount++;
+      }
+    }
+  }
+
+  private boolean isMultipleChoice(final KbIndividual test)
+          throws CycConnectionException, QueryConstructionException {
+    synchronized (this) {
+      if (!mctChecked) {
+        try {
+          multipleChoiceTest = KbCollection.get("MultipleChoiceKBContentTest");
+        } catch (KbException ex) {
+        } finally {
+          mctChecked = true;
+        }
+      }
+    }
+    if (multipleChoiceTest == null) {
+      return false;
+    }
+    return test.isInstanceOf(multipleChoiceTest, INFERENCE_PSC);
+  }
+}
