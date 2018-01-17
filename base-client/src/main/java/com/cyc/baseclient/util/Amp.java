@@ -5,7 +5,7 @@ package  com.cyc.baseclient.util;
  * File: Amp.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ package  com.cyc.baseclient.util;
  * Provides the behavior and attributes of the Agent Manager Protocol - an agent
  * communication language (ACL) for Base Client.<p>
  *
- * @version $Id: Amp.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: Amp.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 

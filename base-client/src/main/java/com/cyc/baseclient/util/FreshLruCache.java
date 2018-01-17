@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: FreshLruCache.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import java.util.Set;
  * <P>FreshLRUCache is designed to...
  *
  * @author tbrussea, Feb 28, 2010, 3:27:51 PM
- * @version $Id: FreshLruCache.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: FreshLruCache.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class FreshLruCache<K,V> implements Map<K,V> {
 

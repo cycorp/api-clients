@@ -5,7 +5,7 @@ package com.cyc.baseclient.util.query;
  * File: QueryResultSet.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
- * @version $Id: QueryResultSet.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: QueryResultSet.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author  mreimers
  */
 public interface QueryResultSet {

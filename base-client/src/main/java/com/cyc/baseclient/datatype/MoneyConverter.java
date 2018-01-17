@@ -5,7 +5,7 @@ package com.cyc.baseclient.datatype;
  * File: MoneyConverter.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import java.util.Map;
  * corresponding CycL representations and vice versa.
  *
  * @author nwinant, May 21, 2010, 2:03:06 PM
- * @version $Id: MoneyConverter.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: MoneyConverter.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 // TODO: Add more currencies. Currently only supports USD.
 public class MoneyConverter extends DataTypeConverter<Money> {

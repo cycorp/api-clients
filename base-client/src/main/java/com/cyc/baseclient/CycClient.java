@@ -5,7 +5,7 @@ package com.cyc.baseclient;
  * File: CycClient.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ import static java.util.stream.Collectors.toSet;
  Collaborates with the <tt>CycConnection</tt> class which manages the API connections.
  </p>
  *
- * @version $Id: CycClient.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: CycClient.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {

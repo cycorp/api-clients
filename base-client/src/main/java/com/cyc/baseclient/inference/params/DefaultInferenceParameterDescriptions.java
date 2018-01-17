@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference.params;
  * File: DefaultInferenceParameterDescriptions.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ import java.util.Map;
  *
  * @author zelal
  * @since August 9, 2005, 9:30 PM
- * @version $Id: DefaultInferenceParameterDescriptions.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: DefaultInferenceParameterDescriptions.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class DefaultInferenceParameterDescriptions extends HashMap<String, InferenceParameter>
         implements InferenceParameterDescriptions {

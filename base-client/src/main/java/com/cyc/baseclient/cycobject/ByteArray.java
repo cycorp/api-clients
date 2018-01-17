@@ -5,7 +5,7 @@ package  com.cyc.baseclient.cycobject;
  * File: ByteArray.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.io.*;
  * The ByteArray object can only be used in the OpenCyc binary api because it does not
  * have a string representation in either SubL or java.
  *
- * @version $Id: ByteArray.java 173021 2017-07-21 18:36:21Z nwinant $
+ * @version $Id: ByteArray.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Bjorn Aldag
  */
 public class ByteArray extends DefaultCycObjectImpl implements Serializable {

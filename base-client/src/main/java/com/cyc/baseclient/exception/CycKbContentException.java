@@ -7,7 +7,7 @@ import com.cyc.base.exception.BaseClientRuntimeException;
  * File: CycKbContentException.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.cyc.base.exception.BaseClientRuntimeException;
  * Class CycKBContentException indicates that there is some problem with
  * the knowledge currently stored in the KB.
  *
- * @version $Id: CycKbContentException.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: CycKbContentException.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 

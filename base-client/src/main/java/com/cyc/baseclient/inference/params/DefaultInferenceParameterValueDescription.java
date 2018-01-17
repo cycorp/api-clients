@@ -5,7 +5,7 @@ package com.cyc.baseclient.inference.params;
  * File: DefaultInferenceParameterValueDescription.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author zelal
  * @since August 14, 2005, 12:51 PM
- * @version $Id: DefaultInferenceParameterValueDescription.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: DefaultInferenceParameterValueDescription.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class DefaultInferenceParameterValueDescription 
 implements InferenceParameterValueDescription {

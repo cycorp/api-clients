@@ -7,7 +7,7 @@ import com.cyc.base.exception.BaseClientRuntimeException;
  * File: CycIoException.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.cyc.base.exception.BaseClientRuntimeException;
 /**
  * Class CycApiException indicates an error condition during a Cyc API call.
  *
- * @version $Id: CycIoException.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: CycIoException.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 

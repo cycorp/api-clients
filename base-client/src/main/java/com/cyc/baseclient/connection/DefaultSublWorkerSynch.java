@@ -5,7 +5,7 @@ package com.cyc.baseclient.connection;
  * File: DefaultSublWorkerSynch.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * @author tbrussea
  * @since March 25, 2004, 2:01 PM
- * @version $Id: DefaultSublWorkerSynch.java 175363 2017-10-18 19:06:10Z nwinant $
+ * @version $Id: DefaultSublWorkerSynch.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class DefaultSublWorkerSynch
     extends DefaultSublWorker

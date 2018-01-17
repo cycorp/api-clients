@@ -5,7 +5,7 @@ package com.cyc.base.connection;
  * File: CycConnection.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.cyc.session.CycAddress;
 /**
  * Defines the interface for local and remote CycConnection objects<p>
  *
- * @version $Id: CycConnection.java 175363 2017-10-18 19:06:10Z nwinant $
+ * @version $Id: CycConnection.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 public interface CycConnection {

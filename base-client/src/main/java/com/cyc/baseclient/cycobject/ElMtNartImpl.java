@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: ElMtNartImpl.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import com.cyc.kb.Context;
  * Provides the container for the ElMt NART (Epistemlogical Level Microtheory
  * Non Atomic Reified Term).<p>
  *
- * @version $Id: ElMtNartImpl.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: ElMtNartImpl.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Tony Brusseau
  */
 public class ElMtNartImpl extends NartImpl implements ElMt {

@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: DefaultCancelable.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ package com.cyc.baseclient.util;
  *
  * @author zelal
  * @since October 14, 2005, 2:29 PM
- * @version $Id: DefaultCancelable.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: DefaultCancelable.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class DefaultCancelable implements Cancelable {
   

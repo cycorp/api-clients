@@ -5,7 +5,7 @@ package com.cyc.baseclient.ui;
  * File: SublInteractor.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * <P>SubLInteractor is designed to...
  *
  * @author baxter, Oct 8, 2008, 1:19:31 PM
- * @version $Id: SublInteractor.java 176028 2017-11-21 20:37:20Z nwinant $
+ * @version $Id: SublInteractor.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class SublInteractor {
   

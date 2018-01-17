@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: CommUtils.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import static com.cyc.base.connection.Worker.EXPECT_INCREMENTAL_RESULTS;
  * <p>
  * @author tbrussea
  * @since Tue Aug  7 15:50:28 CDT 2007
- * @version $Id: CommUtils.java 173230 2017-08-10 00:13:28Z nwinant $
+ * @version $Id: CommUtils.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public final class CommUtils {
   

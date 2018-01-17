@@ -5,7 +5,7 @@ package com.cyc.baseclient.util.query;
  * File: QueryConstraint.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ package com.cyc.baseclient.util.query;
 
 /**
  * Tagging interface for constraint interfaces.
- * @version $Id: QueryConstraint.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: QueryConstraint.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author  mreimers
  */
 public interface QueryConstraint {

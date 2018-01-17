@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: SecondOrderCollectionImpl.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc
+ * Copyright (C) 2013 - 2018 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ import com.cyc.kb.exception.KbTypeException;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: SecondOrderCollectionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: SecondOrderCollectionImpl.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class SecondOrderCollectionImpl<T extends DenotationalTerm> extends KbCollectionImpl<T> implements SecondOrderCollection {
 

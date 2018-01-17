@@ -5,7 +5,7 @@ package  com.cyc.baseclient.xml;
  * File: XpathComputer.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import  org.w3c.dom.DOMException;
  * Implements static methods for computing Xpath strings
  * (www.w3.org/TR/xpath) for DOM Nodes (www.w3.org/DOM/)<p>
  *
- * @version $Id: XpathComputer.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: XpathComputer.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stefano Bertolo
  */
 

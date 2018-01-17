@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: ResultSetSlice.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.List;
  * A Cfaslable slice of a java.sql.ResultSet, used to send SubL portions of
  * a result set.
  *
- * @version $Id: ResultSetSlice.java 175694 2017-11-02 22:46:03Z arebguns $
+ * @version $Id: ResultSetSlice.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author
  *
  *      Bjorn Aldag<BR>

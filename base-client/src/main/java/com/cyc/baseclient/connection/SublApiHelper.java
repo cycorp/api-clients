@@ -5,7 +5,7 @@ package com.cyc.baseclient.connection;
  * File: SublApiHelper.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * <P>SublApiHelper is designed to...
  *
  * @author tbrussea, Nov 4, 2010, 11:33:24 AM
- * @version $Id: SublApiHelper.java 175669 2017-11-01 23:47:32Z nwinant $
+ * @version $Id: SublApiHelper.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class SublApiHelper {
   

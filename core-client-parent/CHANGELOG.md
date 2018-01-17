@@ -5,6 +5,13 @@ For more information, view the [README](README.md) bundled with this release or 
 [Cyc Developer Center](http://dev.cyc.com/api/core/).
 
 
+1.1.1 - 2018-01-12
+------------------
+
+Fixes a bug where `cyc-core-client-impl` was bundling an empty provider-configuration file for
+`SessionFactory` in assembly jars.
+
+
 1.1.0 - 2017-12-18
 ------------------
 

@@ -5,7 +5,7 @@ package com.cyc.baseclient.examples;
  * File: ApiDemo.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import java.io.InputStreamReader;
 /**
  * Provides a simple demo of the Base Client.<p>
  *
- * @version $Id: ApiDemo.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: ApiDemo.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 

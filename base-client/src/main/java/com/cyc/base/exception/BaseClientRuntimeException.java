@@ -7,7 +7,7 @@ import com.cyc.session.exception.SessionRuntimeException;
  * File: BaseClientRuntimeException.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.cyc.session.exception.SessionRuntimeException;
 /**
  * Class BaseClientRuntimeException indicates an error condition...
  *
- * @version $Id: BaseClientRuntimeException.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: BaseClientRuntimeException.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 public class BaseClientRuntimeException 

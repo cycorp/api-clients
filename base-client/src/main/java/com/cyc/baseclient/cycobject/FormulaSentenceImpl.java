@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: FormulaSentenceImpl.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import static com.cyc.baseclient.subl.functions.SublFunctions.INDEXICAL_P;
 
 /**
  * @author baxter, Jul 6, 2009, 10:05:43 AM
- * @version $Id: FormulaSentenceImpl.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: FormulaSentenceImpl.java 176591 2018-01-09 17:27:27Z nwinant $
  *
  */
 // TODO: make it implement CycLFormula, or get rid of CycLFormula, as appropriate

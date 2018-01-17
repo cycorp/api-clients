@@ -5,7 +5,7 @@ package com.cyc.kb.client;
  * File: ContextImpl.java
  * Project: KB Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc
+ * Copyright (C) 2013 - 2018 Cycorp, Inc
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Each Assertion has to be explicitly stated to be true in at least one context.
  * 
  * @author Vijay Raj
- * @version $Id: ContextImpl.java 176349 2017-12-19 01:38:11Z nwinant $
+ * @version $Id: ContextImpl.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
   

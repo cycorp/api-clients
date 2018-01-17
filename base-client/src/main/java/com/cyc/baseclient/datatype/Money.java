@@ -5,7 +5,7 @@ package com.cyc.baseclient.datatype;
  * File: Money.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * <P>Money is a Java representation of monetary amounts.
  *
  * @author nwinant, May 24, 2010, 4:30:39 PM
- * @version $Id: Money.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: Money.java 176591 2018-01-09 17:27:27Z nwinant $
  */
  // TODO: Add String-parsing constructor (so you can instantiate from strings like "$53.60")
  // TODO: Expose BigDecimal arithmetic methods (add, subtract, divide, etc.)

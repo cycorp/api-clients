@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: PasswordManager.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * <P>PasswordManager is designed to handle password encryption, authentication ,etc.
  *
  * @author baxter, Jul 27, 2009, 3:10:59 PM
- * @version $Id: PasswordManager.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: PasswordManager.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class PasswordManager {
 

@@ -5,7 +5,7 @@ package com.cyc.baseclient.parser;
  * File: InvalidConstantNameException.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import static com.cyc.base.cycobject.CycConstant.HD;
  * by its name, and the Cyc server does not already have a constant
  * by that name defined.
  *
- * @version $Id: InvalidConstantNameException.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: InvalidConstantNameException.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Tony Brusseau
  */
 public class InvalidConstantNameException extends BaseClientException {

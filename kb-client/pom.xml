@@ -7,13 +7,13 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-client-parent</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <relativePath>../core-client-parent</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-kb-client</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <packaging>jar</packaging>
   
   <name>KB Client</name>
@@ -36,7 +36,6 @@
     <dependency>
       <groupId>com.cyc</groupId>
       <artifactId>cyc-base-client</artifactId>
-      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>

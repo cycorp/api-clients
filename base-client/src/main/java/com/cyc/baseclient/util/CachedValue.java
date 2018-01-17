@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: CachedValue.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ package com.cyc.baseclient.util;
  * <P>CachedValue is designed to...
  *
  * @author tbrussea, Apr 1, 2010, 3:32:56 PM
- * @version $Id: CachedValue.java 169909 2017-01-11 23:21:20Z nwinant $
+ * @version $Id: CachedValue.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public class CachedValue<V> {
 

@@ -5,7 +5,7 @@ package com.cyc.baseclient.connection;
  * File: SublWorkerSynch.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import com.cyc.baseclient.exception.CycTaskInterruptedException;
  *
  * @author tbrussea
  * @since March 17, 2004, 11:26 AM
- * @version $Id: SublWorkerSynch.java 175363 2017-10-18 19:06:10Z nwinant $
+ * @version $Id: SublWorkerSynch.java 176591 2018-01-09 17:27:27Z nwinant $
  */
 public interface SublWorkerSynch extends Worker {
   

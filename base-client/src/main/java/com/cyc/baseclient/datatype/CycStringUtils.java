@@ -5,7 +5,7 @@ package com.cyc.baseclient.datatype;
  * File: CycStringUtils.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import static org.apache.commons.lang3.StringUtils.stripStart;
  * Provides <tt>String</tt> utilities not otherwise provided by Violin Strings.
  * All methods are static. There is no need to instantiate this class.<p>
  *
- * @version $Id: CycStringUtils.java 175790 2017-11-08 02:44:55Z nwinant $
+ * @version $Id: CycStringUtils.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 public class CycStringUtils {

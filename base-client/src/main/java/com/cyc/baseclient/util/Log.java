@@ -5,7 +5,7 @@ package com.cyc.baseclient.util;
  * File: Log.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ package com.cyc.baseclient.util;
  *
  * user -Dcom.cyc.baseclient.util.log=file  to enable writing to a file.
  *
- * @version $Id: Log.java 170971 2017-03-16 01:34:00Z nwinant $
+ * @version $Id: Log.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Stephen L. Reed
  */
 

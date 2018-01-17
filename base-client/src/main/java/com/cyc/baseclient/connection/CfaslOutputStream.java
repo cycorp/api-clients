@@ -5,7 +5,7 @@ package com.cyc.baseclient.connection;
  * File: CfaslOutputStream.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ import java.util.UUID;
  * objects, such as binding-lists and formulas, should be explicitly coerced before being sent,
  * unless they inherit from a class which can be translated automatically.
  * 
- * @version $Id: CfaslOutputStream.java 175694 2017-11-02 22:46:03Z arebguns $
+ * @version $Id: CfaslOutputStream.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Christopher
  * @author Dan Lipofsky
  */

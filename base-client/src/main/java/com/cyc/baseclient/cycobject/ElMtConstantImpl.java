@@ -5,7 +5,7 @@ package com.cyc.baseclient.cycobject;
  * File: ElMtConstantImpl.java
  * Project: Base Client
  * %%
- * Copyright (C) 2013 - 2017 Cycorp, Inc.
+ * Copyright (C) 2013 - 2018 Cycorp, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import com.cyc.base.cycobject.ElMtConstant;
  * Provides the container for the ElMt CycConstantImpl (Epistemlogical Level Microtheory
  Constant).<p>
  *
- * @version $Id: ElMtConstantImpl.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: ElMtConstantImpl.java 176591 2018-01-09 17:27:27Z nwinant $
  * @author Tony Brusseau
  */
 public class ElMtConstantImpl extends CycConstantImpl implements ElMtConstant {
