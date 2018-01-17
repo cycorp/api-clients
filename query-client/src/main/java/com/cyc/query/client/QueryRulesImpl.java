@@ -45,9 +45,9 @@ import com.cyc.kb.Variable;
 import com.cyc.kb.client.KbPredicateImpl;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbTypeException;
+import com.cyc.query.ModifiableQuerySpecification;
 import com.cyc.query.Query;
 import com.cyc.query.QueryRules;
-import com.cyc.query.QuerySpecification.MutableQuerySpecification;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.exception.SessionCommunicationException;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class QueryRulesImpl implements QueryRules {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(QueryRulesImpl.class);
   
-  private final MutableQuerySpecification query;
+  private final ModifiableQuerySpecification query;
   private final Variable ruleVar;
   private final Context ruleCtx;
   private final Query allowedRulesQuerySentence;
@@ -80,7 +80,7 @@ public class QueryRulesImpl implements QueryRules {
   
   // Construction
   
-  protected QueryRulesImpl(MutableQuerySpecification query) throws KbTypeException, CreateException, QueryConstructionException {
+  protected QueryRulesImpl(ModifiableQuerySpecification query) throws KbTypeException, CreateException, QueryConstructionException {
     this.query = query;
     this.ruleVar = Variable.get("?RULE");
     this.ruleCtx = Context.get("TestVocabularyMt"); // FIXME: what context should we use?
@@ -91,7 +91,7 @@ public class QueryRulesImpl implements QueryRules {
   
   private Query createRuleQuery(String predicateName) throws QueryConstructionException, KbTypeException, CreateException {
     if (query.getId() == null) {
-      throw new QueryConstructionException("Only CycLQuerySpecifications may have queryPracticeRules", new NullPointerException());
+      throw QueryConstructionException.fromThrowable("Only CycLQuerySpecifications may have queryPracticeRules", new NullPointerException());
     }
     return new QueryImpl(Sentence.get(KbPredicateImpl.get(predicateName), query.getId(), ruleVar), ruleCtx);
   }

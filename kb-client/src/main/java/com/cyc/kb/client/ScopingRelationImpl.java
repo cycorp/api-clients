@@ -95,7 +95,7 @@ public class ScopingRelationImpl<T extends DenotationalTerm> extends RelationImp
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

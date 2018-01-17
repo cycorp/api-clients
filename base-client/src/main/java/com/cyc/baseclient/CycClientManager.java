@@ -24,12 +24,9 @@ package com.cyc.baseclient;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.session.CycSession;
-import com.cyc.session.exception.SessionConfigurationException;
-import com.cyc.session.CycSessionConfiguration;
-import com.cyc.session.EnvironmentConfiguration;
 import com.cyc.session.exception.SessionCommunicationException;
+import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
-import com.cyc.session.spi.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,15 +74,10 @@ public class CycClientManager<T extends CycClientSession> extends CycAccessManag
     return this.getSessionMgr().getCurrentSession();
   }
 
-  @Override
-  public CycSessionConfiguration getConfiguration() throws SessionConfigurationException {
-    return this.getSessionMgr().getConfiguration();
-  }
-
-  @Override
-  public EnvironmentConfiguration getEnvironmentConfiguration() throws SessionConfigurationException {
-    return this.getSessionMgr().getEnvironmentConfiguration();
-  }
+  //@Override
+  //public EnvironmentConfiguration getEnvironmentConfiguration() throws SessionConfigurationException {
+  //  return this.getSessionMgr().getEnvironmentConfiguration();
+  //}
   
   @Override
   public CycClient fromSession(CycSession session) {
@@ -96,8 +88,4 @@ public class CycClientManager<T extends CycClientSession> extends CycAccessManag
     return (CycClient) access;
   }
 
-  @Override
-  public int compareTo(SessionManager<T> o) {
-    return 1;
-  }
 }

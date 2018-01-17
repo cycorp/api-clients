@@ -78,7 +78,7 @@ public class TypeFactImpl extends FactImpl implements TypeFact {
         throw new KbException(msg);
       }
     } catch (Exception e) {
-      throw new KbException(e.getMessage(), e);
+      throw KbException.fromThrowable(e);
     }
     identifyTypeObjectsFromAssertion(getCore());
   }

@@ -67,7 +67,7 @@ import java.util.Collection;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version	$Id: KbFunctionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version	$Id: KbFunctionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
   // @TODO: Add examples
 public class KbFunctionImpl<T extends DenotationalTerm> extends RelationImpl<T> implements KbFunction {
@@ -467,7 +467,7 @@ public class KbFunctionImpl<T extends DenotationalTerm> extends RelationImpl<T> 
       }
       return KbObjectImpl.<O>checkAndCastObject(co);
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     } 
   }
   
@@ -475,23 +475,23 @@ public class KbFunctionImpl<T extends DenotationalTerm> extends RelationImpl<T> 
   public Collection<KbCollection> getResultIsa() {
     return getResultIsa(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbCollection> getResultIsa(String ctxStr) {
     return getResultIsa(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbCollection> getResultIsa(Context ctx) {
     //return (this.<KbCollection>getValuesForArg(Constants.resultIsa(), 1, 2, ctx));
     return Constants.resultIsa().getValuesForArgPosition(this, 1, 2, ctx);
   }
-  
+  /*
   @Override
   public KbFunction addResultIsa(String colStr, String ctxStr) throws KbTypeException, CreateException  {
     return addResultIsa(KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public KbFunction addResultIsa(KbCollection col, Context ctx) throws KbTypeException, CreateException {
     //addFact(ctx, Constants.resultIsa(), 1, (Object) col);
@@ -504,23 +504,23 @@ public class KbFunctionImpl<T extends DenotationalTerm> extends RelationImpl<T> 
           throws KbException {
     return getResultGenl(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbCollection> getResultGenl(String ctxStr) {
     return getResultGenl(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public java.util.Collection<KbCollection> getResultGenl(Context ctx) {
     //return (this.<KbCollection>getValuesForArg(Constants.resultGenl(), 1, 2, ctx));
     return Constants.resultGenl().getValuesForArgPosition(this, 1, 2, ctx);
   }
-  
+  /*
   @Override
   public KbFunction addResultGenl(String colStr, String ctxStr) throws KbTypeException, CreateException {
     return addResultGenl(KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public KbFunction addResultGenl(KbCollection col, Context ctx) throws KbTypeException, CreateException {
     //addFact(ctx, Constants.resultGenl(), 1, (Object) col);
@@ -559,7 +559,7 @@ public class KbFunctionImpl<T extends DenotationalTerm> extends RelationImpl<T> 
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

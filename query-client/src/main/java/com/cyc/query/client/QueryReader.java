@@ -145,7 +145,7 @@ public class QueryReader {
     } catch (KbException e) {
       throw e;
     } catch (CycApiException | CycConnectionException | SessionException e) {
-      throw new QueryRuntimeException( e);
+      throw QueryRuntimeException.fromThrowable( e);
     }
   }
   
@@ -169,7 +169,7 @@ public class QueryReader {
         try {
           queryParams = convertParams((QueryInferenceProperties) obj);
         } catch (SessionException ex) {
-          throw new QueryConstructionException("Couldn't convert parameters.", ex);
+          throw QueryConstructionException.fromThrowable("Couldn't convert parameters.", ex);
         }
       }
     }

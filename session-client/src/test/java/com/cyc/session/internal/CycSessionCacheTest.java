@@ -21,19 +21,19 @@ package com.cyc.session.internal;
  * #L%
  */
 
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycSession;
-import com.cyc.session.exception.SessionException;
 import com.cyc.session.exception.SessionConfigurationException;
+import com.cyc.session.exception.SessionException;
 import com.cyc.session.mock.MockSession;
 import com.cyc.session.selection.CycServerSelector;
+import com.cyc.session.services.EnvironmentConfigurationLoader;
 import java.util.Iterator;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import static org.junit.Assert.assertNotEquals;
-
-import org.junit.Test;
-import com.cyc.session.CycAddress;
 
 /**
  *

@@ -53,7 +53,7 @@ public class QueryTestConstants {
         instance = new QueryTestConstants();
       }
     } catch (KbException e) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
               "Once of the private final fields in com.cyc.query.QueryApiTestConstants could not be instantiated, can not proceed further.",
               e);
     }

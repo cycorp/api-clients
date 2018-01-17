@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: KbCollectionImpl.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: KbCollectionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbCollectionImpl<T extends DenotationalTerm> 
         extends KbTermImpl<T> implements KbCollection {
@@ -490,14 +490,14 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       final CycObject co = getStaticAccess().converse().converseCycObject(command);
       return KbCollectionImpl.get(co);
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     } catch (CreateException ce){
       // We are guaranteed to find concepts in the KB and they will be KBCollection in the unlikely
       // event something goes wrong, because in the middle of the operation the CycKB changes,
       // we throw a runtime exception
-      throw new KbRuntimeException("The min-col identified could not be found at construction time.", ce);
+      throw KbRuntimeException.fromThrowable("The min-col identified could not be found at construction time.", ce);
     } catch (KbTypeException te){
-      throw new KbRuntimeException("The min-col identified is not a #$Collection at construction time.", te);
+      throw KbRuntimeException.fromThrowable("The min-col identified is not a #$Collection at construction time.", te);
     }
   }
   
@@ -505,12 +505,12 @@ public class KbCollectionImpl<T extends DenotationalTerm>
   public Collection<KbCollection> allSpecializations() {
     return allSpecializations((Context) null);
   }
-  
+  /*
   @Override
   public Collection<KbCollection> allSpecializations(String ctxStr) {
     return allSpecializations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbCollection> allSpecializations(Context ctx) {
     @SuppressWarnings("rawtypes")
@@ -537,7 +537,7 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       }
       return results;
     } catch (CycConnectionException | CycApiException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -546,18 +546,18 @@ public class KbCollectionImpl<T extends DenotationalTerm>
   public Collection<KbCollection> getSpecializations() {
     return getSpecializations(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbCollection> getSpecializations(String ctxStr) {
     return getSpecializations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbCollection> getSpecializations(Context ctx) {
     //return this.<KbCollection>getValuesForArg(Constants.genls(), 2, 1, ctx);
     return Constants.genls().getValuesForArgPosition(this, 2, 1, ctx);
   }
-  
+  /*
   @Override
   public KbCollection addSpecialization(String moreSpecificStr)
           throws KbTypeException, CreateException {
@@ -572,10 +572,10 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       final ContextImpl  ctx = ContextImpl.get(ctxStr);
       return addSpecialization(c, ctx);
     } catch (KbException e){
-      throw new IllegalArgumentException(e.getMessage(), e);
+      throw new IllegalArgumentException(e);
     }
   }
-  
+  */
   @Override
   public KbCollection addSpecialization(KbCollection moreSpecific) 
           throws KbTypeException, CreateException {
@@ -598,12 +598,12 @@ public class KbCollectionImpl<T extends DenotationalTerm>
   public Collection<KbCollection> allGeneralizations() {
     return allGeneralizations((Context) null);
   }
-  
+  /*
   @Override
   public Collection<KbCollection> allGeneralizations(String ctxStr) {
     return allGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   @SuppressWarnings("unchecked")
   public Collection<KbCollection> allGeneralizations(Context ctx) {
@@ -631,7 +631,7 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       }
       return results;
     } catch (CycConnectionException | CycApiException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -639,18 +639,18 @@ public class KbCollectionImpl<T extends DenotationalTerm>
   public Collection<? extends KbCollection> getGeneralizations() {
     return getGeneralizations(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<? extends KbCollection> getGeneralizations(String ctxStr) {
     return getGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<? extends KbCollection> getGeneralizations(Context ctx) {
     //return (this.<KbCollectionImpl>getValuesForArg(Constants.genls(), 1, 2, ctx));
     return Constants.genls().getValuesForArgPosition(this, 1, 2, ctx);
   }
-  
+  /*
   @Override
   public KbCollection addGeneralization(String moreGeneralStr)
           throws KbTypeException, CreateException {
@@ -665,10 +665,10 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       final KbCollectionImpl c   = KbCollectionImpl.get(moreGeneralStr);
       return addGeneralization(c, ctx);
     } catch (KbException e){
-      throw new IllegalArgumentException(e.getMessage(), e);
+      throw new IllegalArgumentException(e);
     }
   }
-  
+  */
   @Override
   public KbCollection addGeneralization(KbCollection moreGeneral)
           throws KbTypeException, CreateException {
@@ -694,12 +694,12 @@ public class KbCollectionImpl<T extends DenotationalTerm>
     //return (this.<O>getValuesForArg(Constants.isa(), 2, 1, ctx));
     return Constants.isa().getValuesForArgPosition(this, 2, 1, ctx);
   }
-  
+  /*
   @Override
   public <O> Collection<O> getInstances(String ctxStr) {
     return getInstances(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public <O> Collection<? extends O> getInstances() {
     return getInstances(KbConfiguration.getDefaultContext().forQuery());
@@ -710,17 +710,17 @@ public class KbCollectionImpl<T extends DenotationalTerm>
     //return (this.<KbCollection>getValuesForArg(Constants.isa(), 1, 2, ctx));
     return Constants.isa().getValuesForArgPosition(this, 1, 2, ctx);
   }
-  
+  /*
   @Override
   public Collection<KbCollection> instancesOf(String ctxStr) {
     return instancesOf(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbCollection> instancesOf() {
     return instancesOf(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public KbCollectionImpl instantiates(String colStr, String ctxStr)
           throws KbTypeException, CreateException {
@@ -730,11 +730,11 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       ctx = ContextImpl.get(ctxStr);
       col = KbCollectionImpl.get(colStr);
     } catch (KbException e){
-      throw new IllegalArgumentException(e.getMessage(), e);
+      throw new IllegalArgumentException(e);
     }
     return instantiates(col, ctx);
   }
-  
+  */
   @Override
   public KbCollectionImpl instantiates(KbCollection col, Context ctx) 
           throws KbTypeException, CreateException {
@@ -749,28 +749,28 @@ public class KbCollectionImpl<T extends DenotationalTerm>
       return getAccess().getInspectorTool()
               .isGenlOf(getCore(), getCore(moreSpecific), getCore(ctx));
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
-  
+  /*
   @Override
   public boolean isGeneralizationOf(String moreSpecificStr) {
     try {
       return getAccess().getInspectorTool()
               .isGenlOf(getCore(), KbCollectionImpl.get(moreSpecificStr).getCore());
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     } catch (KbException e){
-      throw new IllegalArgumentException(e.getMessage(), e);
+      throw new IllegalArgumentException(e);
     }
   }
-  
+  */
   @Override
   public boolean isGeneralizationOf(KbCollection moreSpecific) {
     try {
       return getAccess().getInspectorTool().isGenlOf(getCore(), getCore(moreSpecific));
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -795,7 +795,7 @@ public class KbCollectionImpl<T extends DenotationalTerm>
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
 

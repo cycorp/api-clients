@@ -242,7 +242,7 @@ public class CycBasedTask {
             | SessionException
             | QueryConstructionException
             | CycConnectionException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -270,7 +270,7 @@ public class CycBasedTask {
             | QueryConstructionException 
             | KbException
             | UnsupportedCycOperationException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
   

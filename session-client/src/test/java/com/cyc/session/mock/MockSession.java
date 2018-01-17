@@ -21,13 +21,13 @@ package com.cyc.session.mock;
  * #L%
  */
 
+import com.cyc.session.AbstractCycSession;
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.ImmutableCycSessionConfiguration;
 import com.cyc.session.exception.SessionConfigurationException;
-import com.cyc.session.internal.AbstractCycSession;
-import com.cyc.session.internal.ImmutableConfiguration;
-import com.cyc.session.CycAddress;
 
 /**
  *
@@ -46,7 +46,7 @@ public class MockSession extends AbstractCycSession implements CycSession {
   }
   
   public MockSession(CycAddress server) throws SessionConfigurationException {
-    this(new ImmutableConfiguration(server, MockSession.class));
+    this(new ImmutableCycSessionConfiguration(server, MockSession.class));
   }
   
   

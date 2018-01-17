@@ -125,7 +125,7 @@ public class QuantifierImpl<T extends DenotationalTerm> extends ScopingRelationI
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

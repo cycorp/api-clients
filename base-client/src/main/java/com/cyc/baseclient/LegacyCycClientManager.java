@@ -21,11 +21,11 @@ package com.cyc.baseclient;
  * #L%
  */
 
+import com.cyc.session.CycAddress;
+import com.cyc.session.LegacyCycAccessManager;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
-import com.cyc.session.internal.LegacyCycAccessManager;
-import com.cyc.session.CycAddress;
 
 /**
  * <p>Deprecated: This class will be removed before final 1.0.0 release

@@ -30,7 +30,7 @@ import java.util.Objects;
  * when errors on the Cyc server side are caught a CycApiServerSideException
  * is thrown instead.
  *
- * @version $Id: CycApiException.java 175669 2017-11-01 23:47:32Z nwinant $
+ * @version $Id: CycApiException.java 176267 2017-12-13 04:02:46Z nwinant $
  * @author Stephen L. Reed
  */
 public class CycApiException extends BaseClientRuntimeException {
@@ -89,12 +89,12 @@ public class CycApiException extends BaseClientRuntimeException {
   
   @Override
   public SessionCommandException toSessionException(String msg) {
-    return new SessionCommandException(msg, this);
+    return SessionCommandException.fromThrowable(msg, this);
   }
   
   @Override
   public SessionCommandException toSessionException() {
-    return new SessionCommandException(this);
+    return SessionCommandException.fromThrowable(this);
   }
   
 }

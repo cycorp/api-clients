@@ -40,7 +40,7 @@ import com.cyc.kb.exception.KbTypeException;
  * characters. This is used to represent a variable in a sentence. 
  * 
  * @author Vijay Raj
- * @version $Id: VariableImpl.java 173072 2017-07-27 01:21:15Z nwinant $
+ * @version $Id: VariableImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 // @todo DaveS review documentation
 public class VariableImpl extends StandardKbObject<CycVariable> implements Variable {
@@ -134,7 +134,7 @@ public class VariableImpl extends StandardKbObject<CycVariable> implements Varia
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }  
   

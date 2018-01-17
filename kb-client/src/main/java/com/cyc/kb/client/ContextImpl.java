@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Each Assertion has to be explicitly stated to be true in at least one context.
  * 
  * @author Vijay Raj
- * @version $Id: ContextImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: ContextImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
   
@@ -527,7 +527,7 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
       try {
         newCore = getAccess().getObjectTool().makeElMt(cycObject);
       } catch (CycConnectionException e) {
-        throw new KbTypeException(
+        throw KbRuntimeException.fromThrowable(
                 "The term \"" + cycObject.toString()
                 + "\" could not be converted to an " + ElMt.class.getSimpleName(), e);
       }
@@ -547,13 +547,13 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
     Constants.genlMt().addFact(Constants.baseKbMt(), moreSpecific, this);
     return this;
   }
-  
+  /*
   @Override
   public Context addExtension(String moreSpecificStr) throws KbTypeException, CreateException {
     final Context c = ContextImpl.get(moreSpecificStr);
     return addExtension(c);
   }
-  
+  */
   @Override
   public Collection<Context> getInheritsFrom() {
     //return (this.<Context>getValues(Constants.genlMt(), 1, 2, null));
@@ -566,12 +566,12 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
     Constants.genlMt().addFact(Constants.baseKbMt(), this, moreGeneral);
     return this;
   }
-  
+  /*
   @Override
   public Context addInheritsFrom(String moreGeneralStr) throws KbTypeException, CreateException  {
     return addInheritsFrom(KbUtils.getKBObjectForArgument(moreGeneralStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Context getMonad() {
     try {
@@ -587,9 +587,9 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
       }
       return null;
     } catch (CycConnectionException | CycApiException ex) {
-      throw new KbRuntimeException("Unable to get monad for context " + this, ex);
+      throw KbRuntimeException.fromThrowable("Unable to get monad for context " + this, ex);
     } catch (KbException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     } 
   }
 
@@ -614,11 +614,11 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
       }
       return null;
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException("Unable to get time interval for context " + this, ex);
+      throw KbRuntimeException.fromThrowable("Unable to get time interval for context " + this, ex);
     } catch (CycApiException ex) {
-      throw new KbRuntimeException("Unable to get time interval for context " + this, ex);
+      throw KbRuntimeException.fromThrowable("Unable to get time interval for context " + this, ex);
     } catch (CycParseException e) {
-      throw new KbRuntimeException("Unable to get time interval for context " + this, e);
+      throw KbRuntimeException.fromThrowable("Unable to get time interval for context " + this, e);
     } 
   }
 
@@ -653,7 +653,7 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
     

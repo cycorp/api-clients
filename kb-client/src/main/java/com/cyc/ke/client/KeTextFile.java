@@ -143,7 +143,7 @@ public class KeTextFile {
     try {
       loadKeTextApiString(DefaultCycObjectImpl.stringApiValue(getLinesAsString()));
     } catch (KbException ex) {
-      throw new KbException("Error attempting to load contents of " + path, ex.getCause());
+      throw KbException.fromThrowable("Error attempting to load contents of " + path, ex.getCause());
     } 
   }
   
@@ -199,7 +199,7 @@ public class KeTextFile {
       CycAccess.getCurrent().converse()
               .converseVoid("(load-ke-text-string " + apiString + " :now)");
     } catch (CycConnectionException | CycApiException ex) {
-      throw new KbException("Error attempting to load KE text string: " + apiString, ex);
+      throw KbException.fromThrowable("Error attempting to load KE text string: " + apiString, ex);
     }
   }
   

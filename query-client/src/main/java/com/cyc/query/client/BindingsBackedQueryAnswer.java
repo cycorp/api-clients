@@ -64,7 +64,7 @@ public class BindingsBackedQueryAnswer
             value = Cyc.getApiObject(rawValue);
           } catch (KbTypeException | CreateException ex) {
             throw QueryRuntimeException
-                    .fromThrowable(ex, "Could not convert to KB API object: " + rawValue);
+                    .fromThrowable("Could not convert to KB API object: " + rawValue, ex);
           }
           bindings.put(Variable.get(colName), value);
         }

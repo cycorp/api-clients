@@ -21,13 +21,13 @@ package com.cyc.session.spi;
  * #L%
  */
 
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
 import java.io.Closeable;
-import com.cyc.session.CycAddress;
 
 /**
  * Responsible for creating and initializing implementations of {@link CycSession}.

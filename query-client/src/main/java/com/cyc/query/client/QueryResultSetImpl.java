@@ -152,7 +152,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
       Object obj = rs.getObject(columnLabel);
       return KbObjectImpl.<T>checkAndCastObject(obj);
     } catch (SQLException | CreateException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -189,7 +189,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
       return KbObjectImpl.<T>checkAndCastObject(obj);
     } catch (KbException ex) {
       logger.error("Problem getting KBObject.", ex);
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -228,7 +228,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
       Object obj = rs.getObject(columnLabel);
       return KbObjectImpl.<T>checkAndCastObject(obj);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -275,7 +275,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
             }
             this.columns = result;
           } catch (KbTypeException ex) {
-            throw new QueryRuntimeException(ex);
+            throw QueryRuntimeException.fromThrowable(ex);
           }
         }
       }
@@ -390,7 +390,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getBoolean(columnIndex);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -445,7 +445,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getFloat(columnIndex);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -460,7 +460,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getDouble(columnIndex);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -551,7 +551,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getBoolean(columnLabel);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -710,7 +710,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getFloat(columnLabel);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -766,7 +766,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getDouble(columnLabel);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -775,7 +775,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getDate(columnIndex);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -803,7 +803,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getDate(columnLabel);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -843,7 +843,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.findColumn(columnLabel);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -859,7 +859,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.isBeforeFirst();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -875,7 +875,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.isAfterLast();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -890,7 +890,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.isFirst();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -905,7 +905,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.isLast();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -920,7 +920,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       rs.beforeFirst();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -935,7 +935,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       rs.afterLast();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -951,7 +951,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.first();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -967,7 +967,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.last();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -981,7 +981,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.getRow();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -999,7 +999,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.absolute(row);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -1016,7 +1016,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.relative(rows);
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -1032,7 +1032,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.previous();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -1047,7 +1047,7 @@ public class QueryResultSetImpl implements QueryResultSet, Iterable<QueryAnswer>
     try {
       return rs.isClosed();
     } catch (SQLException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 

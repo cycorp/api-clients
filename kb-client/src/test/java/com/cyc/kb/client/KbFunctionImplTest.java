@@ -31,7 +31,6 @@ import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.Variable;
-import static com.cyc.kb.client.TestUtils.assumeNotEnterpriseCyc;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.DeleteException;
 import com.cyc.kb.exception.KbException;
@@ -44,13 +43,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.cyc.Cyc.Constants.UV_MT;
+import static com.cyc.kb.client.TestConstants.appleProductMt;
+import static com.cyc.kb.client.TestUtils.assumeNotEnterpriseCyc;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class KbFunctionImplTest {
@@ -64,7 +67,8 @@ public class KbFunctionImplTest {
     TestConstants.ensureInitialized();
     appfn = KbFunctionImpl.findOrCreate("AppFn");
     KbPredicateImpl.findOrCreate("arity").addFact(ContextImpl.findOrCreate("AppleProductMt"), appfn, 1);
-    appfn.addResultIsa("FirstOrderCollection", "UniversalVocabularyMt");
+    //appfn.addResultIsa("FirstOrderCollection", "UniversalVocabularyMt");
+    appfn.addResultIsa(KbCollection.get("FirstOrderCollection"), UV_MT);
     appfn.instantiates(KbCollectionImpl.get("ReifiableFunction"));
   }
   
@@ -92,10 +96,12 @@ public class KbFunctionImplTest {
   public void testArgIsa() throws KbException {
     KbFunctionImpl f = KbFunctionImpl.findOrCreate("AppFn");
     KbCollection c = KbCollectionImpl.findOrCreate("iProduct");
-    c.addGeneralization("Product", "AppleProductMt");
-
-    f.addArgIsa(1, "iProduct", "AppleProductMt");
-    assertEquals(f.getArgIsa(1, "AppleProductMt").iterator().next().toString(), "iProduct");
+    //c.addGeneralization("Product", "AppleProductMt");
+    //f.addArgIsa(1, "iProduct", "AppleProductMt");
+    //assertEquals(f.getArgIsa(1, "AppleProductMt").iterator().next().toString(), "iProduct");
+    c.addGeneralization(KbCollection.get("Product"), appleProductMt);
+    f.addArgIsa(1, KbCollection.get("iProduct"),appleProductMt);
+    assertEquals(f.getArgIsa(1, appleProductMt).iterator().next().toString(), "iProduct");
     new FactImpl("AppleProductMt", "(argIsa AppFn 1 iProduct)").delete();
     try {
       FactImpl factImpl = new FactImpl(true, "AppleProductMt", "(arg1Isa AppFn iProduct)");
@@ -107,16 +113,20 @@ public class KbFunctionImplTest {
   @Test
   public void testArgGenl() throws KbException {
     KbFunctionImpl f = KbFunctionImpl.findOrCreate("AppFn");
-    f.addArgGenl(1, "Product", "AppleProductMt");
-    assertTrue(f.getArgGenl(1, "AppleProductMt").contains(KbCollectionImpl.get("Product")));
+    //f.addArgGenl(1, "Product", "AppleProductMt");
+    //assertTrue(f.getArgGenl(1, "AppleProductMt").contains(KbCollectionImpl.get("Product")));
+    f.addArgGenl(1, KbCollection.get("Product"), appleProductMt);
+    assertTrue(f.getArgGenl(1, appleProductMt).contains(KbCollectionImpl.get("Product")));
   }
 
   @Test
   public void testResultIsa() throws KbException {
     KbFunction f = KbFunctionImpl.findOrCreate("AppFn");
     final String computerProgramTypeByPlatform = "ComputerProgramTypeByPlatform";
-    f.addResultIsa(computerProgramTypeByPlatform, "AppleProductMt");
-    final Collection<KbCollection> resultIsas = f.getResultIsa("AppleProductMt");
+    //f.addResultIsa(computerProgramTypeByPlatform, "AppleProductMt");
+    //final Collection<KbCollection> resultIsas = f.getResultIsa("AppleProductMt");
+    f.addResultIsa(KbCollection.get(computerProgramTypeByPlatform), appleProductMt);
+    final Collection<KbCollection> resultIsas = f.getResultIsa(appleProductMt);
     assertTrue("resultIsas for " + f + " were " + resultIsas
             + ". Couldn't find " + computerProgramTypeByPlatform,
             resultIsas.contains(SecondOrderCollectionImpl.get(computerProgramTypeByPlatform)));
@@ -146,8 +156,8 @@ public class KbFunctionImplTest {
     KbIndividual i = KbIndividualImpl.findOrCreate("TestIndividual001");
     i.instantiates(KbCollectionImpl.get("Person"), ctx2);
 
-    i.instantiates("MaleHuman", 
-            "(SomeAirlineEquipmentLogFn Plane-APITest)");
+    //i.instantiates("MaleHuman",  "(SomeAirlineEquipmentLogFn Plane-APITest)");
+    i.instantiates(KbCollection.get("MaleHuman"), Context.get("(SomeAirlineEquipmentLogFn Plane-APITest)"));
     Fact a = new FactImpl("(SomeAirlineEquipmentLogFn Plane-APITest)",
             "(#$isa #$TestIndividual001 (#$CitizenFn #$UnitedStatesOfAmerica))");
 
@@ -155,11 +165,13 @@ public class KbFunctionImplTest {
     KbCollection ipad = KbCollectionImpl.findOrCreate("iPad-Test");
     ipad.addGeneralization(KbCollectionImpl.findOrCreate("iProduct"), ContextImpl.findOrCreate("AppleProductMt"));
 
-    appfn.addArgGenl(1, "iProduct", "AppleProductMt");
+    //appfn.addArgGenl(1, "iProduct", "AppleProductMt");
+    appfn.addArgGenl(1, KbCollection.get("iProduct"), appleProductMt);
     KbTerm ipadapp = appfn.<KbTerm>findOrCreateFunctionalTerm(KbTerm.class, ipad);
     ipadapp.instantiates((KbCollection)KbCollectionImpl.getClassType());
-    ipadapp.instantiates("ComputerProgramTypeByPlatform", "AppleProductMt");
-
+    //ipadapp.instantiates("ComputerProgramTypeByPlatform", "AppleProductMt");
+    ipadapp.instantiates(KbCollection.get("ComputerProgramTypeByPlatform"), appleProductMt);
+    
     KbFunctionImpl f4 = KbFunctionImpl.get("MtSpace");
     f4.<Context>findOrCreateFunctionalTerm(Context.class, new Date());
     f3.<Context>findOrCreateFunctionalTerm(Context.class, KbIndividualImpl.get("Plane-APITest"));

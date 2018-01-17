@@ -191,7 +191,7 @@ class QueryInference implements InferenceWorkerListener {
           inferenceIdentifier = rs.getInferenceIdentifier();
         }
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       }
     }
     return inferenceIdentifier;

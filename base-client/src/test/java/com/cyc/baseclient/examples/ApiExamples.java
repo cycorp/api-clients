@@ -44,7 +44,7 @@ import com.cyc.baseclient.inference.DefaultInferenceWorkerSynch;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.parser.CyclParserUtil;
 import com.cyc.nl.Paraphraser;
-import com.cyc.nl.ParaphraserFactory;
+import com.cyc.nl.Paraphraser.ParaphrasableType;
 import com.cyc.query.InferenceStatus;
 import com.cyc.query.InferenceSuspendReason;
 import com.cyc.query.parameters.InferenceParameters;
@@ -69,7 +69,7 @@ import static com.cyc.baseclient.testing.TestConstants.*;
 
  Created on : May 1, 2009, 11:13:55 AM Author : tbrussea
  *
- * @version $Id: ApiExamples.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: ApiExamples.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class ApiExamples {
 
@@ -287,7 +287,7 @@ public class ApiExamples {
   public static final void exampleNartManipulations() {
     System.out.println("Starting Cyc NART examples.");
     try {
-      Paraphraser p = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
+      Paraphraser p = Paraphraser.get(ParaphrasableType.KBOBJECT);
 
       CycConstant cycAdministrator = access.getLookupTool().getKnownConstantByName("CycAdministrator");
       CycConstant generalCycKE = access.getLookupTool().getKnownConstantByName("GeneralCycKE");

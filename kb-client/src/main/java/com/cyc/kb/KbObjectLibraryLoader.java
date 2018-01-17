@@ -59,7 +59,7 @@ public class KbObjectLibraryLoader extends CycObjectLibraryLoader {
     try {
       return CycAccessManager.getCurrentAccess();
     } catch (SessionException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   

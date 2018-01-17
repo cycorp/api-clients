@@ -38,7 +38,8 @@ import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeException;
 import com.cyc.nl.Paraphrase;
-import com.cyc.nl.ParaphraserFactory;
+import com.cyc.nl.Paraphraser;
+import com.cyc.nl.Paraphraser.ParaphrasableType;
 import com.cyc.query.InferenceStatus;
 import com.cyc.query.InferenceSuspendReason;
 import com.cyc.query.ParaphrasedQueryAnswer;
@@ -487,7 +488,7 @@ public class QueryImplTest {
   public void testGetParaphrasedAnswerBindings() throws QueryConstructionException, SessionCommunicationException, KbTypeException, CreateException {
     System.out.println("getParaphrasedAnswerBindings");
     currentQuery = Query.get(testConstants().queryAnimals, INFERENCE_PSC);
-    ParaphrasedQueryAnswer answer = currentQuery.getAnswer(0, ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT));
+    ParaphrasedQueryAnswer answer = currentQuery.getAnswer(0, Paraphraser.get(ParaphrasableType.KBOBJECT));
     assertTrue(answer.getBindingParaphrase(Variable.get("?N")) instanceof Paraphrase);
     Paraphrase paraphrasedAnswer = answer.getBindingParaphrase(Variable.get("?N"));
     assertTrue(paraphrasedAnswer.getString().equals("emu") || paraphrasedAnswer.getString().equals("zebra"));

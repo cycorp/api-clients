@@ -74,7 +74,7 @@ public class ProofViewServiceImpl implements ProofViewService {
     try {
       return (ProofViewGeneratorImpl) new ProofViewGeneratorImpl(answer, (ProofViewSpecification) spec);
     } catch (CycConnectionException | OpenCycUnsupportedFeatureException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
   

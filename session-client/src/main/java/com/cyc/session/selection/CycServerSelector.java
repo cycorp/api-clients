@@ -36,8 +36,8 @@ package com.cyc.session.selection;
  * #L%
  */
 
-import com.cyc.session.CycSession;
 import com.cyc.session.CycAddress;
+import com.cyc.session.CycSession;
 
 /**
  * Selects a {@link com.cyc.session.CycSession} by the {@link com.cyc.session.CycAddress} of

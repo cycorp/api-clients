@@ -128,7 +128,7 @@ Configuration:
   Loggers:
     
     Root:
-      level: INFO
+      level: DEBUG
       AppenderRef:
         - ref: STDOUT_Verbose
         - ref: DAILY_Log

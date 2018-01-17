@@ -63,7 +63,7 @@ import java.util.Objects;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: RelationImpl.java 173132 2017-08-02 00:48:28Z nwinant $
+ * @version $Id: RelationImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T> implements Relation {
 
@@ -396,12 +396,12 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
   public Collection<KbCollection> getArgIsa(int argPos) {
     return getArgIsa(argPos, KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbCollection> getArgIsa(int argPos, String ctxStr) {
     return getArgIsa(argPos, KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbCollection> getArgIsa(int argPos, Context ctx) {
     int valuePos = 3;
@@ -410,12 +410,12 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
     //return this.<KbCollection>getValuesForArg(Constants.argIsa(), 1, getPos, filter, filtPos, ctx);
     return Constants.argIsa().getValuesForArgPositionWithMatchArg(this, 1, valuePos, filter, filtPos, ctx);
   }
-  
+  /*
   @Override
   public Relation addArgIsa(int argPos, String colStr, String ctxStr) throws KbTypeException, CreateException {
     return addArgIsa(argPos, KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public Relation addArgIsa(int argPos, KbCollection col, Context ctx) throws KbTypeException, CreateException {
     //addFact(ctx, Constants.argIsa(), 1, (Object) argPos, (Object) col);
@@ -446,12 +446,12 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
   public Collection<KbCollection> getArgGenl(int argPos) {
     return getArgGenl(argPos, KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbCollection> getArgGenl(int argPos, String ctxStr) {
     return getArgGenl(argPos, KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbCollection> getArgGenl(int argPos, Context ctx) {
     int valuePos = 3;
@@ -460,12 +460,12 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
     //return this.<KbCollection>getValuesForArg(Constants.argGenl(), 1, getPos, filter, filtPos, ctx);
     return Constants.argGenl().getValuesForArgPositionWithMatchArg(this, 1, valuePos, filter, filtPos, ctx);
   }
-  
+  /*
   @Override
   public Relation addArgGenl(int argPos, String colStr, String ctxStr) throws KbTypeException, CreateException {
     return addArgGenl(argPos, KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public Relation addArgGenl(int argPos, KbCollection col, Context ctx) throws KbTypeException, CreateException {
     //addFact(ctx, Constants.argGenl(), 1, (Object) argPos, (Object) col);
@@ -507,7 +507,7 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
         //arityValues = this.<Integer>getValuesForArg(Constants.arity(), 1, 2, ctx);
         arityValues = Constants.arity().getValuesForArgPosition(this, 1, 2, ctx);
       } catch (IllegalArgumentException e) {
-        throw new VariableArityException(this + " do not have an Integer arity.  Try using minArity and maxArity instead.", e);
+        throw VariableArityException.fromThrowable(this + " do not have an Integer arity.  Try using minArity and maxArity instead.", e);
       }
     }
     if (arityValues == null || arityValues.isEmpty()) {
@@ -537,7 +537,7 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
         return (Integer) object;
       }
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 
@@ -554,7 +554,7 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
         return (Integer) object;
       }
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -649,7 +649,7 @@ public class RelationImpl<T extends DenotationalTerm> extends KbIndividualImpl<T
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
 

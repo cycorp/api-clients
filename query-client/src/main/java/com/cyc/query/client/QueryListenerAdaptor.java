@@ -157,9 +157,9 @@ public class QueryListenerAdaptor implements InferenceWorkerListener {
         bindings.put(var, val);
       } catch (KbTypeException ex) {
         LOGGER.error("Problem getting binding.", ex);
-        throw new QueryRuntimeException(ex);
+        throw QueryRuntimeException.fromThrowable(ex);
       } catch (CreateException ex) {
-        throw new QueryRuntimeException(ex);
+        throw QueryRuntimeException.fromThrowable(ex);
       }
     }
     return (qaGood ? null : bindings);

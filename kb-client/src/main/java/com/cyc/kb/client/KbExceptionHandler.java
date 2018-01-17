@@ -61,7 +61,7 @@ public class KbExceptionHandler {
       if (thrown instanceof KbRuntimeException) {
         throw (KbRuntimeException) thrown;
       } else {
-        throw new KbRuntimeException(thrown);
+        throw KbRuntimeException.fromThrowable(thrown);
       }
     }
   }

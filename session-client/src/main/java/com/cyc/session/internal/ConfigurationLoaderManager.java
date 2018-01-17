@@ -23,7 +23,11 @@ package com.cyc.session.internal;
 
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
+import com.cyc.session.configuration.ConfigurationValidator;
 import com.cyc.session.exception.SessionConfigurationException;
+import com.cyc.session.services.EnvironmentConfigurationLoader;
+import com.cyc.session.services.PropertiesConfigurationLoader;
+import com.cyc.session.services.SimpleInteractiveLoader;
 import com.cyc.session.spi.SessionConfigurationLoader;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +48,7 @@ public class ConfigurationLoaderManager {
   // Fields
   
   private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationLoaderManager.class);
-  final private Map<String, SessionConfigurationLoader> configLoaders = new HashMap<String, SessionConfigurationLoader>();
+  final private Map<String, SessionConfigurationLoader> configLoaders = new HashMap<>();
   
   
   // Constructor
@@ -105,7 +109,7 @@ public class ConfigurationLoaderManager {
     if (config.getConfigurationLoaderName() != null) {
       return expandConfiguration(loadConfigurationViaConfigLoaderName(config.getConfigurationLoaderName(), environment), environment);
     }
-    if (isGuiAllowed(config, environment)) {
+    if (isGuiAllowed(environment)) {
       return expandConfiguration(loadConfigurationViaGUI(environment), environment);
     }
     LOGGER.warn("Configuration is not sufficient, but cannot be expanded: {}", config);
@@ -149,9 +153,8 @@ public class ConfigurationLoaderManager {
   
   // Protected
   
-  protected boolean isGuiAllowed(CycSessionConfiguration config, EnvironmentConfiguration environment) {
-    return environment.isGuiInteractionAllowed()
-            && config.isGuiInteractionAllowed()
+  protected boolean isGuiAllowed(EnvironmentConfiguration environment) {
+    return environment.getManagerConfiguration().isGuiInteractionAllowed()
             && !EnvironmentConfigurationLoader.isHeadlessEnvironment();
   }
     

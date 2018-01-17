@@ -116,8 +116,7 @@ public class CycServerPool {
   public static CycServerPool createFromCurrentSessionWithDefaults(int defaultConcurrencyLevel)
           throws SessionConfigurationException, SessionCommunicationException,
                  SessionInitializationException {
-    return createFromSessionWithDefaults(
-            CycSessionManager.getCurrentSession(), defaultConcurrencyLevel);
+    return createFromSessionWithDefaults(CycSession.getCurrent(), defaultConcurrencyLevel);
   }
 
   /**

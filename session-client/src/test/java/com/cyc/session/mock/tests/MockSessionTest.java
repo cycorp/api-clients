@@ -21,20 +21,14 @@ package com.cyc.session.mock.tests;
  * #L%
  */
 
-import com.cyc.session.internal.*;
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycSession;
-import com.cyc.session.exception.SessionServiceException;
-import com.cyc.session.spi.SessionManager;
 import com.cyc.session.exception.SessionConfigurationException;
-import com.cyc.session.spi.SessionFactory;
 import com.cyc.session.mock.MockSession;
-import java.util.List;
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import static org.junit.Assert.assertNotEquals;
-
-import org.junit.Test;
-import com.cyc.session.CycAddress;
 
 /**
  *

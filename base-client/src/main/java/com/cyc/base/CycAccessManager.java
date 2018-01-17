@@ -21,14 +21,16 @@ package com.cyc.base;
  * #L%
  */
 
+import com.cyc.Cyc;
 import com.cyc.baseclient.CycClientManager;
 import com.cyc.baseclient.LegacyCycClientManager;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionManager;
+import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.SessionManager;
+import com.cyc.session.SessionManagerConfiguration;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
-import com.cyc.session.spi.SessionManager;
 import java.io.IOException;
 import java.util.ServiceLoader;
 import org.slf4j.Logger;
@@ -105,6 +107,16 @@ abstract public class CycAccessManager<T extends CycAccessSession> implements Se
   }
   
   @Override
+  public CycSessionConfiguration getSessionConfiguration() throws SessionConfigurationException {
+    return this.getSessionMgr().getSessionConfiguration();
+  }
+  
+  @Override
+  public SessionManagerConfiguration getManagerConfiguration() {
+    return this.getSessionMgr().getManagerConfiguration();
+  }
+  
+  @Override
   public void close() throws IOException {
     this.getSessionMgr().close();
   }
@@ -118,6 +130,6 @@ abstract public class CycAccessManager<T extends CycAccessSession> implements Se
   // Protected
   
   protected SessionManager<T> getSessionMgr() {
-    return CycSessionManager.getInstance();
+    return Cyc.getSessionManager();
   }
 }

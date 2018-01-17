@@ -21,9 +21,11 @@ package com.cyc.baseclient;
  * #L%
  */
 
+import com.cyc.Cyc;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.session.*;
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycSession.ConnectionStatus;
+import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.exception.SessionCommandException;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
@@ -45,7 +47,7 @@ public class CycClientSessionFactoryTest extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
     this.factory = new CycClientSessionFactory();
-    this.config = CycSessionManager.getInstance().getConfiguration();
+    this.config = Cyc.getSessionManager().getSessionConfiguration();
     //assertTrue(factory.getServers().isEmpty());
   }
   

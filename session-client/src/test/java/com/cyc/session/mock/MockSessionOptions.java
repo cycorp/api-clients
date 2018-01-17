@@ -37,9 +37,9 @@ package com.cyc.session.mock;
  */
 
 import com.cyc.kb.DefaultContext;
+import com.cyc.session.SessionOptions;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
-import com.cyc.session.SessionOptions;
 
 /**
  *

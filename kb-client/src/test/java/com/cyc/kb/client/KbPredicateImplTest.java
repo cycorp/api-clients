@@ -38,16 +38,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static com.cyc.kb.client.TestConstants.appleProductMt;
+import static com.cyc.kb.client.TestConstants.product;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class KbPredicateImplTest {
 
   private static final Set<KbTerm> TEST_TERMS = new HashSet<>();
-
+  
   @BeforeClass
   public static void setUp() throws Exception {
     TestConstants.ensureInitialized();
@@ -78,25 +81,32 @@ public class KbPredicateImplTest {
   public void testGenls() throws Exception {
     KbPredicate p = KbPredicateImpl.get("iLikes");
     Context ctx = ContextImpl.get("AppleProductMt");
-    p.addGeneralization("likesObject", "AppleProductMt");
-    assertTrue(p.getGeneralizations("AppleProductMt").contains(KbPredicateImpl.get("likesObject")));
+    //p.addGeneralization("likesObject", "AppleProductMt");
+    //assertTrue(p.getGeneralizations("AppleProductMt").contains(KbPredicateImpl.get("likesObject")));
+    p.addGeneralization(KbPredicate.get("likesObject"), appleProductMt);
+    assertTrue(p.getGeneralizations(appleProductMt).contains(KbPredicateImpl.get("likesObject")));
   }
 
   @Test
   public void testSpecs() throws KbException {
     KbPredicate p = KbPredicateImpl.get("likesObject");
-    p.addSpecialization("iLikes", "AppleProductMt");
-    assertTrue(p.getSpecializations("AppleProductMt").contains(KbPredicateImpl.get("iLikes")));
+    //p.addSpecialization("iLikes", "AppleProductMt");
+    //assertTrue(p.getSpecializations("AppleProductMt").contains(KbPredicateImpl.get("iLikes")));
+    p.addSpecialization(KbPredicate.get("iLikes"), appleProductMt);
+    assertTrue(p.getSpecializations(appleProductMt).contains(KbPredicateImpl.get("iLikes")));
   }
 
   @Test
   public void testArgIsa() throws KbException {
     KbPredicateImpl p = KbPredicateImpl.get("iLikes");
-    p.addArgIsa(1, "Person", "AppleProductMt");
-    assertEquals(p.getArgIsa(1, "AppleProductMt").iterator().next().toString(), "Person");
+    //p.addArgIsa(1, "Person", "AppleProductMt");
+    //assertEquals(p.getArgIsa(1, "AppleProductMt").iterator().next().toString(), "Person");
+    p.addArgIsa(1, KbCollection.get("Person"), appleProductMt);
+    assertEquals(p.getArgIsa(1, appleProductMt).iterator().next().toString(), "Person");
 
     KbCollection iprod = new KbCollectionImpl("iProduct");
-    iprod.addGeneralization("Product", "AppleProductMt");
+    //iprod.addGeneralization("Product", "AppleProductMt");
+    iprod.addGeneralization(product, appleProductMt);
     p.addArgIsa(2, iprod, new ContextImpl("AppleProductMt"));
   }
 
@@ -106,8 +116,10 @@ public class KbPredicateImplTest {
 
     // TODO: This assertion does not make sense logically (the arg2 of iLikes
     // is an Individual, not a Collection). Find a better assertion.
-    p.addArgGenl(2, "Product", "AppleProductMt");
-    assertEquals(p.getArgGenl(2, "AppleProductMt").iterator().next().toString(), "Product");
+    //p.addArgGenl(2, "Product", "AppleProductMt");
+    //assertEquals(p.getArgGenl(2, "AppleProductMt").iterator().next().toString(), "Product");
+    p.addArgGenl(2, product, appleProductMt);
+    assertEquals(p.getArgGenl(2, appleProductMt).iterator().next().toString(), "Product");
   }
   
   /*

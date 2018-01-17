@@ -41,15 +41,14 @@ import com.cyc.query.QueryAnswers;
 import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.query.exception.QueryException;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionManager;
 import com.cyc.session.compatibility.CycSessionRequirement;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.TestEnvironmentProperties;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionException;
 import com.cyc.session.exception.SessionInitializationException;
-import com.cyc.session.internal.TestEnvironmentProperties;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +90,7 @@ public class TestUtils {
   
   public static CycSession getSession() {
     try {
-      return CycSessionManager.getCurrentSession();
+      return CycSession.getCurrent();
     } catch (SessionConfigurationException
             | SessionCommunicationException
             | SessionInitializationException e) {
@@ -152,7 +151,7 @@ public class TestUtils {
     try {
       return Query.get(xIsaBird(), INFERENCE_PSC);
     } catch (KbException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 

@@ -22,7 +22,6 @@ package com.cyc.session.internal;
  */
 
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
 import com.cyc.session.exception.SessionException;
 import com.cyc.session.selection.SessionSelector;
@@ -30,7 +29,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,13 +108,12 @@ public class CycSessionCache<T extends CycSession> {
     return false;
   }
   
-  public boolean isCachingAllowed(CycSessionConfiguration config, EnvironmentConfiguration environment) {
-    return environment.isSessionCachingAllowed()
-            && config.isSessionCachingAllowed();
+  public boolean isCachingAllowed(EnvironmentConfiguration environment) {
+    return environment.getManagerConfiguration().isSessionCachingAllowed();
   }
   
   public boolean isCacheable(T session, EnvironmentConfiguration environment) {
-    return isCachingAllowed(session.getConfiguration(), environment);
+    return isCachingAllowed(environment);
   }
   
   public int size() {

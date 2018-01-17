@@ -50,7 +50,7 @@ import com.cyc.kb.exception.KbTypeException;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: SecondOrderCollectionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: SecondOrderCollectionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class SecondOrderCollectionImpl<T extends DenotationalTerm> extends KbCollectionImpl<T> implements SecondOrderCollection {
 
@@ -445,7 +445,7 @@ public class SecondOrderCollectionImpl<T extends DenotationalTerm> extends KbCol
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

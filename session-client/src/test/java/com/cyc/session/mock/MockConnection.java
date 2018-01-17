@@ -21,8 +21,8 @@ package com.cyc.session.mock;
  * #L%
  */
 
-import com.cyc.session.CycSession;
 import com.cyc.session.CycAddress;
+import com.cyc.session.CycSession;
 
 /**
  *

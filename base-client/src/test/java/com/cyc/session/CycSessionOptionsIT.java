@@ -25,13 +25,14 @@ import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.CycAccessOptions;
 import com.cyc.baseclient.CycClientSession;
-import static com.cyc.baseclient.testing.TestConstants.CYC_ADMINISTRATOR;
-import static com.cyc.baseclient.testing.TestConstants.GENERAL_CYC_KE;
-import static com.cyc.baseclient.testing.TestConstants.LENAT;
 import com.cyc.kb.DefaultContext;
 import com.cyc.session.exception.SessionRuntimeException;
 import junit.framework.TestCase;
 import org.junit.Test;
+
+import static com.cyc.baseclient.testing.TestConstants.CYC_ADMINISTRATOR;
+import static com.cyc.baseclient.testing.TestConstants.GENERAL_CYC_KE;
+import static com.cyc.baseclient.testing.TestConstants.LENAT;
 
 /**
  *
@@ -46,7 +47,7 @@ public class CycSessionOptionsIT extends TestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    session = CycSessionManager.getCurrentSession();
+    session = CycSession.getCurrent();
     cyc = CycAccessManager.getCurrentAccess();
     sessionOptions = ((CycClientSession) session).getOptions();
     cycOptions = cyc.getOptions();

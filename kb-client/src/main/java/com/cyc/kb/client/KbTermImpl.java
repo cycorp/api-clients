@@ -61,7 +61,7 @@ import java.util.Map;
  * @param <T> type of CycObject core
  * 
  * @author Dave Schneider
- * @version $Id: KbTermImpl.java 173441 2017-08-23 03:23:59Z nwinant $
+ * @version $Id: KbTermImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbObjectImpl<T> implements KbTerm {
 
@@ -425,10 +425,10 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
     try {
       return getAccess().getInspectorTool().isa(this.getCore(), KbObjectImpl.getCore(col), KbObjectImpl.getCore(ctx));
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
-  
+  /*
   @Override
   public boolean provablyNotInstanceOf(String colStr, String ctxStr) {
     ContextImpl ctx;
@@ -437,11 +437,11 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
       ctx = ContextImpl.get(ctxStr);
       col = KbCollectionImpl.get(colStr);
     } catch (KbException kae){
-      throw new IllegalArgumentException(kae.getMessage(), kae);
+      throw new IllegalArgumentException(kae);
     }
     return provablyNotInstanceOf(col, ctx);
   }
-
+*/
   @Override
   public KbIndividual getCreator() {
     try {
@@ -490,7 +490,7 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   
@@ -510,9 +510,9 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
         getAccess().getObjectTool().rename(((CycConstant) getCore()), name, true,
                 KbConfiguration.getShouldTranscriptOperations());
       } catch (CycConnectionException e) {
-        throw new KbRuntimeException("Unable to rename " + this + " to " + name, e);
+        throw KbRuntimeException.fromThrowable("Unable to rename " + this + " to " + name, e);
       } catch (CycApiException cae) {
-        throw new InvalidNameException(cae.getMessage(), cae);
+        throw InvalidNameException.fromThrowable(cae);
       }
       return this;
     } else {
@@ -538,10 +538,10 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
                 + ". It was not a Fort.");
       }
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
               "Couldn't kill the constant " + getCore().toString(), e);
     } catch (CycApiException cae) {
-      throw new KbRuntimeException("Could not kill the constant: " + getCore()
+      throw KbRuntimeException.fromThrowable("Could not kill the constant: " + getCore()
               + " very likely because it is not in the KB. " + cae.getMessage(), cae);
     }
   }
@@ -551,12 +551,12 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
     Constants.isa().addFact(ctx, this, col);
     return this;
   }
-  
+  /*
   @Override
   public KbTerm instantiates(String colStr, String ctxStr) throws KbTypeException, CreateException {
     return instantiates(KbCollectionImpl.get(colStr), ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public KbTerm instantiates(KbCollection col) throws KbTypeException, CreateException {
     return instantiates(col, KbConfiguration.getDefaultContext().forAssertion());
@@ -572,31 +572,31 @@ public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbO
     try {
       return getAccess().getInspectorTool().isa(this.getCore(), (Fort) col.getCore());
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
-  
+  /*
   @Override
   public boolean isInstanceOf(String colStr) {
     return isInstanceOf(KbUtils.getKBObjectForArgument(colStr, KbCollectionImpl.class));
   }
-  
+  */
   @Override
   public boolean isInstanceOf(KbCollection col, Context ctx) {
     try {
       return getAccess().getInspectorTool().isa(this.getCore(), getCore(col), getCore(ctx));
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
-  
+  /*
   @Override
   public boolean isInstanceOf(String colStr, String ctxStr) {
     return isInstanceOf(
             KbUtils.getKBObjectForArgument(colStr, KbCollectionImpl.class), 
             KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public KbTerm addQuotedIsa(KbCollection coll, Context ctx) throws KbTypeException, CreateException {
     super.addQuotedIsa(coll, ctx);

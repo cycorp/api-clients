@@ -106,7 +106,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
     } catch (JAXBException ex) {
       throw new RuntimeException(ex);
     } catch (CycConnectionException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -180,7 +180,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
       getCyc().converse().converseVoid(command);
       
     } catch (CycConnectionException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -203,9 +203,9 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
                 "get-proof-view-domain-mt", proofViewId));
         return Context.get(mtObject.toString());
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       } catch (CreateException | KbTypeException ex) {
-        throw new QueryRuntimeException(ex);
+        throw QueryRuntimeException.fromThrowable(ex);
       }
     }
     return spec.getDomainContext();
@@ -224,7 +224,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
         return cyc.converse().converseBoolean(makeSublStmt(
                 "get-proof-view-include-details", proofViewId));
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       }
     } else {
       return spec.isIncludeDetails();
@@ -244,7 +244,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
         return cyc.converse().converseBoolean(makeSublStmt(
                 "get-proof-view-include-linear", proofViewId));
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       }
     } else {
       return spec.isIncludeLinear();
@@ -266,7 +266,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
                 "get-proof-view-include-summary", proofViewId);
         return cyc.converse().converseBoolean(command);
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       }
     } else {
       return spec.isIncludeSummary();
@@ -289,7 +289,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
                 "get-proof-view-language-mt", proofViewId));
         return Context.get(mtObject.toString());
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       }
     }
     return spec.getLanguageContext();
@@ -354,7 +354,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
       return ! cyc.converse().converseBoolean(makeSublStmt(
               "get-proof-view-suppress-assertion-bookkeeping", proofViewId));
     } catch (CycConnectionException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 
@@ -373,7 +373,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
       return ! cyc.converse().converseBoolean(makeSublStmt(
               "get-proof-view-suppress-assertion-cyclists", proofViewId));
     } catch (CycConnectionException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 
@@ -389,7 +389,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
                 proofViewId, algorithm.getCycName()));
         this.summaryAlgorithm = algorithm;
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
       }
     }
   }
@@ -406,7 +406,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
                 proofViewId, addressee));
         this.addressee = addressee;
       } catch (CycConnectionException ex) {
-        throw new SessionCommunicationException(ex);
+        throw SessionCommunicationException.fromThrowable(ex);
 
       }
     }
@@ -461,7 +461,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
     try {
       cyc.converse().converseVoid(command);
     } catch (CycApiException e) {
-      throw new QueryRuntimeException(e);
+      throw QueryRuntimeException.fromThrowable(e);
     }
   }
 
@@ -469,7 +469,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
     try {
       return cyc.converse().converseBoolean(command);
     } catch (CycApiException e) {
-      throw new QueryRuntimeException(e);
+      throw QueryRuntimeException.fromThrowable(e);
     }
   }
 
@@ -477,7 +477,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
     try {
       return cyc.converse().converseCycObject(command);
     } catch (CycApiException e) {
-      throw new QueryRuntimeException(e);
+      throw QueryRuntimeException.fromThrowable(e);
     }
   }
 
@@ -496,7 +496,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
         setRoot(new com.cyc.query.client.explanations.ProofViewImpl(rootEntryJaxb, this));
       } catch (Exception e) {
         e.printStackTrace(System.err);
-        throw new QueryRuntimeException("Failed to get root of proof view.", e);
+        throw QueryRuntimeException.fromThrowable("Failed to get root of proof view.", e);
       }
     }
   }

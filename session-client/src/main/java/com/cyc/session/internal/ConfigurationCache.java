@@ -24,7 +24,6 @@ package com.cyc.session.internal;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.EnvironmentConfiguration;
 import com.cyc.session.exception.SessionConfigurationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,16 +83,15 @@ public class ConfigurationCache {
       throw new SessionConfigurationException("Cannot cache instances of " + EnvironmentConfiguration.class.getSimpleName());
     }
     if (!hasConfiguration(environment)
-            && isCachingAllowed(environment, config)) {
+            && isCachingAllowed(environment)) {
       LOGGER.debug("Caching new config {} for environment {}", config, environment);
       this.cachedEnvironment = environment;
       this.cachedConfiguration = config;
     }
     return config;
   }
-    
-  public boolean isCachingAllowed(EnvironmentConfiguration environment, CycSessionConfiguration config) {
-    return environment.isConfigurationCachingAllowed()
-            && config.isConfigurationCachingAllowed();
+  
+  public boolean isCachingAllowed(EnvironmentConfiguration environment) {
+    return environment.getManagerConfiguration().isConfigurationCachingAllowed();
   }
 }

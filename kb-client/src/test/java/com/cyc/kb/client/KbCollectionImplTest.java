@@ -48,6 +48,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.cyc.kb.client.TestConstants.appleProductMt;
+import static com.cyc.kb.client.TestConstants.product;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -124,7 +126,8 @@ public class KbCollectionImplTest {
     final ContextImpl ctx = ContextImpl.findOrCreate("AppleProductMt");
     c.addSpecialization(ipadColl, ctx);
     c.addSpecialization(KbCollectionImpl.findOrCreate("IPhone-APITest"), ctx);
-    final Collection<KbCollection> productTypes = c.getSpecializations("AppleProductMt");
+    //final Collection<KbCollection> productTypes = c.getSpecializations("AppleProductMt");
+    final Collection<KbCollection> productTypes = c.getSpecializations(appleProductMt);
 
     assertTrue("Couldn't find " + IPadString + " in " + productTypes,
             productTypes.contains(ipadColl));
@@ -141,8 +144,10 @@ public class KbCollectionImplTest {
     final String productString = "Product";
 
     // Internally genls(mt, c) will be run, so not additional test needed.
-    c.addGeneralization(productString, "AppleProductMt");
-    final Collection<? extends KbCollection> generalizations = c.getGeneralizations("AppleProductMt");
+    //c.addGeneralization(productString, "AppleProductMt");
+    //final Collection<? extends KbCollection> generalizations = c.getGeneralizations("AppleProductMt");
+    c.addGeneralization(product, appleProductMt);
+    final Collection<? extends KbCollection> generalizations = c.getGeneralizations(appleProductMt);
     final FirstOrderCollection productQuaFOC = FirstOrderCollectionImpl.findOrCreate(productString);
     assertTrue(generalizations + " does not contain " + productString + " qua "
             + FirstOrderCollectionImpl.class.getSimpleName(),
@@ -160,8 +165,10 @@ public class KbCollectionImplTest {
 	    final String productString = "Product";
 
 	    // Internally genls(mt, c) will be run, so not additional test needed.
-	    c.addGeneralization(productString);
-	    final Collection<? extends KbCollection> generalizations = c.getGeneralizations("AppleProductMt");
+	    //c.addGeneralization(productString);
+	    //final Collection<? extends KbCollection> generalizations = c.getGeneralizations("AppleProductMt");
+      c.addGeneralization(product);
+	    final Collection<? extends KbCollection> generalizations = c.getGeneralizations(appleProductMt);
 	    final FirstOrderCollection productQuaFOC = FirstOrderCollectionImpl.findOrCreate(productString);
 	    assertTrue(generalizations + " does not contain " + productString + " qua "
 	            + FirstOrderCollectionImpl.class.getSimpleName(),
@@ -199,22 +206,23 @@ public class KbCollectionImplTest {
     KbIndividualImpl a = KbIndividualImpl.findOrCreate("anIPad");
     ContextImpl con = ContextImpl.findOrCreate("AppleProductMt");
     a.instantiates(c, con);
-    assertTrue(c.<KbIndividual>getInstances("AppleProductMt").contains(KbIndividualImpl.get("anIPad")));
+    //assertTrue(c.<KbIndividual>getInstances("AppleProductMt").contains(KbIndividualImpl.get("anIPad")));
+    assertTrue(c.<KbIndividual>getInstances(appleProductMt).contains(KbIndividualImpl.get("anIPad")));
 
     KbCollection cet = KbCollectionImpl.findOrCreate("ConsumerElectronicsType");
     c.instantiates(cet, con);
-    assertTrue(cet.<KbCollection>getInstances("AppleProductMt").contains(
-            KbCollectionImpl.get("IPad-APITest")));
-
+    //assertTrue(cet.<KbCollection>getInstances("AppleProductMt").contains(KbCollectionImpl.get("IPad-APITest")));
+    assertTrue(cet.<KbCollection>getInstances(appleProductMt).contains(KbCollectionImpl.get("IPad-APITest")));
   }
 
   @Test
   public void testSuperTypes() throws KbException {
     KbCollection cet = KbCollectionImpl.findOrCreate("ConsumerElectronicsType");
     KbCollection c = KbCollectionImpl.findOrCreate("IPhone-APITest");
-    c.instantiates("ConsumerElectronicsType", "AppleProductMt");
-
-    assertTrue(c.instancesOf("AppleProductMt").contains(cet));
+    //c.instantiates("ConsumerElectronicsType", "AppleProductMt");
+    //assertTrue(c.instancesOf("AppleProductMt").contains(cet));
+    c.instantiates(KbCollection.get("ConsumerElectronicsType"), appleProductMt);
+    assertTrue(c.instancesOf(appleProductMt).contains(cet));
   }
 
   @Test
@@ -223,7 +231,8 @@ public class KbCollectionImplTest {
     //TODO: Test the getValues method.
 
     KbIndividualImpl ig = KbIndividualImpl.findOrCreate("iGuy");
-    ig.instantiates("Person", "AppleProductMt");
+    //ig.instantiates("Person", "AppleProductMt");
+    ig.instantiates(KbCollection.get("Person"), appleProductMt);
     KbPredicateImpl.get("owns").addFact(ContextImpl.get("AppleProductMt"), ig, KbIndividualImpl.findOrCreate("anIPad"));
   }
 

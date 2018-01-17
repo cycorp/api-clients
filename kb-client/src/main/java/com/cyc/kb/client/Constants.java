@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * to use this class in application making use of the KB API.
  * 
  * @author Vijay Raj
- * @version $Id: Constants.java 175435 2017-10-20 23:37:33Z nwinant $
+ * @version $Id: Constants.java 176267 2017-12-13 04:02:46Z nwinant $
  * @since 1.0
  */
 @CycObjectLibrary(accessor="getInstance")
@@ -215,7 +215,7 @@ class Constants {
               = "One of the private final fields in " + Constants.class.getCanonicalName()
               + " could not be instantiated, cannot proceed further.";
       LOG.error(msg, e);
-      throw new KbRuntimeException(msg, e);
+      throw KbRuntimeException.fromThrowable(msg, e);
     }
   }
   

@@ -27,6 +27,7 @@ import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.cycobject.DenotationalTerm;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.baseclient.cycobject.NartImpl;
+import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.KbStatus;
@@ -45,6 +46,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.cyc.Cyc.Constants.EVERYTHING_PSC;
+import static com.cyc.Cyc.Constants.UV_MT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -369,8 +372,8 @@ public class KbIndividualImplTest {
 
     KbIndividualImpl i = KbIndividualImpl.findOrCreate("(SomeAirlineEquipmentLogFn Plane-APITest)");
     assertEquals(i.toString(), "(SomeAirlineEquipmentLogFn Plane-APITest)");
-    System.out.println("Isas: " + i.instanceOf("UniversalVocabularyMt").toString());
-
+    //System.out.println("Isas: " + i.instanceOf("UniversalVocabularyMt").toString());
+    System.out.println("Isas: " + i.instanceOf(UV_MT).toString());
   }
 
   @Test
@@ -379,13 +382,16 @@ public class KbIndividualImplTest {
     KbIndividualImpl i = KbIndividualImpl.findOrCreate(name);
     assertEquals(i.toString(), name);
     final KbCollection person = KbCollectionImpl.get("Person");
-
-    i.instantiates(person, ContextImpl.get("PeopleDataMt")).instantiates(
-            "MaleHuman", "PeopleDataMt");
-    System.out.println("Just checking: " + i.isInstanceOf("MaleHuman", "EverythingPSC"));
-    assertTrue(i.instanceOf("PeopleDataMt").contains(person));
+    final KbCollection maleHuman = KbCollection.get("MaleHuman");
+    final Context peopleDataMt = Context.get("PeopleDataMt");
+    
+    //i.instantiates(person, ContextImpl.get("PeopleDataMt")).instantiates("MaleHuman", "PeopleDataMt");
+    i.instantiates(person, peopleDataMt).instantiates(maleHuman, peopleDataMt);
+    //System.out.println("Just checking: " + i.isInstanceOf("MaleHuman", "EverythingPSC"));
+    System.out.println("Just checking: " + i.isInstanceOf(maleHuman, EVERYTHING_PSC));
+    assertTrue(i.instanceOf(peopleDataMt).contains(person));
   }
-
+  
   @Test
   public void testComment() throws KbException {
     KbIndividualImpl i = KbIndividualImpl.findOrCreate("TestCommentTestIndividual");
@@ -446,7 +452,8 @@ public class KbIndividualImplTest {
     Collection<KbCollectionImpl> expResult = new HashSet<>();
     expResult.add(col);
     expResult.add(KbCollectionImpl.get("Individual"));
-    Collection<KbCollection> result = instance.instanceOf("SomeAirlineLogMt");
+    //Collection<KbCollection> result = instance.instanceOf("SomeAirlineLogMt");
+    Collection<KbCollection> result = instance.instanceOf(Context.get("SomeAirlineLogMt"));
     assertEquals(expResult, result);
 
     expResult = new HashSet<>();

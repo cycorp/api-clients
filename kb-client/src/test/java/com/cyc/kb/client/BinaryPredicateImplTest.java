@@ -25,16 +25,19 @@ import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.kb.BinaryPredicate;
+import com.cyc.kb.KbCollection;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.DeleteException;
 import com.cyc.kb.exception.KbRuntimeException;
 import com.cyc.kb.exception.KbTypeException;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static com.cyc.Cyc.Constants.UV_MT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class BinaryPredicateImplTest {
 
@@ -44,7 +47,8 @@ public class BinaryPredicateImplTest {
 	public static void setUp() throws Exception {
       TestConstants.ensureInitialized();
       individual = KbIndividualImpl.findOrCreate("TestIndividual001");
-      individual.instantiates("Person", "UniversalVocabularyMt");
+      //individual.instantiates("Person", "UniversalVocabularyMt");
+      individual.instantiates(KbCollection.get("Person"), UV_MT);
 	}
 
 	@AfterClass

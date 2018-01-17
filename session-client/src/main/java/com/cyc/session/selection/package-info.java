@@ -1,5 +1,5 @@
 /**
- * Implementations of com.cyc.session.selection.SessionSelector.
+ * Provides an arbitrary set of criteria to select a subset of CycSession objects.
  */
 package com.cyc.session.selection;
 

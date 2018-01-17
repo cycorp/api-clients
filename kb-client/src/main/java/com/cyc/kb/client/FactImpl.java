@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * is used to create and remove arbitrary assertions from Cyc.
  * 
  * @author Vijay Raj
- * @version $Id: FactImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: FactImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  * @since 1.0
  */
 
@@ -182,7 +182,7 @@ public class FactImpl extends AssertionImpl implements Fact {
         setCore(assertSentence(factStr, ctxStr, null, null));
       }
     } catch (CreateException | KbTypeException ex) {
-      throw new KbException(ex);
+      throw KbException.fromThrowable(ex);
     }
   }
 
@@ -226,7 +226,7 @@ public class FactImpl extends AssertionImpl implements Fact {
         setCore(assertSentence(factSentence, ctx, null, null));
       }
     } catch (KbTypeException | CreateException ex) {
-      throw new KbException(ex);
+      throw KbException.fromThrowable(ex);
     }
   }
 
@@ -264,7 +264,7 @@ public class FactImpl extends AssertionImpl implements Fact {
         setCore(assertSentence((FormulaSentence) factSentence.getCore(), ctx, null, null));
       }
     } catch (KbTypeException | KbObjectNotFoundException ex) {
-      throw new KbException(ex);
+      throw KbException.fromThrowable(ex);
     }
   }
 
@@ -297,7 +297,7 @@ public class FactImpl extends AssertionImpl implements Fact {
     try {
       result = DefaultCycObjectImpl.fromPossibleCompactExternalId(hlid, getStaticAccess());
     } catch (CycConnectionException e){
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
     if (result instanceof CycObject) {
       return KbObjectImplFactory.get((CycObject)result, FactImpl.class);
@@ -418,7 +418,7 @@ public class FactImpl extends AssertionImpl implements Fact {
           KbConfiguration.getShouldTranscriptOperations());
       setIsValid(false);
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
               "Couldn't delete the fact: " + getCore().toString(), ex);
     }
     try {
@@ -429,7 +429,7 @@ public class FactImpl extends AssertionImpl implements Fact {
                 "Unable to delete Fact " + sentence + " in " + mt);
       }
     } catch (CycConnectionException | CycApiException ex) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
               "Couldn't delete the fact: " + getCore().toString(), ex);
     }
   }
@@ -487,7 +487,7 @@ public class FactImpl extends AssertionImpl implements Fact {
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

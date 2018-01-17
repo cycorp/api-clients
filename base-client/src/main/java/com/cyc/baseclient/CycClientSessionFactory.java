@@ -25,11 +25,11 @@ import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.session.CycAddress;
 import com.cyc.session.CycSessionConfiguration;
+import com.cyc.session.configuration.ConfigurationValidator;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
 import com.cyc.session.exception.SessionRuntimeException;
-import com.cyc.session.internal.ConfigurationValidator;
 import com.cyc.session.spi.SessionFactory;
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class CycClientSessionFactory implements SessionFactory<CycClientSession>
     } catch (CycConnectionException ex) {
       throw ex.toSessionException("Error communicating with " + server);
     } catch (CycApiException ex) {
-      throw new SessionInitializationException("Error initializing CycSession for " + server, ex);
+      throw SessionInitializationException.fromThrowable("Error initializing CycSession for " + server, ex);
     }
     // NOTE: I briefly thought of attaching SessionListeners here, but anything interesting that 
     //       could go in a SessionFactory would probably go better in the SessionManager instead,

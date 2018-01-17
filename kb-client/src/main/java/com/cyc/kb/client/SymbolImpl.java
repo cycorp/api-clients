@@ -45,7 +45,7 @@ import com.cyc.kb.exception.KbTypeException;
  * rare, but the API supports it for completeness. 
  * 
  * @author Vijay Raj
- * @version $Id: SymbolImpl.java 173072 2017-07-27 01:21:15Z nwinant $  
+ * @version $Id: SymbolImpl.java 176267 2017-12-13 04:02:46Z nwinant $  
  */
 public class SymbolImpl extends StandardKbObject<CycSymbol> implements Symbol {
 
@@ -126,7 +126,7 @@ public class SymbolImpl extends StandardKbObject<CycSymbol> implements Symbol {
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }  
   

@@ -66,12 +66,12 @@ public class CycConnectionException
   
   @Override
   public SessionCommunicationException toSessionException(String msg) {
-    return new SessionCommunicationException(msg, this);
+    return SessionCommunicationException.fromThrowable(msg, this);
   }
   
   @Override
   public SessionCommunicationException toSessionException() {
-    return new SessionCommunicationException(this);
+    return SessionCommunicationException.fromThrowable(this);
   }
   
   

@@ -21,13 +21,13 @@ package com.cyc.kb.client.config;
  * #L%
  */
 
-import com.cyc.kb.DefaultContext;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.baseclient.CycClientOptions;
+import com.cyc.kb.DefaultContext;
 import com.cyc.kb.KbIndividual;
 import com.cyc.kb.client.KbIndividualImpl;
 import com.cyc.kb.exception.KbRuntimeException;
-import com.cyc.session.CycSessionManager;
+import com.cyc.session.CycSession;
 import com.cyc.session.exception.SessionException;
 
 
@@ -45,9 +45,9 @@ public class KbConfiguration {
 
   public static CycClientOptions getOptions() {
     try {
-      return (CycClientOptions) CycSessionManager.getCurrentSession().getOptions();
+      return (CycClientOptions) CycSession.getCurrent().getOptions();
     } catch (SessionException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -66,7 +66,7 @@ public class KbConfiguration {
     try {
       return CycAccessManager.getCurrentAccess();
     } catch (SessionApiException ex) {
-      throw new KBApiRuntimeException(ex.getMessage(), ex);
+      throw new KBApiRuntimeException(ex);
     }
   }
   
@@ -192,15 +192,15 @@ public class KbConfiguration {
       getStaticAccess().getOptions().setCyclistName(cyclist);
       return KBIndividualImpl.get(cyclist);
     } catch (SessionApiException ex) {
-      throw new KBApiRuntimeException(ex.getMessage(), ex);
+      throw new KBApiRuntimeException(ex);
     } catch (CycConnectionException ex) {
-      throw new KBApiRuntimeException(ex.getMessage(), ex);
+      throw new KBApiRuntimeException(ex);
     } catch (CycApiException ex) {
-      throw new KBApiRuntimeException(ex.getMessage(), ex);
+      throw new KBApiRuntimeException(ex);
     } catch (KBTypeException ex) {
-      throw new KBApiRuntimeException(ex.getMessage(), ex);
+      throw new KBApiRuntimeException(ex);
     } catch (CreateException ex) {
-      throw new KBApiRuntimeException(ex.getMessage(), ex);
+      throw new KBApiRuntimeException(ex);
     }
   }
 

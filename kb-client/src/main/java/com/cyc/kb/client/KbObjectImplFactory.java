@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * The class and the methods of this class are not part of the KB API.
  *
  * @author David Baxter
- * @version $Id: KbObjectImplFactory.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: KbObjectImplFactory.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbObjectImplFactory {
 
@@ -184,7 +184,7 @@ public class KbObjectImplFactory {
       }
       return tempCore;
     } catch (CycConnectionException cce) {
-      throw new KbRuntimeException(cce.getMessage(), cce);
+      throw KbRuntimeException.fromThrowable(cce);
     }
   }
   
@@ -209,7 +209,7 @@ public class KbObjectImplFactory {
         return null;  //  ... but it also can't be retrieved as CycL, so we're done.
       }
     } catch (CycConnectionException cce) {
-      throw new KbRuntimeException(cce.getMessage(), cce);
+      throw KbRuntimeException.fromThrowable(cce);
     }
   }
   
@@ -530,7 +530,7 @@ public class KbObjectImplFactory {
       try {
         tightestCycCol = getStaticAccess().getInspectorTool().categorizeTermWRTApi(cycObject);
       } catch (CycConnectionException cce) {
-        throw new KbRuntimeException(cce.getMessage(), cce);
+        throw KbRuntimeException.fromThrowable(cce);
       }
       final Class tightestKbClass = CYC_OBJECT_TO_KB_API_CLASS.get(tightestCycCol);
       if (tightestCycCol != null && tightestKbClass != null) {
@@ -600,7 +600,7 @@ public class KbObjectImplFactory {
             + "\" as " + requestedClass.getSimpleName() + ".";
     LOG.warn(msg);
     if (constructionException != null) {
-      throw new KbObjectNotFoundException(msg, constructionException);
+      throw KbObjectNotFoundException.fromThrowable(msg, constructionException);
     }
     throw new KbObjectNotFoundException(msg);
   }
@@ -985,7 +985,7 @@ public class KbObjectImplFactory {
       }
       return getStatus(cycObject, c);
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -1014,7 +1014,7 @@ public class KbObjectImplFactory {
         return KbStatus.EXISTS_WITH_COMPATIBLE_TYPE;
       }
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
 

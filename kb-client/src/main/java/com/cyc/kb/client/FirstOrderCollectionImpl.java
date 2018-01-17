@@ -53,7 +53,7 @@ import java.util.Collection;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: FirstOrderCollectionImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: FirstOrderCollectionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class FirstOrderCollectionImpl<T extends DenotationalTerm> extends KbCollectionImpl<T> implements FirstOrderCollection {
   private static final DenotationalTerm TYPE_CORE =
@@ -445,17 +445,18 @@ public class FirstOrderCollectionImpl<T extends DenotationalTerm> extends KbColl
   public Collection<FirstOrderCollection> getGeneralizations() {
     return getGeneralizations(KbConfiguration.getDefaultContext().forQuery());
   }
+  /*
   @Override
   public Collection<FirstOrderCollection> getGeneralizations(String ctxStr) {
     return getGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<FirstOrderCollection> getGeneralizations(Context ctx) {
     //return (this.<FirstOrderCollection>getValues(Constants.genls(), 1, 2, ctx));
     return Constants.genls().getValuesForArgPosition(this, 1, 2, ctx);
   }
-  
+  /*
   @Override
   public FirstOrderCollection addGeneralization(String moreGeneralStr, String ctxStr) throws KbTypeException, CreateException {
     FirstOrderCollectionImpl c;
@@ -464,10 +465,11 @@ public class FirstOrderCollectionImpl<T extends DenotationalTerm> extends KbColl
       c = FirstOrderCollectionImpl.get(moreGeneralStr);
       ctx = ContextImpl.get(ctxStr);
     } catch (KbException e){
-      throw new IllegalArgumentException(e.getMessage(), e);
+      throw new IllegalArgumentException(e);
     }
     return addGeneralization(c, ctx);
   }
+  */
   @Override
   public FirstOrderCollection addGeneralization(KbCollection moreGeneral, Context ctx) throws KbTypeException, CreateException {
     Context ctx1 = Constants.uvMt();
@@ -502,7 +504,7 @@ public class FirstOrderCollectionImpl<T extends DenotationalTerm> extends KbColl
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

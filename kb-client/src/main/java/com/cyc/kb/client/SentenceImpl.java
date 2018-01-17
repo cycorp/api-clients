@@ -83,7 +83,7 @@ import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
  * and understood by the server, and are used extensively to perform queries or make assertions.
  *
  * @author Vijay Raj
- * @version $Id: SentenceImpl.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: SentenceImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  * @since 1.0
  */
 public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence> implements Sentence {
@@ -177,7 +177,7 @@ public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence>
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
 
@@ -242,7 +242,7 @@ public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence>
       }
     } catch (CycConnectionException e) {
       // Low level connection exception
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
 
     if (outargs.isEmpty()) {
@@ -275,9 +275,9 @@ public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence>
           return (FormulaSentence) o;
         }
       } catch (CycConnectionException ex1) {
-        throw new CreateException(ex1.getMessage(), ex1);
+        throw CreateException.fromThrowable(ex1);
       }
-      throw new CreateException(ex.getMessage(), ex);
+      throw CreateException.fromThrowable(ex);
     }
   }
   
@@ -627,7 +627,7 @@ public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence>
       }
       return result;
     } catch (KbTypeException | CreateException ex) {
-      throw new RuntimeException(ex.getMessage(), ex);
+      throw new RuntimeException(ex);
     }
   }
   

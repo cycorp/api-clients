@@ -77,7 +77,6 @@ import com.cyc.query.parameters.InferenceMode;
 import com.cyc.query.parameters.InferenceParameters;
 import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionManager;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.MinimumPatchRequirement;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
@@ -163,11 +162,11 @@ public class QueryImpl implements Query, Closeable {
     } catch (JAXBException ex) {
       throw new RuntimeException(ex);
     } catch (NullPointerException ex) {
-      throw new QueryConstructionException("Could not load a query for " + id, ex);
+      throw QueryConstructionException.fromThrowable("Could not load a query for " + id, ex);
     } catch (SessionCommunicationException | SessionInitializationException
             | SessionCommandException | SessionConfigurationException
             | QueryConstructionException | QueryRuntimeException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 
@@ -193,7 +192,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       q = loadCycObjectMap(id, kboToCoMap);
     } catch (UnsupportedCycOperationException | QueryConstructionException | KbException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
     return q;
   }
@@ -224,7 +223,7 @@ public class QueryImpl implements Query, Closeable {
       replaceIndexicals(indexicals, q);
       return q;
     } catch (KbException e) {
-      throw new QueryRuntimeException("Exception thrown while trying to load " + idStr, e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown while trying to load " + idStr, e);
     }
   }
 
@@ -281,7 +280,7 @@ public class QueryImpl implements Query, Closeable {
     } catch (SessionCommunicationException
             | SessionConfigurationException | SessionInitializationException
             | CycApiException | CycConnectionException e) {
-      throw new QueryRuntimeException("Exception thrown during indexical replacement", e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown during indexical replacement", e);
     }
   }
 
@@ -328,7 +327,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       return ContextImpl.get(ctxStr);
     } catch (KbTypeException | CreateException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 
@@ -340,7 +339,7 @@ public class QueryImpl implements Query, Closeable {
     } catch (SessionConfigurationException
             | SessionCommunicationException
             | SessionInitializationException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 
@@ -354,7 +353,7 @@ public class QueryImpl implements Query, Closeable {
             | ParseException | UnsupportedVocabularyException
             | CycConnectionException | CycApiException
             | InvalidConstantNameException | InvalidConstantGuidException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 
@@ -362,7 +361,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       return ContextImpl.get(ctx);
     } catch (KbTypeException | CreateException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 
@@ -372,7 +371,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       return KbIndividualImpl.get(id.cyclify());
     } catch (KbTypeException | CreateException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
    */
@@ -440,7 +439,7 @@ public class QueryImpl implements Query, Closeable {
   private QueryImpl(FormulaSentence sent, Context ctx, InferenceParameters params)
           throws QueryConstructionException {
     try {
-      this.session = CycSessionManager.getCurrentSession();
+      this.session = CycSession.getCurrent();
       this.inference = new QueryInference(this);
       this.cyc = CycAccessManager.getAccessManager().fromSession(session);
       this.ctx = ctx;
@@ -455,7 +454,7 @@ public class QueryImpl implements Query, Closeable {
     } catch (SessionConfigurationException
             | SessionCommunicationException
             | SessionInitializationException ex) {
-      throw new QueryConstructionException(ex);
+      throw QueryConstructionException.fromThrowable(ex);
     }
   }
 
@@ -613,7 +612,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       return inference.performInference();
     } catch (Exception e) {
-      throw new QueryRuntimeException("Exception thrown during inference", e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown during inference", e);
     }
   }
 
@@ -658,7 +657,7 @@ public class QueryImpl implements Query, Closeable {
       getCycAccess().converse().converseVoid(
               "(ensure-sksi-modules-needed " + getId().stringApiValue() + ")");
     } catch (CycConnectionException | CycApiException e) {
-      throw new QueryRuntimeException("Exception thrown during SKS module registration", e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown during SKS module registration", e);
     }
   }
 
@@ -680,7 +679,7 @@ public class QueryImpl implements Query, Closeable {
                                                                 getContext()), params);
       getCycAccess().converse().converseVoid(command);
     } catch (CycConnectionException | CycApiException e) {
-      throw new QueryRuntimeException("Exception thrown while saving query", e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown while saving query", e);
     }
   }
 
@@ -753,7 +752,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       return InferenceMetricsValuesImpl.fromInference(getInferenceIdentifier());
     } catch (CycConnectionException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 
@@ -805,16 +804,17 @@ public class QueryImpl implements Query, Closeable {
     bindVariable((CycVariable) var.getCore(), replacement);
   }
 
-  /**
+  /* *
    * Bind a query variable to a specified value.
    *
    * @param varName The name of the variable, with or without the '?' prefix.
    * @param replacement
-   */
+   * /
   @Override
   public void bindVariable(String varName, Object replacement) {
     bindVariable(CycObjectFactory.makeCycVariable(varName), replacement);
   }
+  */
 
   /**
    * Designates var as a variable to <i>not</i> return bindings for.
@@ -860,7 +860,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       inference.continueInference();
     } catch (Exception e) {
-      throw new QueryRuntimeException("Exception thrown while continuing query", e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown while continuing query", e);
     }
   }
 
@@ -896,7 +896,7 @@ public class QueryImpl implements Query, Closeable {
       }
       return clauses;
     } catch (CycConnectionException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 
@@ -923,7 +923,7 @@ public class QueryImpl implements Query, Closeable {
       }
       return argPositions;
     } catch (CycConnectionException | CycApiException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 
@@ -965,7 +965,7 @@ public class QueryImpl implements Query, Closeable {
               constructContext((CycObject) newStuff.second()),
               DefaultInferenceParameters.fromPlist(getCycAccess(), paramsList));
     } catch (CycConnectionException | CycApiException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 
@@ -1152,7 +1152,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       inference.start();
     } catch (IOException | CycConnectionException e) {
-      throw new SessionCommunicationException(e);
+      throw SessionCommunicationException.fromThrowable(e);
     }
   }
 
@@ -1523,7 +1523,7 @@ public class QueryImpl implements Query, Closeable {
     try {
       return inference.getResultSet();
     } catch (Exception e) {
-      throw new QueryRuntimeException("Exception thrown while getting result set", e);
+      throw QueryRuntimeException.fromThrowable("Exception thrown while getting result set", e);
     }
   }
 

@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * variables.
  *
  * @author vijay
- * @version $Id: RuleImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: RuleImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  * @since 1.0
  */
 public class RuleImpl extends AssertionImpl implements Rule {
@@ -121,7 +121,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
     try {
       result = DefaultCycObjectImpl.fromPossibleCompactExternalId(hlid, getStaticAccess());
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
     if (result instanceof CycAssertion) {
       LOG.debug("Found assertion: {} using HLID: {}", result, hlid);
@@ -246,7 +246,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
       final FormulaSentence result = (FormulaSentence) ca.getELFormula(getAccess()).getArg1();
       return KbObjectImpl.<Sentence>checkAndCastObject(result);
     } catch (CycApiException | CycConnectionException | CreateException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -257,7 +257,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
       final FormulaSentence result = (FormulaSentence) ca.getELFormula(getAccess()).getArg2();
       return KbObjectImpl.<Sentence>checkAndCastObject(result);
     } catch (CycApiException | CycConnectionException | CreateException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -279,7 +279,7 @@ public class RuleImpl extends AssertionImpl implements Rule {
         final CycObject operator = ((CycAssertion) cycObject).getArg0(getAccess());
         return operator.equals(IMPLIES);
       } catch (CycApiException | CycConnectionException ex) {
-        throw new KbRuntimeException(ex.getMessage(), ex);
+        throw KbRuntimeException.fromThrowable(ex);
       }
     }
     return false;

@@ -7,13 +7,13 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-client-parent</artifactId>
-    <version>1.0.0-rc8.0</version>
+    <version>1.0.0-rc9.0</version>
     <relativePath>../core-client-parent</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-kb-client</artifactId>
-  <version>1.0.0-rc8.0</version>
+  <version>1.0.0-rc9.0</version>
   <packaging>jar</packaging>
   
   <name>KB Client</name>

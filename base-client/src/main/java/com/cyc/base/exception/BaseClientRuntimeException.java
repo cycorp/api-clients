@@ -26,7 +26,7 @@ import com.cyc.session.exception.SessionRuntimeException;
 /**
  * Class BaseClientRuntimeException indicates an error condition...
  *
- * @version $Id: BaseClientRuntimeException.java 175669 2017-11-01 23:47:32Z nwinant $
+ * @version $Id: BaseClientRuntimeException.java 176267 2017-12-13 04:02:46Z nwinant $
  * @author Stephen L. Reed
  */
 public class BaseClientRuntimeException 
@@ -74,12 +74,12 @@ public class BaseClientRuntimeException
   
   @Override
   public SessionRuntimeException toSessionException(String msg) {
-    return new SessionRuntimeException(msg, this);
+    return SessionRuntimeException.fromThrowable(msg, this);
   }
   
   @Override
   public SessionRuntimeException toSessionException() {
-    return new SessionRuntimeException(this);
+    return SessionRuntimeException.fromThrowable(this);
   }
   
   String getRawMessage() {

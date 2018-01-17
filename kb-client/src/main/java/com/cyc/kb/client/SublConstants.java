@@ -83,7 +83,7 @@ public class SublConstants {
       }
       return instance;
     } catch (KbException e) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
           "One of the private final fields in com.cyc.kb.Constants could not be instantiated, can not proceed further.",
           e);
     }

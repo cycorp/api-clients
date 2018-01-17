@@ -54,7 +54,7 @@ import java.util.Map;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: KbIndividualImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: KbIndividualImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 
 public class KbIndividualImpl<T extends DenotationalTerm> extends KbTermImpl<T> implements KbIndividual {
@@ -515,12 +515,12 @@ public class KbIndividualImpl<T extends DenotationalTerm> extends KbTermImpl<T> 
   public Collection<KbCollection> instanceOf() {
     return instanceOf(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbCollection> instanceOf(String ctxStr) {
     return instanceOf(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-   
+  */
   @Override
   public Collection<KbCollection> instanceOf(Context ctx) {
     return Constants.isa().getValuesForArgPosition(this, 1, 2, ctx);
@@ -555,7 +555,7 @@ public class KbIndividualImpl<T extends DenotationalTerm> extends KbTermImpl<T> 
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

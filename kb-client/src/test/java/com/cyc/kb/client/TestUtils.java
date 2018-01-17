@@ -39,21 +39,21 @@ package com.cyc.kb.client;
 
 import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionManager;
-import com.cyc.session.exception.SessionException;
-import com.cyc.session.exception.SessionCommunicationException;
-import com.cyc.session.exception.SessionConfigurationException;
-import com.cyc.session.exception.SessionInitializationException;
 import com.cyc.session.compatibility.CycSessionRequirement;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.MinimumPatchRequirement;
 import com.cyc.session.compatibility.NotEnterpriseCycRequirement;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
-import com.cyc.session.internal.TestEnvironmentProperties;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.cyc.session.TestEnvironmentProperties;
+import com.cyc.session.exception.SessionCommunicationException;
+import com.cyc.session.exception.SessionConfigurationException;
+import com.cyc.session.exception.SessionException;
+import com.cyc.session.exception.SessionInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -107,7 +107,7 @@ public class TestUtils {
   }
   
   private static CycSession getSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {
-    return CycSessionManager.getCurrentSession();
+    return CycSession.getCurrent();
   }
   
   /**

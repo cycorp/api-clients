@@ -21,12 +21,12 @@ package com.cyc.session.mock;
  * #L%
  */
 
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.CycSessionConfiguration;
 import com.cyc.session.exception.SessionCommandException;
 import com.cyc.session.exception.SessionCommunicationException;
-import com.cyc.session.CycAddress;
 
 /**
  *

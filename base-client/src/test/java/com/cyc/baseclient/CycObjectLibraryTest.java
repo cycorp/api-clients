@@ -21,29 +21,30 @@ package com.cyc.baseclient;
  * #L%
  */
 import com.cyc.base.CycAccess;
-import com.cyc.baseclient.testing.TestUtils;
-import com.cyc.baseclient.testing.TestGuids;
-import com.cyc.baseclient.testing.TestConstants;
+import com.cyc.base.cycobject.CycObject;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
-import com.cyc.base.cycobject.CycObject;
 import com.cyc.baseclient.CycObjectLibraryLoader.CycLibraryField;
 import com.cyc.baseclient.CycObjectLibraryLoader.CycLibraryFieldHandler;
 import com.cyc.baseclient.datatype.ContinuousTimeInterval;
 import com.cyc.baseclient.datatype.ContinuousTimeInterval.TimeIntervalFunction;
 import com.cyc.baseclient.datatype.DateConverter;
 import com.cyc.baseclient.testing.KbPopulator;
-import static com.cyc.baseclient.testing.TestGuids.BUSH_DOG_GUID_STRING;
+import com.cyc.baseclient.testing.TestConstants;
+import com.cyc.baseclient.testing.TestGuids;
 import com.cyc.baseclient.testing.TestSentences;
-import static com.cyc.baseclient.testing.TestUtils.isEnterpriseCyc;
+import com.cyc.baseclient.testing.TestUtils;
+import com.cyc.session.TestEnvironmentProperties;
 import com.cyc.session.exception.SessionException;
-import com.cyc.session.internal.TestEnvironmentProperties;
 import java.util.Collection;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static com.cyc.baseclient.testing.TestGuids.BUSH_DOG_GUID_STRING;
+import static com.cyc.baseclient.testing.TestUtils.isEnterpriseCyc;
 import static org.junit.Assert.*;
 
 /**

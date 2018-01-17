@@ -25,15 +25,17 @@ package com.cyc.kb.client;
  * #L%
  */
 
+import com.cyc.kb.Context;
 import com.cyc.kb.FirstOrderCollection;
 import com.cyc.kb.SecondOrderCollection;
 import com.cyc.kb.exception.KbException;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
@@ -99,7 +101,8 @@ public class FirstOrderCollectionImplTest {
     
     FirstOrderCollection foc1 = FirstOrderCollectionImpl.findOrCreate("NewFirstOrderCollectionByUser");
     FirstOrderCollection foc2 = FirstOrderCollectionImpl.findOrCreate("AnotherNewFirstOrderCollectionByUser");
-    foc1.addGeneralization("AnotherNewFirstOrderCollectionByUser");
+    //foc1.addGeneralization("AnotherNewFirstOrderCollectionByUser");
+    foc1.addGeneralization(foc2);
     
     java.util.Collection<FirstOrderCollection> genls = foc1.getGeneralizations();
     System.out.println("Generalizations: " + genls);
@@ -127,7 +130,8 @@ public class FirstOrderCollectionImplTest {
     String collectionStr = "AnotherNewFirstOrderCollectionByUser";
     FirstOrderCollectionImpl foc2 = FirstOrderCollectionImpl.findOrCreate(collectionStr);
     
-    FirstOrderCollection result = foc1.addGeneralization(collectionStr, ctxStr);
+    //FirstOrderCollection result = foc1.addGeneralization(collectionStr, ctxStr);
+    FirstOrderCollection result = foc1.addGeneralization(foc2, Context.get(ctxStr));
     assertEquals(foc1, result);
     
     java.util.Collection<FirstOrderCollection> genls = foc1.getGeneralizations();

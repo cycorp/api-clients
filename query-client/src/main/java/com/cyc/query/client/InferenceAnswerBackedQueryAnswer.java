@@ -153,7 +153,7 @@ public class InferenceAnswerBackedQueryAnswer
       Integer id = (Integer) subLWorker.getWork();
       return new DefaultProofIdentifier(this.getId().getInferenceIdentifier().getProblemStoreId(), id);
     } catch (CycConnectionException | CycTimeOutException | CycApiException | CycTaskInterruptedException | SessionConfigurationException | SessionCommunicationException | SessionInitializationException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 

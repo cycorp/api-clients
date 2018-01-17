@@ -34,6 +34,7 @@ import com.cyc.base.CycAccessManager;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.FormulaSentence;
 import com.cyc.base.exception.CycConnectionException;
+import com.cyc.nl.Paraphraser.ParaphrasableType;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionInitializationException;
@@ -47,7 +48,6 @@ import static com.cyc.baseclient.testing.TestGuids.BRAZIL_GUID_STRING;
 import static com.cyc.baseclient.testing.TestGuids.DOG_GUID_STRING;
 import static com.cyc.baseclient.testing.TestGuids.DONE_BY_GUID_STRING;
 import static com.cyc.baseclient.testing.TestSentences.WHAT_IS_IN_AUSTIN_STRING;
-import static com.cyc.nl.ParaphraserFactory.isBasicParaphraser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -77,7 +77,7 @@ public class BasicParaphraserTest {
 //      cycAccess = com.cyc.baseclient.testing.TestUtils.getCyc();
 //    }
     cycAccess = CycAccessManager.getCurrentAccess();
-    paraphraser = ParaphraserFactory.getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
+    paraphraser = Paraphraser.get(ParaphrasableType.KBOBJECT);
   }
   
   @After
@@ -107,7 +107,7 @@ public class BasicParaphraserTest {
     final CycConstant dog = cycAccess.getLookupTool().getKnownConstantByGuid(DOG_GUID_STRING);
     final String phrase = paraphraser.paraphrase(dog).getString();
     assertNotNull(phrase);
-    if (isBasicParaphraser(paraphraser)) {
+    if (Paraphraser.isBasicParaphraser(paraphraser)) {
       assertEquals("dog", phrase.toLowerCase());
     } else {
       assertEquals("canis familiaris", phrase.toLowerCase());
@@ -161,7 +161,7 @@ public class BasicParaphraserTest {
   
   private void skipIfNotBasicParaphraser(Paraphraser paraphraser) {
     org.junit.Assume.assumeTrue("Using Paraphraser other than BasicParaphraser",
-            isBasicParaphraser(paraphraser));
+            Paraphraser.isBasicParaphraser(paraphraser));
   }
   
 }

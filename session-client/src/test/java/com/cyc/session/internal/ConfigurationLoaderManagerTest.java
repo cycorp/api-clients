@@ -22,6 +22,9 @@ package com.cyc.session.internal;
  */
 
 import com.cyc.session.exception.SessionConfigurationException;
+import com.cyc.session.services.EnvironmentConfigurationLoader;
+import com.cyc.session.services.PropertiesConfigurationLoader;
+import com.cyc.session.services.SimpleInteractiveLoader;
 import com.cyc.session.spi.SessionConfigurationLoader;
 import java.util.Map;
 import junit.framework.TestCase;

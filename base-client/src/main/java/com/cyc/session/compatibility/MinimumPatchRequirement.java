@@ -94,9 +94,9 @@ public class MinimumPatchRequirement extends AbstractCycSessionRequirement imple
     try {
       return checkCompatibility(CycClientManager.getClientManager().fromSession(session));
     } catch (CycApiException ex) {
-      throw new SessionCommandException(ex);
+      throw SessionCommandException.fromThrowable(ex);
     } catch (CycConnectionException ex) {
-      throw new SessionCommunicationException(ex);
+      throw SessionCommunicationException.fromThrowable(ex);
     }
   }
 }

@@ -33,7 +33,7 @@ Requirements
 * [Apache Maven](http://maven.apache.org/) version `3.2` or higher to build the sources. If you are
   new to Maven, you may wish to view the [quick start](http://maven.apache.org/run-maven/index.html).
 
-The APIs may be used without Maven via the `cyc-core-client-impl-1.0.0-rc8.0-jar-with-dependencies.jar`.
+The APIs may be used without Maven via the `cyc-core-client-impl-1.0.0-rc9.0-jar-with-dependencies.jar`.
 See [Standalone Bundle](#standalone-bundle), below.
 
 ### Cyc Server
@@ -68,13 +68,13 @@ project, add the following dependencies to your pom.xml:
       <!-- Core API specification -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-api</artifactId>
-      <version>1.0.0-rc8.0</version>
+      <version>1.0.0-rc9.0</version>
     </dependency>
     <dependency>
       <!-- Reference implementation for the Core API -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc8.0</version>
+      <version>1.0.0-rc9.0</version>
       <scope>runtime</scope>
     </dependency>
 
@@ -119,14 +119,14 @@ specifying the dependency:
       <!-- Core API specification -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-api</artifactId>
-      <version>1.0.0-rc8.0</version>
+      <version>1.0.0-rc9.0</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
     <dependency>
       <!-- Reference implementation for the Core API -->
       <groupId>com.cyc</groupId>
       <artifactId>cyc-core-client-impl</artifactId>
-      <version>1.0.0-rc8.0</version>
+      <version>1.0.0-rc9.0</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
 

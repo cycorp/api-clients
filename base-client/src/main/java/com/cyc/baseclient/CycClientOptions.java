@@ -21,12 +21,12 @@ package com.cyc.baseclient;
  * #L%
  */
 
+import com.cyc.Cyc;
 import com.cyc.base.CycAccessOptions;
 import com.cyc.base.cycobject.Fort;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.kb.DefaultContext;
-import com.cyc.session.CycSessionConfiguration.DefaultSessionOptions;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionException;
@@ -94,13 +94,13 @@ public class CycClientOptions implements CycAccessOptions {
   public void resetCyclist() {
     LOGGER.debug("Resetting cyclist. Previous value: {}", this.cyclist);
     this.cyclist = null;
-    final DefaultSessionOptions defaults = this.session.getConfiguration().getDefaultSessionOptions();
+    final DefaultSessionOptions defaults = Cyc.getSessionManager().getManagerConfiguration().getDefaultSessionOptions();
     if (defaults.getCyclistName() != null) {
       try {
         setCyclistName(defaults.getCyclistName());
       } catch (SessionException ex) {
         // TODO: should this be a checked exception, or a higher-level runtime exception?
-        throw new SessionRuntimeException(ex);
+        throw SessionRuntimeException.fromThrowable(ex);
       }
     }
   }
@@ -149,13 +149,13 @@ public class CycClientOptions implements CycAccessOptions {
   public void resetKePurpose() {
     LOGGER.debug("Resetting KE purpose. Previous value: {}", this.project);
     this.project = null;
-    final DefaultSessionOptions defaults = this.session.getConfiguration().getDefaultSessionOptions();
+    final DefaultSessionOptions defaults = Cyc.getSessionManager().getManagerConfiguration().getDefaultSessionOptions();
     if (defaults.getKePurposeName() != null) {
       try {
         setKePurposeName(defaults.getKePurposeName());
       } catch (SessionException ex) {
         // TODO: should this be a checked exception, or a higher-level runtime exception?
-        throw new SessionRuntimeException(ex);
+        throw SessionRuntimeException.fromThrowable(ex);
       }
     }
   }
@@ -188,7 +188,7 @@ public class CycClientOptions implements CycAccessOptions {
   @Override
   public void resetDefaultContext() {
     LOGGER.debug("Resetting defaultContext. Previous value: {}", this.defaultContext);
-    final DefaultSessionOptions defaults = this.session.getConfiguration().getDefaultSessionOptions();
+    final DefaultSessionOptions defaults = Cyc.getSessionManager().getManagerConfiguration().getDefaultSessionOptions();
     setDefaultContext(defaults.getDefaultContext());
   }
   
@@ -203,7 +203,7 @@ public class CycClientOptions implements CycAccessOptions {
               "A DefaultContext is not set for this session. Set it by calling"
                       + " CycSession#getOptions()#setDefaultContext(DefaultContext) on the"
                       + " current session.");
-      throw new SessionRuntimeException(ex);
+      throw SessionRuntimeException.fromThrowable(ex);
     }
     return this.defaultContext;
   }
@@ -223,7 +223,7 @@ public class CycClientOptions implements CycAccessOptions {
   @Override
   public void resetShouldTranscriptOperations() {
     LOGGER.debug("Resetting shouldTranscriptOperations. Previous value: {}", this.shouldTranscriptOperations);
-    final DefaultSessionOptions defaults = this.session.getConfiguration().getDefaultSessionOptions();
+    final DefaultSessionOptions defaults = Cyc.getSessionManager().getManagerConfiguration().getDefaultSessionOptions();
     setShouldTranscriptOperations(defaults.getShouldTranscriptOperations());
   }
   
@@ -291,9 +291,9 @@ public class CycClientOptions implements CycAccessOptions {
       }
       return newFort;
     } catch (CycConnectionException cce) {
-      throw new SessionCommunicationException(cce);
+      throw SessionCommunicationException.fromThrowable(cce);
     } catch (CycApiException cae) {
-      throw new SessionConfigurationException(cae);
+      throw SessionConfigurationException.fromThrowable(cae);
     }
   }
   

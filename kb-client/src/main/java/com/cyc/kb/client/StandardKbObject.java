@@ -220,7 +220,7 @@ abstract class StandardKbObject<T extends CycObject> extends KbObjectImpl<T> {
               }
             } catch (CycApiException ex) {
               if (ex.getMessage().contains("Cannot create new constant")) {
-                throw new InvalidNameException(
+                throw InvalidNameException.fromThrowable(
                         "Unable to make a constant with the name '" + nameOrIdOrVar + "'.",
                         ex);
               } else {
@@ -267,7 +267,7 @@ abstract class StandardKbObject<T extends CycObject> extends KbObjectImpl<T> {
     } catch (CreateException ce){
       throw ce;
     } catch (Exception e) {
-      throw new CreateException("Failed to create new " + getTypeString()
+      throw CreateException.fromThrowable("Failed to create new " + getTypeString()
               + " named " + nameOrIdOrVar, e);
     }
   }
@@ -287,7 +287,7 @@ abstract class StandardKbObject<T extends CycObject> extends KbObjectImpl<T> {
     try {
       setCore(KbObjectImpl.getCore(kbObject));
     } catch (KbTypeException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
     //} else {
     //  throw new KBApiRuntimeException ("Incompatible types in copy constructor.");
@@ -299,7 +299,7 @@ abstract class StandardKbObject<T extends CycObject> extends KbObjectImpl<T> {
       return getAccess().getObjectTool().makeCycConstant(cyclifiedIndStr, true,
               KbConfiguration.getShouldTranscriptOperations());
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   

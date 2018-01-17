@@ -22,9 +22,9 @@ package com.cyc.baseclient;
  */
 
 import com.cyc.base.CycAccessSession;
+import com.cyc.session.AbstractCycSession;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycSessionConfiguration;
-import com.cyc.session.internal.AbstractCycSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

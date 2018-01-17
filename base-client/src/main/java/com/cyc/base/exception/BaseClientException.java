@@ -62,11 +62,11 @@ public class BaseClientException extends Exception {
   }
   
   public SessionRuntimeException toSessionException(String msg) {
-    return new SessionRuntimeException(msg, this);
+    return SessionRuntimeException.fromThrowable(msg, this);
   }
   
   public SessionRuntimeException toSessionException() {
-    return new SessionRuntimeException(this);
+    return SessionRuntimeException.fromThrowable(this);
   }
   
   // Static methods

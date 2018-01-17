@@ -243,7 +243,7 @@ public class QuerySearch {
       final List<Object> queriesOrFormulas = formulaTemplate.getCyclQueryOrFormula();
       return queriesOrFormulas;
     } catch (JAXBException ex) {
-      throw new QueryRuntimeException(ex);
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -265,7 +265,7 @@ public class QuerySearch {
     try {
       return cyc.converse().converseList(command);
     } catch (CycApiException | CycConnectionException e) {
-      throw new QueryRuntimeException(e);
+      throw QueryRuntimeException.fromThrowable(e);
     }
   }
 

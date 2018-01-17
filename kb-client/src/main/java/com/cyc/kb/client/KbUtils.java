@@ -112,7 +112,7 @@ public class KbUtils {
     try {
       return KbObjectImplFactory.get(kboStr, retType);
     } catch (KbException | ClassCastException kae) {
-      throw new IllegalArgumentException(kae.getMessage(), kae);
+      throw new IllegalArgumentException(kae);
     }
   }
   
@@ -144,7 +144,7 @@ public class KbUtils {
       // This is truely exceptional. The input collections will always result
       // in a single collection being returned.
       LOG.error(e.getMessage());
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -167,7 +167,7 @@ public class KbUtils {
       // This is truely exceptional. The input collections will always result
       // in a single collection being returned.
       LOG.error(e.getMessage());
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -192,7 +192,7 @@ public class KbUtils {
       CycList cycCols = getStaticAccess().getLookupTool().getMinCols(l,  ContextImpl.asELMt(ctx));
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
     } catch (CycConnectionException | CycApiException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -212,7 +212,7 @@ public class KbUtils {
       CycList cycCols = getStaticAccess().getLookupTool().getMinCols(l);
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
     } catch (CycConnectionException | CycApiException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -238,7 +238,7 @@ public class KbUtils {
       CycList cycCols = getStaticAccess().getLookupTool().getMaxCols(l,  ContextImpl.asELMt(ctx));
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
     } catch (CycConnectionException | CycApiException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -259,7 +259,7 @@ public class KbUtils {
       CycList cycCols = getStaticAccess().getLookupTool().getMaxCols(l);
       return KbUtils.<KbCollection>cycListToKBObjectList(cycCols);
     } catch (CycConnectionException | CycApiException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
     
@@ -278,7 +278,7 @@ public class KbUtils {
       return available;
     } catch (CycConnectionException | CycApiException e) {
       // Don't want to return true, we actually couldn't find out for exceptional reasons
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 }

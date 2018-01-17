@@ -189,9 +189,9 @@ class PossiblyNonAtomicKbObjectImpl<T extends CycObject>
       try {
         o = ((CycAssertion) this.getCore()).getArg(getPos, getAccess());
       } catch (CycApiException ex) {
-        throw new KbServerSideException(ex.getMessage(), ex);
+        throw KbServerSideException.fromThrowable(ex);
       } catch (CycConnectionException ex) {
-        throw new KbRuntimeException(ex.getMessage(), ex);
+        throw KbRuntimeException.fromThrowable(ex);
       }
     } else if (this.getCore() instanceof CycList) {
       CycList<CycObject> cl = (CycList<CycObject>) this.getCore();

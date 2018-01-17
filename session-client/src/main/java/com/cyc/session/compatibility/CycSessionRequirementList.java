@@ -38,7 +38,6 @@ package com.cyc.session.compatibility;
  */
 
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionManager;
 import com.cyc.session.exception.SessionCommandException;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
@@ -151,7 +150,7 @@ public class CycSessionRequirementList<T extends UnsupportedCycOperationExceptio
           throws SessionConfigurationException,
                  SessionCommunicationException,
                  SessionInitializationException {
-    return CycSessionManager.getCurrentSession();
+    return CycSession.getCurrent();
   }
 
 }

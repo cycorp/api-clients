@@ -259,7 +259,7 @@ public class KbTestConstants {
       LOG.info("DONE: Instantiating KBAPITestConstants..");
       return instance;
     } catch (KbException e) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
               "One of the final fields in " + KbTestConstants.class.getSimpleName()
               + " could not be instantiated, can not proceed further.", 
               e);

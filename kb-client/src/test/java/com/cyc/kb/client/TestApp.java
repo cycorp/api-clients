@@ -57,8 +57,9 @@ public class TestApp {
     KbIndividual expected = KbIndividualImpl.get("FlightXYZ-APITest");
     //assertTrue(w.<KbIndividual>getValues("isa", 2, 1, "SomeAirlineLogMt").contains(expected));
     assertTrue(Constants.isa().getValuesForArgPosition(w, 2, 1, airlineLogMt).contains(expected));
-    assertTrue(w.<KbIndividual>getInstances("SomeAirlineLogMt").contains(expected));
-
+    //assertTrue(w.<KbIndividual>getInstances("SomeAirlineLogMt").contains(expected));
+    assertTrue(w.<KbIndividual>getInstances(airlineLogMt).contains(expected));
+    
     // LOG.info("values of d: " + d.getValues("ownerOfType"));
     // LOG.info("values of m: " +
     // m.getValues("genlMt").get(2).getValues("genlMt"));
@@ -69,7 +70,8 @@ public class TestApp {
     final KbCollectionImpl p = KbCollectionImpl.get("Planet");
     final Context iauStandardsMt = ContextImpl.findOrCreate("IAUStandardsAndDefinitionsMt");
 
-    Collection<KbIndividual> ps1 = p.<KbIndividual>getInstances("IAUStandardsAndDefinitionsMt");
+    //Collection<KbIndividual> ps1 = p.<KbIndividual>getInstances("IAUStandardsAndDefinitionsMt");
+    Collection<KbIndividual> ps1 = p.<KbIndividual>getInstances(iauStandardsMt);
     System.out.println("Instance of planets are: " + ps1.toString());
 
     //Collection<KbIndividual> ps2 = p.<KbIndividual>getValues(

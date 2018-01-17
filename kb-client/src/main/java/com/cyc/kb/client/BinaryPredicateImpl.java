@@ -55,7 +55,7 @@ import java.util.Collection;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: BinaryPredicateImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: BinaryPredicateImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class BinaryPredicateImpl<T extends DenotationalTerm> extends KbPredicateImpl<T> implements BinaryPredicate {
 
@@ -449,7 +449,7 @@ public class BinaryPredicateImpl<T extends DenotationalTerm> extends KbPredicate
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
   

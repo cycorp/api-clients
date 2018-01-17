@@ -23,7 +23,6 @@ package com.cyc.kb.client;
 import com.cyc.Cyc;
 import com.cyc.base.CycAccess;
 import com.cyc.base.CycAccessManager;
-import com.cyc.base.cycobject.CycAssertion;
 import com.cyc.base.cycobject.CycConstant;
 import com.cyc.base.cycobject.CycList;
 import com.cyc.base.cycobject.CycObject;
@@ -51,7 +50,6 @@ import com.cyc.kb.KbObject;
 import com.cyc.kb.KbPredicate;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.Sentence;
-import com.cyc.kb.Symbol;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbException;
 import com.cyc.kb.exception.KbRuntimeException;
@@ -59,9 +57,8 @@ import com.cyc.kb.exception.KbServerSideException;
 import com.cyc.kb.exception.KbTypeException;
 import com.cyc.kb.exception.VariableArityException;
 import com.cyc.nl.Paraphraser;
-import com.cyc.nl.ParaphraserFactory;
+import com.cyc.nl.Paraphraser.ParaphrasableType;
 import com.cyc.session.CycSession;
-import com.cyc.session.CycSessionManager;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionException;
@@ -94,7 +91,7 @@ import static com.cyc.kb.KbObject.hasValidKbApiObjectType;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version "$Id: KbObjectImpl.java 175540 2017-10-26 19:59:02Z nwinant $"
+ * @version "$Id: KbObjectImpl.java 176267 2017-12-13 04:02:46Z nwinant $"
  */
 public class KbObjectImpl<T extends CycObject> implements KbObject {
   
@@ -269,15 +266,15 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       //return convertToKBObject(cyco);
       return Cyc.getApiObject(cyco);
     } catch (KbTypeException ex) {
-      throw new CreateException(ex);
+      throw CreateException.fromThrowable(ex);
     }
   }
   
   private static boolean shouldConvertToJavaDates() throws CreateException {
     try {
-      return CycSessionManager.getCurrentSession().getOptions().getShouldConvertToJavaDates();
+      return CycSession.getCurrent().getOptions().getShouldConvertToJavaDates();
     } catch (SessionConfigurationException | SessionCommunicationException | SessionInitializationException ex) {
-      throw new CreateException(ex);
+      throw CreateException.fromThrowable(ex);
     }
   }
   /*
@@ -297,7 +294,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       try {
         tightCol = getStaticAccess().getInspectorTool().categorizeTermWRTApi(cyco);
       } catch (CycConnectionException cce) {
-        throw new KbRuntimeException(cce.getMessage(), cce);
+        throw KbRuntimeException.fromThrowable(cce);
       }
       
       if (tightCol != null && KbObjectImplFactory.CYC_OBJECT_TO_KB_API_CLASS.get(tightCol) != null) {
@@ -306,7 +303,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
         return KbObjectImpl.get(cyco);
       }
     } catch (KbTypeException ex) {
-      throw new CreateException(ex);
+      throw CreateException.fromThrowable(ex);
     }
   }
   */
@@ -332,7 +329,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
 
@@ -365,7 +362,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     } catch (KbTypeException te) {
       // This type is not possible, since we are not checking for a specific Cyc collection
       // Fix API if this ever happens
-      throw new KbRuntimeException(te.getMessage(), te);
+      throw KbRuntimeException.fromThrowable(te);
     }
   }
 
@@ -375,7 +372,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     } catch (KbTypeException te){
       // This type is not possible, since we are not checking for a specific Cyc collection
       // Fix API if this ever happens
-      throw new KbRuntimeException(te.getMessage(), te);
+      throw KbRuntimeException.fromThrowable(te);
     }
   }
   
@@ -383,7 +380,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     try {
       return CycAccessManager.getCurrentAccess();
     } catch (SessionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -413,9 +410,9 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       // We expect the getTypeString return string to be in the KB since it is
       // a fundamental concept. CreateException and KBTypeException are possible
       // but can't recover from such an exception anyways.
-      throw new KbRuntimeException(te.getMessage(), te);
+      throw KbRuntimeException.fromThrowable(te);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 
@@ -440,7 +437,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
       // We expect NoSuchMethodException and IllegalArgumentException both of which are 
       // internal API errors. So just throw RuntimeException
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -513,7 +510,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       // or not a CycObject.
       // This should never happen in our case.
       // TODO: Check for null core in the constructor. Happens in Facts
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
     //return "";
   }
@@ -543,7 +540,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
             || this.getCore() instanceof CycVariable
             || this.getCore() instanceof CycSymbol;
   }
-  
+  /*
   @Override
   public Boolean isAssertion() {
     return this.getCore() instanceof CycAssertion;
@@ -588,9 +585,9 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
   public Boolean isTerm() {
     return this.getCore() instanceof KbTerm;
   }
-  
-  @Override
-  public Boolean isVariable() {
+  */
+  //@Override
+  protected Boolean isVariable() {
     return this.getCore() instanceof CycVariable;
   }
   
@@ -605,31 +602,31 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     try {
       return getAccess().getInspectorTool().isQuotedIsa(this.getCore(), (Fort) col.getCore());
     } catch (CycConnectionException ioe) {
-      throw new KbRuntimeException(ioe.getMessage(), ioe);
+      throw KbRuntimeException.fromThrowable(ioe);
     }
   }
-  
+  /*
   @Override
   public boolean isQuotedInstanceOf(String colStr) {
     return isQuotedInstanceOf(KbUtils.getKBObjectForArgument(colStr, KbCollectionImpl.class));
   }
-  
+  */
   @Override
   public boolean isQuotedInstanceOf(KbCollection col, Context ctx) {
     try {
       return getAccess().getInspectorTool().isQuotedIsa(this.getCore(), getCore(col), getCore(ctx));
     } catch (CycConnectionException ioe) {
-      throw new KbRuntimeException(ioe.getMessage(), ioe);
+      throw KbRuntimeException.fromThrowable(ioe);
     }
   }
-  
+  /*
   @Override
   public boolean isQuotedInstanceOf(String colStr, String ctxStr) {
     return isQuotedInstanceOf(
             KbUtils.getKBObjectForArgument(colStr, KbCollectionImpl.class), 
             KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public boolean isIndexical() throws SessionCommunicationException {
     // TODO: should we cache this value? - nwinant, 2017-07-05
@@ -653,7 +650,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       final String msg = isIndexical()
               ? "Cannot resolve indexical " + this
               : "Cannot resolve; is not an indexical: " + this;
-      throw new KbTypeException(msg, ex);
+      throw KbTypeException.fromThrowable(msg, ex);
     } catch (CycConnectionException | CycApiException ex) {
       throw ex.toSessionException();
     }
@@ -675,7 +672,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       try {
         return (O) referent;
       } catch (ClassCastException ex) {
-        throw new KbTypeException(
+        throw KbTypeException.fromThrowable(
                 "Referent is not of expected class: " + this + " -> " + referent, ex);
       }
     }
@@ -683,7 +680,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       try {
         resolveIndexical();
       } catch (KbTypeException | CreateException ex) {
-        throw new KbTypeException("Indexical is not resolvable or auto-resolvable: " + this, ex);
+        throw KbTypeException.fromThrowable("Indexical is not resolvable or auto-resolvable: " + this, ex);
       }
     }
     return (O) this;
@@ -737,7 +734,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
               ? new SentenceImpl(Constants.isa(), this, this.getType())
               : null;
     } catch (KbTypeException | CreateException kte) {
-      throw new KbRuntimeException(kte.getMessage(), kte);
+      throw KbRuntimeException.fromThrowable(kte);
     }
   }
   
@@ -753,8 +750,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
   
   @Override
   public String toNlString() throws SessionException {
-    Paraphraser p = ParaphraserFactory
-            .getInstance(ParaphraserFactory.ParaphrasableType.KBOBJECT);
+    Paraphraser p = Paraphraser.get(ParaphrasableType.KBOBJECT);
     return p.paraphrase(this).getString();
   }
   
@@ -816,9 +812,9 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
    */
   protected CycSession getSession() {
     try {
-      return CycSessionManager.getCurrentSession();
+      return CycSession.getCurrent();
     } catch (SessionConfigurationException | SessionCommunicationException | SessionInitializationException ex) {
-      throw new KbRuntimeException("Encountered a problem with the current CycSession.", ex);
+      throw KbRuntimeException.fromThrowable("Encountered a problem with the current CycSession.", ex);
     }
   }
   
@@ -831,7 +827,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     try {
       return CycAccessManager.getAccessManager().fromSession(getSession());
     } catch (Exception ex) {
-      throw new KbRuntimeException("Encountered a problem with the current CycAccess.", ex);
+      throw KbRuntimeException.fromThrowable("Encountered a problem with the current CycAccess.", ex);
     }
   }
   
@@ -854,8 +850,8 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     try {
       final String ctxStr = (ctx == null) ? KbConfiguration.getDefaultContext().forQuery().stringApiValue() //"#$BaseKB"
               : ctx.stringApiValue();
-      String command = "(" + SublConstants.getInstance().withInferenceMtRelevance.stringApiValue() + " " + ctxStr
-              + " (" + SublConstants.getInstance().gatherGafArgIndex.stringApiValue() + " "
+      String command = "(" + SublConstants.getParaphraser().withInferenceMtRelevance.stringApiValue() + " " + ctxStr
+              + " (" + SublConstants.getParaphraser().gatherGafArgIndex.stringApiValue() + " "
               + matchArg.stringApiValue() + " " + matchArgPos + " "
               + pred.stringApiValue() + "))";
       
@@ -878,9 +874,9 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
       }
       return facts;
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     } catch (CycApiException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   */
@@ -963,9 +959,9 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
         return CycAccessManager.getCurrentAccess().converse().converseBoolean(command);
       }
     } catch (CycApiException e) {
-      throw new KbServerSideException(e.getMessage(), e);
+      throw KbServerSideException.fromThrowable(e);
     } catch (CycConnectionException | SessionConfigurationException | SessionCommunicationException | SessionInitializationException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   

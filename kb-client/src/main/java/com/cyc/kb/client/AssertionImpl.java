@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: AssertionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  * @since 1.0
  */
 public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> implements Assertion {
@@ -152,7 +152,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
     try {
       result = DefaultCycObjectImpl.fromPossibleCompactExternalId(hlid, getStaticAccess());
     } catch (CycConnectionException e){
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
     if (result instanceof CycAssertion) {
       LOG.debug("Found assertion: {} using HLID: {}", result, hlid);
@@ -196,9 +196,9 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
     final String msg = "Could not assert " + formula + " in " + ctx;
     if (verbose) {
       final String explanations = formula.notAssertibleExplanation(ctx);
-      throw new KbRuntimeException(msg + ":\n" + explanations, ex);
+      throw KbRuntimeException.fromThrowable(msg + ":\n" + explanations, ex);
     } else {
-      throw new KbRuntimeException(msg, ex);
+      throw KbRuntimeException.fromThrowable(msg, ex);
     }
   }
   
@@ -275,7 +275,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       return new SentenceImpl(assertionFormula);
     } catch (CycApiException | CycConnectionException | KbTypeException | CreateException ex) {
       LOG.error(ex.getMessage());
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -289,7 +289,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
     } catch (CreateException | KbTypeException te) {
       // The assertion is already created, that means the context should
       // already be there. 
-      throw new KbRuntimeException(te.getMessage(), te);
+      throw KbRuntimeException.fromThrowable(te);
     }
     return ctx;
   }
@@ -307,7 +307,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       }
       return asserts;
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 
@@ -330,7 +330,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
               = SublConstants.getInstance().deducedAssertionQ.buildCommand(getCore());
       return getAccess().converse().converseBoolean(command);
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -346,7 +346,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
               = SublConstants.getInstance().assertedAssertionQ.buildCommand(getCore());
       return getAccess().converse().converseBoolean(command);
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -370,7 +370,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
         throw new KbRuntimeException("Unknown Direction");
       }
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 
@@ -399,7 +399,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
         throw new KbRuntimeException("Failed to change the direction of the assertion: " + this);
       }
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
   
@@ -432,7 +432,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
         throw new KbRuntimeException("Failed to retrigger forward inference against " + this);
       }
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e.getMessage(), e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 
@@ -470,7 +470,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
 
@@ -519,10 +519,10 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
               cyc.getObjectTool().makeElMt(cyc.cyclifyString(ctxStr)));
     } catch (CycApiException ex) {
       // TODO: Why was this previously commented out & returning null? - nwinant, 2017-05-04
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
       //return null;
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -559,7 +559,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
     try {
       result = getStaticAccess().converse().converseObject(command);
     } catch (CycApiException | CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
     LOG.trace("Assertion lookup response: {}", result);
     KB_FIND_LOGGER.trace("{}  Assertion lookup response: {}", assertionLogMarker, result);
@@ -633,7 +633,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       KB_LOG.logAssertResult(assertSentence, mt, s, d, newAssertion);
       return newAssertion;
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -651,7 +651,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       makeAssertion(assertSentence, mt, s, d);
       return true; // If the asserting doesn't throw an exception, it was successful.
     } catch (CycConnectionException exception) {
-      throw new KbRuntimeException(exception.getMessage(), exception);
+      throw KbRuntimeException.fromThrowable(exception);
     }
   }
 
@@ -663,7 +663,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       final Context ctx = ContextImpl.get(ctxStr);
       return createAssertion(factSentence, ctx, s, d);
     } catch (CycConnectionException exception) {
-      throw new KbRuntimeException(exception.getMessage(), exception);
+      throw KbRuntimeException.fromThrowable(exception);
     }
   }
 
@@ -696,7 +696,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       final Context ctx = ContextImpl.get(ctxStr);
       return assertSentence(factSentence, ctx, s, d);
     } catch (CycConnectionException exception) {
-      throw new KbRuntimeException(exception.getMessage(), exception);
+      throw KbRuntimeException.fromThrowable(exception);
     }
   }
   
@@ -719,7 +719,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
               .setMaxTime(3);
       return getStaticAccess().getInferenceTool().isQueryTrue(assertSentence, mt, params);
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -735,7 +735,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
       final Context ctx = ContextImpl.get(ctxStr);
       return AssertionImpl.isSentenceTriviallyProvable(formulaSentence, ContextImpl.asELMt(ctx));
     } catch (CycConnectionException exception) {
-      throw new KbRuntimeException(exception.getMessage(), exception);
+      throw KbRuntimeException.fromThrowable(exception);
     }
   }
   
@@ -828,7 +828,8 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
         setIsValid(false);
       } catch (CycConnectionException | CycApiException ex) {
         LOG.warn("Unable to forcefully delete assertion {}", this);
-        throw new KbRuntimeException("Couldn't forcefully delete fact: " + getCore().toString(), ex);
+        throw KbRuntimeException
+                .fromThrowable("Couldn't forcefully delete fact: " + getCore().toString(), ex);
       }
     }
   }
@@ -841,7 +842,7 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
               .unassertAssertion(ca, true, KbConfiguration.getShouldTranscriptOperations());
       setIsValid(false);
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(
+      throw KbRuntimeException.fromThrowable(
               "Couldn't delete the fact: " + getCore().toString(), ex);
     }
     try {
@@ -852,7 +853,8 @@ public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> i
         throw new DeleteException("Unable to delete assertion: " + ca);
       }
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException("Couldn't delete the fact: " + getCore().toString(), ex);
+      throw KbRuntimeException
+              .fromThrowable("Couldn't delete the fact: " + getCore().toString(), ex);
     }
   }
   

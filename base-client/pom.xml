@@ -6,13 +6,13 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-client-parent</artifactId>
-    <version>1.0.0-rc8.0</version>
+    <version>1.0.0-rc9.0</version>
     <relativePath>../core-client-parent</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-base-client</artifactId>
-  <version>1.0.0-rc8.0</version>
+  <version>1.0.0-rc9.0</version>
   <packaging>jar</packaging>
   
   <name>Base Client</name>
@@ -81,10 +81,7 @@
     -->
   </dependencies>
   
-  
-  
   <profiles>
-    <!-- FIXME: ???? - nwinant, 2017-08-02 -->
     <profile>
       <id>packaging-profile</id>
       <activation>
@@ -126,7 +123,7 @@
             <!--
             Set properties to be used by unit tests.
             
-            For details, see com.cyc.session.internal.TestEnvironmentProperties
+            For details, see com.cyc.session.configuration.TestEnvironmentProperties
             -->
             <property>
               <name>cyc.test.expectedNumberOfCycObjectLibraries</name>

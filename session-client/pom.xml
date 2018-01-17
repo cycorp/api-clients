@@ -6,13 +6,13 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-client-parent</artifactId>
-    <version>1.0.0-rc8.0</version>
+    <version>1.0.0-rc9.0</version>
     <relativePath>../core-client-parent</relativePath>
   </parent>
 
   <groupId>com.cyc</groupId>
   <artifactId>cyc-session-client</artifactId>
-  <version>1.0.0-rc8.0</version>
+  <version>1.0.0-rc9.0</version>
   <packaging>jar</packaging>
   
   <name>Session Client</name>
@@ -41,7 +41,7 @@
             <!--
             Set properties to be used by unit tests.
             
-            For details, see com.cyc.session.internal.TestEnvironmentProperties
+            For details, see com.cyc.session.configuration.TestEnvironmentProperties
             -->
             <property>
               <name>cyc.test.includeGuiElementTests</name>
@@ -61,7 +61,8 @@
           <services>
             <param>com.cyc.session.spi.SessionApiService</param>
             <param>com.cyc.session.spi.SessionConfigurationLoader</param>
-            <param>com.cyc.session.spi.SessionManager</param>
+            <param>com.cyc.session.spi.SessionFactory</param>
+            <param>com.cyc.session.spi.SessionManagerFactory</param>
           </services>
         </configuration>
       </plugin>

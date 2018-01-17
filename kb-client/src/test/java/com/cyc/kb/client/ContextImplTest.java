@@ -24,8 +24,8 @@ import com.cyc.baseclient.datatype.ContinuousTimeInterval;
 import com.cyc.baseclient.datatype.ContinuousTimeInterval.TimeIntervalFunction;
 import com.cyc.baseclient.datatype.TimeInterval;
 import com.cyc.kb.Context;
+import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbStatus;
-import static com.cyc.kb.client.TestConstants.baseKB;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.InvalidNameException;
 import com.cyc.kb.exception.KbException;
@@ -38,12 +38,15 @@ import java.util.Collection;
 import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static com.cyc.Cyc.Constants.BASE_KB;
+import static com.cyc.kb.client.TestConstants.baseKB;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -62,20 +65,18 @@ public class ContextImplTest {
   private static TimeInterval tenToTwentyKExclIncl = null;
   private static TimeInterval tenToTwentyKInclIncl = null;
   private static TimeInterval tenToTwentyKExclExcl = null;
+  private static Context organizationProductMt = null;
 
   @BeforeClass
   public static void setUpClass() throws Exception {
     TestConstants.ensureInitialized();
     final Date start = new Date(10000);
     final Date end = new Date(20000);
-    tenToTwentyKInclExcl = TimeIntervalFunction.INCL_EXCL.constructTimeInterval(
-            start, end);
-    tenToTwentyKExclIncl = TimeIntervalFunction.EXCL_INCL.constructTimeInterval(
-            start, end);
-    tenToTwentyKInclIncl = TimeIntervalFunction.INCL_INCL.constructTimeInterval(
-            start, end);
-    tenToTwentyKExclExcl = TimeIntervalFunction.EXCL_EXCL.constructTimeInterval(
-            start, end);
+    tenToTwentyKInclExcl = TimeIntervalFunction.INCL_EXCL.constructTimeInterval(start, end);
+    tenToTwentyKExclIncl = TimeIntervalFunction.EXCL_INCL.constructTimeInterval(start, end);
+    tenToTwentyKInclIncl = TimeIntervalFunction.INCL_INCL.constructTimeInterval(start, end);
+    tenToTwentyKExclExcl = TimeIntervalFunction.EXCL_EXCL.constructTimeInterval(start, end);
+    organizationProductMt = Context.get(ORGANIZATION_PRODUCT_MT_STR);
   }
 
   @AfterClass
@@ -143,7 +144,8 @@ public class ContextImplTest {
   public void testInheritsFrom_0args() throws Exception {
     System.out.println("inheritsFrom");
     Context m = ContextImpl.findOrCreate(APPLE_PRODUCT_MT_STR);
-    m.addInheritsFrom(ORGANIZATION_PRODUCT_MT_STR);
+    //m.addInheritsFrom(ORGANIZATION_PRODUCT_MT_STR);
+    m.addInheritsFrom(organizationProductMt);
     {
       final Collection<Context> superiors = m.getInheritsFrom();
       assertTrue(superiors.contains(ContextImpl.get(ORGANIZATION_PRODUCT_MT_STR)));
@@ -167,7 +169,8 @@ public class ContextImplTest {
   public void testInheritsFrom_String() throws Exception {
     System.out.println("inheritsFrom");
     Context m = ContextImpl.get(APPLE_PRODUCT_MT_STR);
-    m.addInheritsFrom(ORGANIZATION_PRODUCT_MT_STR);
+    //m.addInheritsFrom(ORGANIZATION_PRODUCT_MT_STR);
+    m.addInheritsFrom(organizationProductMt);
     {
       final Collection<Context> superiors = m.getInheritsFrom();
       assertTrue(superiors.contains(ContextImpl.get(ORGANIZATION_PRODUCT_MT_STR)));
@@ -189,7 +192,8 @@ public class ContextImplTest {
   public void testInheritsFrom_String_String() throws Exception {
     System.out.println("inheritsFrom");
     Context m = ContextImpl.get(APPLE_PRODUCT_MT_STR);
-    m.addInheritsFrom(ORGANIZATION_PRODUCT_MT_STR);
+    //m.addInheritsFrom(ORGANIZATION_PRODUCT_MT_STR);
+    m.addInheritsFrom(organizationProductMt);
     //@todo finish this, and make sure it works from Mt strings...
   }
 
@@ -366,7 +370,8 @@ public class ContextImplTest {
       c3 = ContextImpl.findOrCreate(name);
       assertTrue("c3 is null", c3 != null);
       assertTrue("i1's CycL wasn't coerced into a context", c3.getCore().equals(i1.getCore()));
-      assertTrue("i1 didn't get turned into a #$Microtheory", i1.isInstanceOf("Microtheory", "BaseKB"));
+      //assertTrue("i1 didn't get turned into a #$Microtheory", i1.isInstanceOf("Microtheory", "BaseKB"));
+      assertTrue("i1 didn't get turned into a #$Microtheory", i1.isInstanceOf(KbCollection.get("Microtheory"), BASE_KB));
     } finally {
       if (c3 != null) {
         c3.delete();

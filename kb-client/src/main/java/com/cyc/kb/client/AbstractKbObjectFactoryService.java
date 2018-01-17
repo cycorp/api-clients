@@ -116,7 +116,7 @@ abstract public class AbstractKbObjectFactoryService<T extends KbObjectImpl> {
   private String cleanString(String inputString) {
     if (inputString == null) {
       NullPointerException npe = new NullPointerException("String cannot be null");
-      throw new KbRuntimeException(npe);
+      throw KbRuntimeException.fromThrowable(npe);
     }
     final String trimmedString = inputString.trim();
     if (trimmedString.isEmpty()) {

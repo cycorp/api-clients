@@ -392,12 +392,12 @@ public class AsynchronousQueryTest {
     }
   }
   
-  /**
+  /* *
    * Test of bindVariable method, of class Query.
    * @throws java.io.IOException
    * @throws com.cyc.query.exception.QueryConstructionException
    * @throws com.cyc.kb.exception.KbException
-   */
+   * /
   @Test
   public void testBindVariable_String_Object() throws IOException, QueryConstructionException, KbException {
     currentQuery = constructXIsaBirdQuery();
@@ -408,6 +408,7 @@ public class AsynchronousQueryTest {
     assertTrue(currentQuery + " does not contain " + X, currentQuery.getQueryVariables().contains(X));
     currentQuery.bindVariable("X", QueryTestConstants.bird());
   }
+  */
 
   /**
    * Test of bindVariable method, of class Query.

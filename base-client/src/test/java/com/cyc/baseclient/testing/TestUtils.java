@@ -29,18 +29,17 @@ import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CycClient;
 import com.cyc.baseclient.subl.functions.SublFunctions;
 import com.cyc.session.CycServerReleaseType;
+import com.cyc.session.CycSession;
 import com.cyc.session.compatibility.CycClientRequirement;
 import com.cyc.session.compatibility.CycClientRequirementList;
 import com.cyc.session.compatibility.CycSessionRequirement;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
+import com.cyc.session.TestEnvironmentProperties;
 import com.cyc.session.exception.SessionException;
-import com.cyc.session.internal.TestEnvironmentProperties;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.cyc.session.CycSessionManager.getCurrentSession;
 
 /**
  *
@@ -100,7 +99,7 @@ public class TestUtils {
   public static void assumeCycSessionRequirement(CycSessionRequirement requirement) {
     // TODO: move this into some central test library
     try {
-      org.junit.Assume.assumeTrue(requirement.checkCompatibility(getCurrentSession()).isCompatible());
+      org.junit.Assume.assumeTrue(requirement.checkCompatibility(CycSession.getCurrent()).isCompatible());
     } catch (SessionException ex) {
       ex.printStackTrace(System.err);
       throw new RuntimeException(ex);

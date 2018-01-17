@@ -94,7 +94,7 @@ public class KbServiceImpl implements KbService {
     try {
       return KbObjectImpl.get(string);  // TODO: should this be replaced with a call to a service?
     } catch (KbObjectNotFoundException ex) {
-      throw new KbObjectNotFoundException("Could not retrieve term for " + nameOrIdOrCycl, ex);
+      throw KbObjectNotFoundException.fromThrowable("Could not retrieve term for " + nameOrIdOrCycl, ex);
     }
   }
 
@@ -135,7 +135,7 @@ public class KbServiceImpl implements KbService {
     try {
       return KbObjectImpl.get(string);  // TODO: should this be replaced with a call to a service?
     } catch (KbObjectNotFoundException ex) {
-      throw new KbObjectNotFoundException("Could not retrieve term for " + nameOrIdOrCycl, ex);
+      throw KbObjectNotFoundException.fromThrowable("Could not retrieve term for " + nameOrIdOrCycl, ex);
     }
   }
   
@@ -164,7 +164,7 @@ public class KbServiceImpl implements KbService {
   private String cleanString(String inputString) {
     if (inputString == null) {
       NullPointerException npe = new NullPointerException("String cannot be null");
-      throw new KbRuntimeException(npe);
+      throw KbRuntimeException.fromThrowable(npe);
     }
     final String trimmedString = inputString.trim();
     if (trimmedString.isEmpty()) {
@@ -225,7 +225,7 @@ public class KbServiceImpl implements KbService {
         return result;
       }
     } catch (CycConnectionException | SessionException ex) {
-      throw new KbTypeException("Exception encountered while trying to interpret '" + string + "' as a java object.", ex);
+      throw KbTypeException.fromThrowable("Exception encountered while trying to interpret '" + string + "' as a java object.", ex);
     }
     return null;
   }

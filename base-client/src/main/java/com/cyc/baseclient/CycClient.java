@@ -22,6 +22,7 @@ package com.cyc.baseclient;
  */
 
 //// External Imports
+import com.cyc.Cyc;
 import com.cyc.base.CycAccess;
 import com.cyc.base.connection.CycConnection;
 import com.cyc.base.connection.LeaseManager;
@@ -57,7 +58,6 @@ import com.cyc.baseclient.util.PasswordManager;
 import com.cyc.session.CycAddress;
 import com.cyc.session.CycSession;
 import com.cyc.session.CycSessionConfiguration;
-import com.cyc.session.CycSessionManager;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionException;
@@ -90,7 +90,7 @@ import static java.util.stream.Collectors.toSet;
  Collaborates with the <tt>CycConnection</tt> class which manages the API connections.
  </p>
  *
- * @version $Id: CycClient.java 175777 2017-11-07 20:06:42Z nwinant $
+ * @version $Id: CycClient.java 176267 2017-12-13 04:02:46Z nwinant $
  * @author Stephen L. reed <p><p><p><p><p>
  */
 public class CycClient implements CycAccess {
@@ -306,7 +306,7 @@ public class CycClient implements CycAccess {
   
   public static CycClient getCurrent() throws CycConnectionException, CycApiException {
     try {
-      return get(CycSessionManager.getCurrentSession());
+      return get(CycSession.getCurrent());
     } catch (SessionConfigurationException
             | SessionCommunicationException 
             | SessionInitializationException ex) {
@@ -589,7 +589,7 @@ public class CycClient implements CycAccess {
       }
       return session;
     } catch (SessionException ex) {
-      throw new SessionRuntimeException(ex);
+      throw SessionRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -1246,7 +1246,7 @@ public class CycClient implements CycAccess {
           String msg = "This server is not compatible with this release of the Core API Suite and cannot be patched; skipping. " + forMoreInfo;
           LOGGER.error(msg);
           throw new BaseClientRuntimeException(msg);
-        } else if (config.isServerPatchingAllowed()) {
+        } else if (Cyc.getSessionManager().getManagerConfiguration().isServerPatchingAllowed()) {
           // TODO: we may also want Cyc to be able to disallow server patching.
           LOGGER.info("Auto-loading SubL patches is enabled (" + CycSessionConfiguration.class.getSimpleName() + "#isServerPatchingAllowed() == true). " + forMoreInfo);
           loader.loadMissingResources(SublFunctions.SOURCES);

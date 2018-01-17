@@ -24,6 +24,7 @@
 import com.cyc.base.CycAccess;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
+import com.cyc.session.CycAddress;
 import com.cyc.session.CycServerInfo;
 import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.compatibility.AbstractCycClientRequirement;
@@ -43,8 +44,6 @@ import static com.cyc.baseclient.subl.functions.SublFunctions.CYC_REVISION_NUMBE
 import static com.cyc.baseclient.subl.functions.SublFunctions.CYC_REVISION_STRING;
 import static com.cyc.baseclient.subl.functions.SublFunctions.CYC_SYSTEM_CODE_STRING;
 import static com.cyc.baseclient.subl.functions.SublFunctions.KB_VERSION_STRING;
-
-import com.cyc.session.CycAddress;
 
 /**
  * This class provides basic information about the state and location of the current
@@ -130,7 +129,7 @@ public class CycServerInfoImpl implements CycServerInfo {
     try {
       reloadCache();
     } catch (SessionCommunicationException ex) {
-      throw new SessionRuntimeException(ex);
+      throw SessionRuntimeException.fromThrowable(ex);
     }
   }
   

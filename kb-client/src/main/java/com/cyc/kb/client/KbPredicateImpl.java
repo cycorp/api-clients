@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version $Id: KbPredicateImpl.java 173082 2017-07-28 15:36:55Z nwinant $
+ * @version $Id: KbPredicateImpl.java 176267 2017-12-13 04:02:46Z nwinant $
  */
 public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T> implements KbPredicate {
 
@@ -451,24 +451,24 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
   public Collection<KbPredicate> getSpecializations() {
     return getSpecializations(KbConfiguration.getDefaultContext().forQuery());
   }
-  
+  /*
   @Override
   public Collection<KbPredicate> getSpecializations(String ctxStr) {
     return getSpecializations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public java.util.Collection<KbPredicate> getSpecializations(Context ctx) {
     //return (this.<KbPredicate>getValues(Constants.genlPreds(), 2, 1, ctx));
     return Constants.genlPreds().getValuesForArgPosition(this, 2, 1, ctx);
   }
-  
+  /*
   @Override
   public KbPredicate addSpecialization(String moreSpecificStr, String ctxStr) throws KbTypeException, CreateException {
     KbPredicate p = KbPredicateImpl.get(moreSpecificStr);
     return addSpecialization(p, ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public KbPredicate addSpecialization(KbPredicate moreSpecific, Context ctx) throws KbTypeException, CreateException {
     Constants.genlPreds().addFact(ctx, moreSpecific, this);
@@ -489,24 +489,24 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
   public Sentence getInverseGeneralizationSentence(KbPredicate moreGeneral) throws KbTypeException, CreateException {
     return new SentenceImpl (Constants.getInstance().GENLINVERSEPREDS_PRED, this, (Object) moreGeneral);
   }
-  
+  /*
   @Override
   public Collection<KbPredicate> getGeneralizations(String ctxStr) {
     return getGeneralizations(KbUtils.getKBObjectForArgument(ctxStr, ContextImpl.class));
   }
-  
+  */
   @Override
   public Collection<KbPredicate> getGeneralizations(Context ctx) {
     //return (this.<KbPredicate>getValues(Constants.genlPreds(), 1, 2, ctx));
     return Constants.genlPreds().getValuesForArgPosition(this, 1, 2, ctx);
   }
-  
+  /*
   @Override
   public KbPredicate addGeneralization(String moreGeneralStr, String ctxStr) throws KbTypeException, CreateException {
     KbPredicate p = KbPredicateImpl.get(moreGeneralStr);
     return addGeneralization(p, ContextImpl.get(ctxStr));
   }
-  
+  */
   @Override
   public KbPredicate addGeneralization(KbPredicate moreGeneral, Context ctx) throws KbTypeException, CreateException {
     Constants.genlPreds().addFact(ctx, this, moreGeneral);
@@ -518,7 +518,7 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
     try {
       return getAccess().getInspectorTool().isGenlPredOf((Fort) getCore(), (Fort) moreSpecific.getCore(), getCore(ctx));
     } catch (CycConnectionException e) {
-      throw new KbRuntimeException(e);
+      throw KbRuntimeException.fromThrowable(e);
     }
   }
 
@@ -542,7 +542,7 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
         }
       }
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
     return kbFacts;
   }
@@ -568,7 +568,7 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
     try {
       return KbCollectionImpl.get(getClassTypeString());
     } catch (KbException kae) {
-      throw new KbRuntimeException(kae.getMessage(), kae);
+      throw KbRuntimeException.fromThrowable(kae);
     }
   }
 
@@ -636,9 +636,9 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
       }
       return facts;
     } catch (CycConnectionException ex) {
-      throw new KbRuntimeException(ex);
+      throw KbRuntimeException.fromThrowable(ex);
     } catch (CycApiException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex);
     }
   }
   
@@ -654,7 +654,7 @@ public class KbPredicateImpl<T extends DenotationalTerm> extends RelationImpl<T>
           TypeFactImpl fact = new TypeFactImpl(ctx, argsWithPredicate.toArray());
           return FactImpl.findOrCreate(fact.getFormula(), fact.getContext());
         } catch (KbException kbe) {
-          throw new CreateException(kbe.getMessage(), kbe);
+          throw CreateException.fromThrowable(kbe);
         }
       }
     }

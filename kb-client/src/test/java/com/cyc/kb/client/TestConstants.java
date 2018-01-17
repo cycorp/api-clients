@@ -51,6 +51,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.cyc.Cyc.Constants.BASE_KB;
+import static com.cyc.Cyc.Constants.UV_MT;
 
 
 /**
@@ -58,11 +60,13 @@ import org.slf4j.LoggerFactory;
  * @author vijay
  */
 public class TestConstants {
-
+  
   public static Context baseKB;
   public static Context universalVocabularyMt;
   public static Rule flyingRule;
   public static KbTestConstants kbapitc;
+  public static Context appleProductMt;
+  public static KbCollection product;
 
   private static Logger LOG = LoggerFactory.getLogger(TestConstants.class.getName());
   
@@ -70,7 +74,7 @@ public class TestConstants {
     try {
       return CycAccessManager.getCurrentAccess();
     } catch (SessionException ex) {
-      throw new KbRuntimeException(ex.getMessage(), ex);
+      throw KbRuntimeException.fromThrowable(ex.getMessage(), ex);
     }
   }
   
@@ -93,7 +97,8 @@ public class TestConstants {
       baseKB = new ImmutableContext("BaseKB");
 
       kbapitc = KbTestConstants.getInstance();
-
+      appleProductMt  = Context.findOrCreate("AppleProductMt");
+      product = KbCollection.get("Product");
       setupOEScript();
     } catch (Exception ex) {
       ex.printStackTrace(System.err);
@@ -106,7 +111,8 @@ public class TestConstants {
     LOG.info("Entering the setupOEScript");
     
     KbIndividual i = KbIndividualImpl.findOrCreate("TestIndividual001");
-    i.instantiates("(#$CitizenFn #$UnitedStatesOfAmerica)", "UniversalVocabularyMt");
+    //i.instantiates("(#$CitizenFn #$UnitedStatesOfAmerica)", "UniversalVocabularyMt");
+    i.instantiates(KbCollection.get("(#$CitizenFn #$UnitedStatesOfAmerica)"), UV_MT);
     KbCollection nonSense = KbCollectionImpl.findOrCreate("Nonsense");
     
     KbIndividual airline = KbIndividualImpl.findOrCreate("SomeAirline");
@@ -159,8 +165,10 @@ public class TestConstants {
         
     // objectActedOn is on self in Flying-Move
     BinaryPredicate destinationList = BinaryPredicateImpl.findOrCreate("flightDestinationList");
-    destinationList.addArgIsa(2, "(ListOfTypeFn GeopoliticalEntity)", "BaseKB");
-    destinationList.addArgIsa(1, "FlyingAnObject-Operate", "BaseKB");
+    //destinationList.addArgIsa(2, "(ListOfTypeFn GeopoliticalEntity)", "BaseKB");
+    //destinationList.addArgIsa(1, "FlyingAnObject-Operate", "BaseKB");
+    destinationList.addArgIsa(2, KbCollection.get("(ListOfTypeFn GeopoliticalEntity)"), BASE_KB);
+    destinationList.addArgIsa(1, KbCollection.get("FlyingAnObject-Operate"), BASE_KB);
     
     FirstOrderCollection flying3Col = FirstOrderCollectionImpl.findOrCreate("Flying-Travel");
     FirstOrderCollectionImpl travel = FirstOrderCollectionImpl.get("Travel-TripEvent");
@@ -180,7 +188,8 @@ public class TestConstants {
     
     // Setup a context hierarchy
     Context airlineLogMt = ContextImpl.findOrCreate("SomeAirlineLogMt");
-    airlineLogMt.addInheritsFrom("CurrentWorldDataCollectorMt");
+    //airlineLogMt.addInheritsFrom("CurrentWorldDataCollectorMt");
+    airlineLogMt.addInheritsFrom(Context.get("CurrentWorldDataCollectorMt"));
     Context airlineEmpMt = ContextImpl.findOrCreate("SomeAirlineEmployeeMt");
     Context airlineEquipMt = ContextImpl.findOrCreate("SomeAirlineEquipmentMt");
     
@@ -221,7 +230,8 @@ public class TestConstants {
     // Adding GAFs using fact
     final KbIndividual city2 = KbIndividualImpl.findOrCreate("TestCity002", kbapitc.city);
     final Fact f2 = new FactImpl(airlineLogMt, KbPredicateImpl.get("toLocation"), flight, city2); // To
-    f2.addComment("A flight to Test City 002", "SomeAirlineLogMt");
+    //f2.addComment("A flight to Test City 002", "SomeAirlineLogMt");
+    f2.addComment("A flight to Test City 002", airlineLogMt);
     
     final KbCollection publicData = KbCollectionImpl.findOrCreate("SomeAirlinePublicData");
             
