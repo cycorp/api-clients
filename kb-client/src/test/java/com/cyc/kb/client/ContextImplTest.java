@@ -367,6 +367,7 @@ public class ContextImplTest {
     String name = "TestIndividualForTypeConflict3";
     try {
       i1 = KbIndividualImpl.findOrCreate(name);
+      assertTrue(Context.existsAsType(name));
       c3 = ContextImpl.findOrCreate(name);
       assertTrue("c3 is null", c3 != null);
       assertTrue("i1's CycL wasn't coerced into a context", c3.getCore().equals(i1.getCore()));

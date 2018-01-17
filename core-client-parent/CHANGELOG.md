@@ -5,6 +5,12 @@ For more information, view the [README](README.md) bundled with this release or 
 [Cyc Developer Center](http://dev.cyc.com/api/core/).
 
 
+1.1.0 - 2017-12-18
+------------------
+
+Fixes assorted unit tests, adds a couple of KE methods to `AssertionServiceImpl`.
+
+
 1.0.0 - 2017-12-12
 ------------------
 

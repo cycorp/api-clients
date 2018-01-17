@@ -141,7 +141,7 @@ public class ProofViewNodeImpl implements ProofViewNode {
 
   public void marshal(org.w3c.dom.Node destination) {
     try {
-      marshal(destination, new com.cyc.xml.query.ProofViewMarshaller());
+      marshal(destination, new com.cyc.xml.query.ProofViewJaxbMarshaller());
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
@@ -154,7 +154,7 @@ public class ProofViewNodeImpl implements ProofViewNode {
    * @param marshaller
    */
   public void marshal(org.w3c.dom.Node destination,
-          final com.cyc.xml.query.ProofViewMarshaller marshaller) {
+          final com.cyc.xml.query.ProofViewJaxbMarshaller marshaller) {
     try {
       marshaller.marshal(entryJaxb, destination);
     } catch (Exception ex) {

@@ -29,12 +29,11 @@ import com.cyc.baseclient.CommonConstants;
 import com.cyc.baseclient.cycobject.CycArrayList;
 import com.cyc.baseclient.cycobject.ElMtConstantImpl;
 import com.cyc.baseclient.cycobject.ElMtCycNautImpl;
+import com.cyc.session.CycAddress;
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.cyc.baseclient.testing.TestConstants.CONTEXT_OF_PCW_FN;
-
-import com.cyc.session.CycAddress;
 
 /**
  *
@@ -96,9 +95,9 @@ public class KbPopulator {
               "#$CIAWorldFactbook1995Mt", cyc);
     }
     
-    makeSentence(
-            "'(#$capitalEntity #$France #$CityOfParisFrance)",
-            "#$WorldGeographyMt", cyc);
+    //makeSentence(  // TODO: re-enable once capitalCity -> capitalEntity change has been reconciled - nwinant, 2017-12-18
+    //        "'(#$capitalEntity #$France #$CityOfParisFrance)",
+    //        "#$WorldGeographyMt", cyc);
     makeSentence("  '(#$implies " +
             "   (#$and " +
             "    (#$isa ?EVENT #$WorkingEvent) " +

@@ -17,7 +17,7 @@ package com.cyc.kb.client;
 
 /*
  * #%L
- * File: PossiblyNonAtomicKbObjectImpl.java
+ * File: KbObjectWithArityImpl.java
  * Project: KB Client
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc
@@ -54,6 +54,7 @@ import com.cyc.kb.DefaultContext;
 import com.cyc.kb.Fact;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
+import com.cyc.kb.KbObject.KbObjectWithArity;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.client.config.KbConfiguration;
 import com.cyc.kb.exception.CreateException;
@@ -66,7 +67,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.cyc.kb.KbObject.KbObjectWithArity;
 
 /**
  * Provides a shared superclass for Assertion, KbTerm, and Sentence to share common methods. 
@@ -75,7 +75,7 @@ import com.cyc.kb.KbObject.KbObjectWithArity;
  * @author nwinant
  * @param <T> type of CycObject core
  */
-class PossiblyNonAtomicKbObjectImpl<T extends CycObject> 
+class KbObjectWithArityImpl<T extends CycObject> 
         extends StandardKbObject<T>
         implements KbObjectWithArity {
   
@@ -83,11 +83,11 @@ class PossiblyNonAtomicKbObjectImpl<T extends CycObject>
   
   //====|    Construction    |====================================================================//
   
-  PossiblyNonAtomicKbObjectImpl() {
+  KbObjectWithArityImpl() {
     super();
   }
   
-  PossiblyNonAtomicKbObjectImpl(CycObject cycObject) throws KbTypeException {
+  KbObjectWithArityImpl(CycObject cycObject) throws KbTypeException {
     super(cycObject);
   }
 
@@ -97,16 +97,16 @@ class PossiblyNonAtomicKbObjectImpl<T extends CycObject>
   }
   */
   
-  PossiblyNonAtomicKbObjectImpl(String termStr) throws KbTypeException, CreateException  {
+  KbObjectWithArityImpl(String termStr) throws KbTypeException, CreateException  {
     super(termStr);
   }
   
-  PossiblyNonAtomicKbObjectImpl(String termStr, LookupType lookup) 
+  KbObjectWithArityImpl(String termStr, LookupType lookup) 
           throws KbTypeException, CreateException  {
     super(termStr, lookup);
   }
   
-  protected PossiblyNonAtomicKbObjectImpl(DefaultContext contexts, KbTerm term) {
+  protected KbObjectWithArityImpl(DefaultContext contexts, KbTerm term) {
     super();
     this.setCore(term);
   }

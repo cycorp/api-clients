@@ -200,7 +200,6 @@ public class KbFunctionImplTest {
 
   @Test
   public void testUnreifiableFunctionWithDateInput2() throws KbException {
-  
     KbFunctionImpl<DenotationalTerm> f1 = KbFunctionImpl.get ("USDollarFn");
     KbFunctionImpl<DenotationalTerm> f2 = f1.findOrCreateFunctionalTerm(KbFunctionImpl.class, 2012);
     f2.addResultIsa(KbCollectionImpl.get("MonetaryValue"), ContextImpl.get("UniversalVocabularyMt"));
@@ -212,6 +211,7 @@ public class KbFunctionImplTest {
     
     KbFunctionImpl<DenotationalTerm> fy = KbFunctionImpl.get("FiscalYearFn");
     KbIndividual i2 = fy.findOrCreateFunctionalTerm(KbIndividualImpl.class, w, 2012);
+    // TODO: this should be found to be an Individual instead of a term, but categorize-term-wrt-api is currently categorizing it as Thing: - nwinant, 2017-12-18
     KbIndividual coc = KbIndividualImpl.findOrCreate("(#$AccountingCodeOfTypeTypicallyUsedByAgentFn #$GenerallyAcceptedAccountingPrinciples #$Walmart-CommercialOrganization)");
     revenueForPeriodByAccountingCOC.addFact(Constants.uvMt(), w, i1, i2, coc);
   }

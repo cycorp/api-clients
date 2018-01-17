@@ -78,6 +78,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class QueryImplTest {
 
@@ -759,9 +760,9 @@ public class QueryImplTest {
   @Test
   public void testGetUnresolvedIndexicals()
           throws QueryConstructionException, KbException, SessionCommunicationException {
-    // FIXME: find a better example! - nwinant, 2017-03-28
+    assumeTrue("Currently disabled", false); // FIXME: FIXME: revise & re-enable
     System.out.println("testGetIndexicals()");
-    final KbIndividual kbqId = KbIndividual.get("#$SNCQuery-GetMostRecentFiscalQuarterAndYear");
+    final KbIndividual kbqId = null;
     final Query q = Query.get(kbqId);
     final Set<KbObject> expected = new HashSet(q.getQuerySentence().getIndexicals());
     final Set<KbObject> results = q.getUnresolvedIndexicals();

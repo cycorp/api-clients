@@ -246,8 +246,10 @@ public class FactImplTest {
     //and the expected answer on this should change, since it's now perfectly valid to send the args in as strings
     //and expect them to be interpreted correctly.
     //@daves 2017-03-31
-    assertNull("Should have failed to get a Fact", f1);
-    assertNotNull("Should have errored when attempting to get a Fact", caught);
+    //assertNull("Should have failed to get a Fact", f1);
+    //assertNotNull("Should have errored when attempting to get a Fact", caught);
+    assertNull(caught);
+    assertNotNull(f1);
   }
    
   @Test

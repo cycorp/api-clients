@@ -50,8 +50,12 @@ import com.cyc.baseclient.datatype.Pair;
 import com.cyc.baseclient.inference.params.DefaultInferenceParameters;
 import com.cyc.baseclient.util.LruCache;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.cyc.baseclient.CommonConstants.GENERIC_INSTANCE_FN;
 import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
@@ -67,7 +71,53 @@ import static com.cyc.baseclient.subl.functions.SublFunctions.CATEGORIZE_TERM_WR
  * @author nwinant
  */
 public class InspectorToolImpl extends AbstractKbTool implements InspectorTool {
+  
+  // Fields
+  
+  private static final Logger LOG = LoggerFactory.getLogger(InspectorToolImpl.class);
+  
+  private static final CycSymbolImpl EL_WFF = makeCycSymbol("el-wff?");
 
+  /**
+   * Least Recently Used Cache of isCollection results.
+   */
+  private final Map<CycObject, Boolean> isCollectionCache = new LruCache<>(500, 5000, true);
+
+  /**
+   * Least Recently Used Cache of isGenlOf results.
+   */
+  private final Map<Pair, Boolean> isGenlOfCache = new LruCache<>(500, 5000, true);
+
+  /**
+   * Least Recently Used Cache of countAllInstances results.
+   */
+  private final Map<Fort, Integer> countAllInstancesCache = new LruCache<>(500, 5000, true);
+
+  private Map<CycObject, CycObject> categorizedFunctorMap = null;
+  
+  //a map from schema to the categories for that schema (via schemaIsa)
+  private final Map<CycObject, CycObject> schemaIsaMap = new HashMap<>();
+
+  private static final String MICROTHEORY = CommonConstants.MICROTHEORY.cyclify();
+  
+  // Commented out regarding BASEAPI-63 - nwinant, 2014-08-18
+  //  private static final String PUBLIC_CONSTANT = CommonConstants.PUBLIC_CONSTANT.cyclify();
+  
+  private static final String COLLECTION = CommonConstants.COLLECTION.cyclify();
+  
+  private static final String INDIVIDUAL = CommonConstants.INDIVIDUAL.cyclify();
+  
+  private static final String FUNCTION_DENOTATIONAL 
+          = CommonConstants.FUNCTION_DENOTATIONAL.cyclify();
+  
+  private static final String REIFIABLE_FUNCTION = CommonConstants.REIFIABLE_FUNCTION.cyclify();
+  
+  private static final String PREDICATE = CommonConstants.PREDICATE.cyclify();
+  
+  private static final String UNARY_PREDICATE = CommonConstants.UNARY_PREDICATE.cyclify();
+  
+  // Construction
+  
   public InspectorToolImpl(CycAccess client) {
     super(client);
   }
@@ -145,11 +195,9 @@ public class InspectorToolImpl extends AbstractKbTool implements InspectorTool {
 
     return getConverse().converseBoolean(command);
   }
-
-  @Override
-  public CycObject categorizeTermWRTApi(CycObject term) throws CycConnectionException {
+  
+  private CycObject categorizeTermWRTApi_precheck(CycObject term) {
     // TODO: investigate doing this for NARTs as well.
-
     if (term instanceof Naut) {
       Naut cycNaut = (Naut) term;
       CycObject functor = (CycObject) cycNaut.getArg0();
@@ -161,9 +209,42 @@ public class InspectorToolImpl extends AbstractKbTool implements InspectorTool {
         return nautCategory;
       }
     }
-    return CATEGORIZE_TERM_WRT_API.eval(getCyc(), term);
+    return null;
   }
-
+  
+  @Override
+  public CycObject categorizeTermWRTApi(CycObject term) throws CycConnectionException {
+    final CycObject precheck = categorizeTermWRTApi_precheck(term);
+    return (precheck != null) 
+           ? precheck 
+           : CATEGORIZE_TERM_WRT_API.eval(getCyc(), term);
+  }
+  
+  @Override
+  public List<CycObject> categorizeTermsWRTApi(List<CycObject> terms)
+          throws CycConnectionException {
+    final List<CycObject> results = new ArrayList<>(terms.size());
+    final List<CycObject> preCachedResults = new ArrayList<>(terms.size());
+    final List<CycObject> serverTerms = new ArrayList<>(terms.size());
+    for (int i = 0; i < terms.size(); i++) {
+      final CycObject term = terms.get(i);
+      final CycObject precheck = categorizeTermWRTApi_precheck(term);
+      preCachedResults.add(precheck);
+      if (precheck == null) {
+        serverTerms.add(term);
+      }
+    }
+    final String command = makeSublStmt("mapcar", CATEGORIZE_TERM_WRT_API.getSymbol(), serverTerms);
+    results.addAll(getCyc().converse().converseList(command));
+    for (int i = 0; i < preCachedResults.size(); i++) {
+      final CycObject result = preCachedResults.get(i);
+      if (result != null) {
+        results.add(i, result);
+      }
+    }
+    return results;
+  }
+  
   CycObject getCategoryForFunctor(CycObject functor) {
     final Map<CycObject, CycObject> functorMap = getCategorizedFunctorMap();
     CycObject mapValue = functorMap.get(functor);
@@ -701,17 +782,14 @@ public class InspectorToolImpl extends AbstractKbTool implements InspectorTool {
   }
   
   @Override
-  public boolean isGenlPredOf(Fort genlPred,
-          Fort specPred)
+  public boolean isGenlPredOf(Fort genlPred, Fort specPred)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(with-all-mts (genl-predicate? " + specPred.stringApiValue() + " "
             + genlPred.stringApiValue() + "))");
   }
   
   @Override
-  public boolean isGenlInverseOf(Fort genlPred,
-          Fort specPred,
-          CycObject mt)
+  public boolean isGenlInverseOf(Fort genlPred, Fort specPred, CycObject mt)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(genl-inverse? " + specPred.stringApiValue() + " "
             + genlPred.stringApiValue() + " " + makeElMt_inner(
@@ -719,19 +797,22 @@ public class InspectorToolImpl extends AbstractKbTool implements InspectorTool {
   }
   
   @Override
-  public boolean isGenlInverseOf(Fort genlPred,
-          Fort specPred)
+  public boolean isGenlInverseOf(Fort genlPred, Fort specPred)
           throws CycConnectionException, com.cyc.base.exception.CycApiException {
     return getConverse().converseBoolean("(with-all-mts (genl-inverse? " + specPred.stringApiValue() + " "
             + genlPred.stringApiValue() + "))");
   }
   
   @Override
-  public boolean isGenlMtOf(CycObject genlMt,
-          CycObject specMt)
-          throws CycConnectionException, com.cyc.base.exception.CycApiException {
+  public boolean isGenlMtOf(CycObject genlMt, CycObject specMt) 
+          throws CycConnectionException, CycApiException {
     return getConverse().converseBoolean("(genl-mt? " + makeElMt_inner(specMt).stringApiValue() + " "
             + makeElMt_inner(genlMt).stringApiValue() + ")");
+  }
+  
+  @Override
+  public boolean isBroadMt(CycObject mt) throws CycConnectionException, CycApiException {
+    return getConverse().converseBoolean("(broad-mt? " + makeElMt_inner(mt).stringApiValue() + ")");
   }
 
   // Private
@@ -752,38 +833,4 @@ public class InspectorToolImpl extends AbstractKbTool implements InspectorTool {
     ((LookupToolImpl) getCyc().getLookupTool()).verifyPossibleDenotationalTerm(cycObject);
   }
 
-  // Internal
-  private static final CycSymbolImpl EL_WFF = makeCycSymbol("el-wff?");
-
-  /**
-   * Least Recently Used Cache of isCollection results.
-   */
-  private final Map<CycObject, Boolean> isCollectionCache = new LruCache<>(
-          500, 5000, true);
-
-  /**
-   * Least Recently Used Cache of isGenlOf results.
-   */
-  private final Map<Pair, Boolean> isGenlOfCache = new LruCache<>(
-          500, 5000, true);
-
-  /**
-   * Least Recently Used Cache of countAllInstances results.
-   */
-  private final Map<Fort, Integer> countAllInstancesCache = new LruCache<>(
-          500, 5000, true);
-
-  private Map<CycObject, CycObject> categorizedFunctorMap = null;
-//a map from schema to the categories for that schema (via schemaIsa)
-  private final Map<CycObject, CycObject> schemaIsaMap = new HashMap<>();
-
-  private static final String MICROTHEORY = CommonConstants.MICROTHEORY.cyclify();
-  // Commented out regarding BASEAPI-63 - nwinant, 2014-08-18
-  //  private static final String PUBLIC_CONSTANT = CommonConstants.PUBLIC_CONSTANT.cyclify();
-  private static final String COLLECTION = CommonConstants.COLLECTION.cyclify();
-  private static final String INDIVIDUAL = CommonConstants.INDIVIDUAL.cyclify();
-  private static final String FUNCTION_DENOTATIONAL = CommonConstants.FUNCTION_DENOTATIONAL.cyclify();
-  private static final String REIFIABLE_FUNCTION = CommonConstants.REIFIABLE_FUNCTION.cyclify();
-  private static final String PREDICATE = CommonConstants.PREDICATE.cyclify();
-  private static final String UNARY_PREDICATE = CommonConstants.UNARY_PREDICATE.cyclify();
 }

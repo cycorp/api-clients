@@ -37,14 +37,15 @@ package com.cyc.kb.client;
  * #L%
  */
 
+import com.cyc.Cyc;
 import com.cyc.session.CycServerReleaseType;
 import com.cyc.session.CycSession;
+import com.cyc.session.TestEnvironmentProperties;
 import com.cyc.session.compatibility.CycSessionRequirement;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.MinimumPatchRequirement;
 import com.cyc.session.compatibility.NotEnterpriseCycRequirement;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
-import com.cyc.session.TestEnvironmentProperties;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionException;
@@ -104,6 +105,20 @@ public class TestUtils {
   public static void skipTest(Object testCase, String testName, String msg) {
     LOG.warn("Skipping {}#{}: {}", testCase.getClass().getSimpleName(), testName, msg);
     org.junit.Assume.assumeTrue(msg, false);
+  }
+  
+  public static void assumeKbObject(String nameOrId) {
+    // TODO: move this into some central test library
+    org.junit.Assume.assumeTrue(
+            "Test requires " + nameOrId + ", which is not present in tested KB.", 
+            Cyc.existsInKb(nameOrId));
+  }
+  
+  public static void assumeKbObjects(String... namesOrIds) {
+    // TODO: move this into some central test library
+    for (String nameOrId : namesOrIds) {
+      assumeKbObject(nameOrId);
+    }
   }
   
   private static CycSession getSession() throws SessionConfigurationException, SessionInitializationException, SessionCommunicationException {

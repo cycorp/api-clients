@@ -59,7 +59,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *
@@ -72,7 +75,7 @@ public class TemplateOeToolImplTest {
   
   @BeforeClass
   public static void setUpClass() throws SessionException, CycConnectionException {
-    //assumeTrue("TemplateOe tests are currently disabled.", false); // FIXME: revise tests & re-enable - nwinant, 2017-08-09
+    assumeTrue("TemplateOe tests are currently disabled.", false); // FIXME: revise tests & re-enable - nwinant, 2017-08-09
     TestUtils.ensureTestEnvironmentInitialized();
   }
   
@@ -92,8 +95,9 @@ public class TemplateOeToolImplTest {
   
   //====|    Fields    |==========================================================================//
   
-  public static final DenotationalTerm KBQ_ID = new CycConstantImpl(
-          "#$SNCVA-AWCAQuery", new Guid("2eaff188-4fcb-4932-9b20-64f5a388ae76")); // FIXME: change this test constant - nwinant, 2017-08-09
+  //public static final boolean TEMPLATE_OE_TOOL_KE_PRESENT = false;
+  
+  public static final DenotationalTerm KBQ_ID = null; // FIXME: change this test constant - nwinant, 2017-08-09
   
   public static final DenotationalTerm SIMPLE_KBQ_ID = new CycConstantImpl(
             "#$SimpleQuery_ContentForAPITest", new Guid("f4a5aebb-808b-42ac-b942-c7389e34458a")); // FIXME: make sure this is created in KB - nwinant, 2017-08-23

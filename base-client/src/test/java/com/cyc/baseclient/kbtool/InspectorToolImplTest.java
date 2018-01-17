@@ -37,18 +37,25 @@ package com.cyc.baseclient.kbtool;
  */
 
 import com.cyc.base.cycobject.CycObject;
+import com.cyc.base.cycobject.ElMt;
 import com.cyc.base.cycobject.NonAtomicTerm;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.baseclient.CommonConstants;
+import com.cyc.baseclient.cycobject.CycConstantImpl;
+import com.cyc.baseclient.cycobject.ElMtConstantImpl;
+import com.cyc.baseclient.cycobject.GuidImpl;
 import com.cyc.baseclient.cycobject.NautImpl;
 import com.cyc.baseclient.datatype.DateConverter;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import static com.cyc.baseclient.testing.TestConstants.SAMPLE_COMPUTER_DATABASE_PROGRAM_OBJECT_CMLS;
 import static com.cyc.baseclient.testing.TestConstants.SAMPLE_COMPUTER_DATABASE_SUPPLIER_CMLS;
 import static com.cyc.baseclient.testing.TestUtils.getCyc;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -133,7 +140,27 @@ public class InspectorToolImplTest {
     expResult = CommonConstants.THING;
     result = instance.categorizeTermWRTApi(schemaObjectFnWithoutSchemaIsa);
     assertEquals(expResult, result);
-
+  }
+  
+  @Test
+  public void testIsBroad() throws CycConnectionException {
+    System.out.println("isBroad");
+    final InspectorToolImpl instance = (InspectorToolImpl) (getCyc().getInspectorTool());
+    
+    assertTrue(instance.isBroadMt(CommonConstants.BASE_KB));
+    assertTrue(instance.isBroadMt(CommonConstants.BOOKKEEPING_MT));
+    assertTrue(instance.isBroadMt(CommonConstants.UNIVERSAL_VOCABULARY_MT));
+    
+    assertFalse(instance.isBroadMt(CommonConstants.ANYTIME_PSC));
+    assertFalse(instance.isBroadMt(CommonConstants.CURRENT_WORLD_DATA_MT)); // !!!
+    assertFalse(instance.isBroadMt(CommonConstants.ENGLISH_PARAPHRASE_MT));
+    assertFalse(instance.isBroadMt(CommonConstants.EVERYTHING_PSC));
+    assertFalse(instance.isBroadMt(CommonConstants.INFERENCE_PSC));
+    
+    final ElMt tmp = ElMtConstantImpl.makeElMtConstant(
+            new CycConstantImpl("VACobraTestingAndDevelopment-ForQueryingMetricsLayer1-QueryMt",
+                    new GuidImpl("35deb0ff-4b30-4ebc-a511-4aba326e68e1")));
+    assertFalse(instance.isBroadMt(tmp));
   }
 
 }

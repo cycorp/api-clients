@@ -91,7 +91,7 @@ import static com.cyc.kb.KbObject.hasValidKbApiObjectType;
  * @param <T> type of CycObject core
  * 
  * @author Vijay Raj
- * @version "$Id: KbObjectImpl.java 176267 2017-12-13 04:02:46Z nwinant $"
+ * @version "$Id: KbObjectImpl.java 176349 2017-12-19 01:38:11Z nwinant $"
  */
 public class KbObjectImpl<T extends CycObject> implements KbObject {
   
@@ -977,8 +977,7 @@ public class KbObjectImpl<T extends CycObject> implements KbObject {
     if (isValidCore(cycObject)) {
       core = (T) cycObject;
     } else {
-      String msg = "The term \"" + cycObject.toString() + "\" is not a "
-              + getTypeString() + ".";
+      String msg = "The term \"" + cycObject.toString() + "\" is not a " + getTypeString() + ".";
       LOG.trace(msg);
       throw new KbTypeException(msg);
     }

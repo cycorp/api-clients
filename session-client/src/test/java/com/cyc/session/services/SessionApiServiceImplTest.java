@@ -26,7 +26,6 @@ import com.cyc.session.TestEnvironmentProperties;
 import com.cyc.session.exception.SessionConfigurationException;
 import com.cyc.session.exception.SessionServiceException;
 import com.cyc.session.spi.SessionApiService;
-import java.util.ServiceConfigurationError;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -95,7 +94,7 @@ public class SessionApiServiceImplTest extends TestCase {
     } catch (SessionServiceException ex) {
       System.out.println("Good news! Test captured an expected exception: \"" + ex.getMessage() + "\"");
       //ex.printStackTrace(System.err);
-      assertEquals(ServiceConfigurationError.class, ex.getClass());
+      assertEquals(SessionServiceException.class, ex.getClass());
     }
     assertNull(sessionMgr);
   }

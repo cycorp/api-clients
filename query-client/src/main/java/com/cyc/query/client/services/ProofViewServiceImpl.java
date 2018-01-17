@@ -84,6 +84,5 @@ public class ProofViewServiceImpl implements ProofViewService {
     generator.generate();
     return (ProofViewImpl) generator.getExplanation();
   }
-
   
 }

@@ -7,13 +7,13 @@
   <parent>
     <groupId>com.cyc</groupId>
     <artifactId>cyc-core-client-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <relativePath>../core-client-parent</relativePath>
   </parent>
   
   <groupId>com.cyc</groupId>
   <artifactId>cyc-core-client-impl</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
   
   <name>Core Client Implementation</name>
@@ -25,12 +25,6 @@
   <!-- ====|    Configuration    |============================================================= -->
   
   <dependencies>
-    <!--
-    <dependency>
-      <groupId>com.cyc.xml</groupId>
-      <artifactId>cyc-cycml</artifactId>
-    </dependency>
-    -->
     <dependency>
       <groupId>com.cyc</groupId>
       <artifactId>cyc-session-client</artifactId>
@@ -53,18 +47,66 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
+        <version>2.6</version>
         <executions>
           <execution>
-            <id>make-assembly</id>
+            <id>make-descriptors</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/assembly-standalone.xml</descriptor>
+                <descriptor>src/assembly/assembly-libs.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-descriptorRefs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-aggregate</id>
+            <phase>package</phase>
+            <goals>
+              <goal>aggregate</goal>
+              <goal>aggregate-jar</goal>
+            </goals>
+            <configuration>
+              <includeDependencySources>true</includeDependencySources>
+              <classifier>javadoc-standalone</classifier>
+              <dependencySourceIncludes>com.cyc:*-client</dependencySourceIncludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-aggregate</id>
+            <phase>package</phase>
+            <goals>
+              <goal>aggregate</goal>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>standalone</classifier>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -73,7 +115,7 @@
       </plugin>
     </plugins>
   </build>
-
+  
   <reporting>
     <plugins>
       <plugin>
@@ -84,6 +126,7 @@
           <dependencySourceIncludes>
             <dependencySourceInclude>com.cyc:*-client</dependencySourceInclude>
           </dependencySourceIncludes>
+          <!--
           <groups>
             <group>
               <title>KB API</title>
@@ -106,6 +149,7 @@
               <packages>com.cyc.base*</packages>
             </group>
           </groups>
+          -->
           <show>public</show>
           <author>false</author>
           <version>false</version>

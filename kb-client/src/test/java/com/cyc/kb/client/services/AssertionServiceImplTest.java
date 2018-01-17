@@ -40,6 +40,7 @@ import com.cyc.baseclient.testing.TestIterator.IteratedTest;
 import com.cyc.kb.Assertion;
 import com.cyc.kb.Assertion.Direction;
 import com.cyc.kb.Assertion.Strength;
+import com.cyc.kb.Context;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.client.AssertionImpl;
 import com.cyc.kb.client.KbTermImpl;
@@ -56,6 +57,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.cyc.Cyc.Constants.UV_MT;
 import static com.cyc.baseclient.CommonConstants.ISA;
 import static com.cyc.kb.client.services.examples.ServiceTestExamplesInKb.CTX;
 import static com.cyc.kb.client.services.examples.ServiceTestExamplesInKb.CTX_STR;
@@ -65,6 +67,8 @@ import static com.cyc.kb.client.services.examples.ServiceTestExamplesNotInKb.FLY
 import static com.cyc.kb.client.services.examples.ServiceTestUtils.TEST_ITERATOR;
 import static com.cyc.kb.client.services.examples.ServiceTestUtils.trimString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -273,6 +277,29 @@ public class AssertionServiceImplTest {
     Assertion result = instance.findOrCreate(formula, CTX, Strength.AUTO, Direction.AUTO);
     Assertion expResult = AssertionImpl.get(result.getId());
     assertEquals(expResult, result);
+  }
+  
+  @Test
+  public void testGetAllAssertedInContext() throws Exception {
+    System.out.println("getAllAssertedInContext");
+    final Context ctx = Context.get("CurrentWorldDataCollectorMt-NonHomocentric");
+    final List<Assertion> results = instance.getAllAssertedInContext(ctx, false);
+    assertNotNull(results);
+    System.out.println("Size: " + results.size());
+    assertTrue(results.size() > 0);
+    results.forEach(result -> {
+      assertEquals(ctx, result.getContext());
+    });
+    System.out.println("Size: " + results.size());
+    final int numAssertedInContext = instance.getCountOfAllAssertedInContext(ctx, false);
+    System.out.println("# asserted in context: " + numAssertedInContext);
+    assertEquals(results.size(), numAssertedInContext);
+  }
+  
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetAllAssertedInContext_NoExpensiveContexts() throws Exception {
+    System.out.println("getAllAssertedInContext_NoExpensiveContexts");
+    instance.getAllAssertedInContext(UV_MT, false);
   }
   
 }

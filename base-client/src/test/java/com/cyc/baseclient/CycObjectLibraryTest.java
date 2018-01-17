@@ -45,7 +45,9 @@ import org.junit.Test;
 
 import static com.cyc.baseclient.testing.TestGuids.BUSH_DOG_GUID_STRING;
 import static com.cyc.baseclient.testing.TestUtils.isEnterpriseCyc;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -299,7 +301,7 @@ public class CycObjectLibraryTest {
   private static final int EXPECTED_NUM_DATE_CONSTANTS = 18;
   private static final int EXPECTED_NUM_TIME_INTERVAL_CONSTANTS = 4;
   private static final int EXPECTED_NUM_TIME_INTERVAL_FUNCTION_CONSTANTS = 3;
-  private static final int EXPECTED_NUM_TEST_CONSTANTS_FULL = 114;
+  private static final int EXPECTED_NUM_TEST_CONSTANTS_FULL = 113;
   private static final int EXPECTED_NUM_TEST_SENTENCES_FULL = 15;
   private int expectedNumTestConstants;
   private int expectedNumTestSentences;

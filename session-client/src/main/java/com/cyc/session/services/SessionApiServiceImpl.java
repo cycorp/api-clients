@@ -157,7 +157,15 @@ public class SessionApiServiceImpl implements SessionApiService {
   //====|    Construction    |====================================================================//
   
   public SessionApiServiceImpl() {
-    Object tmp = SessionManagerHolder.INSTANCE;  // Trivial call to ensure instance is initialized.
+    try {
+      Object tmp = SessionManagerHolder.INSTANCE; // Trivial call to ensure instance is initialized.
+    } catch (ExceptionInInitializerError ex) {
+      if (ex.getCause() instanceof SessionServiceException) {
+        final Class iface = ((SessionServiceException) ex.getCause()).getInterfaceClass();
+        throw SessionServiceException.fromThrowable(iface, ex);
+      }
+      throw SessionServiceException.fromThrowable(SessionApiService.class, ex);
+    }
   }
   
   //====|    Public methods    |==================================================================//

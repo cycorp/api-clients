@@ -154,22 +154,19 @@ public class QueryImpl implements Query, Closeable {
       QUERY_LOADER_REQUIREMENTS.throwExceptionIfIncompatible();
       final Query q = new QueryReader().queryFromTerm(id);
       
-      //q.getRules().useOnlySpecifiedRules(false);        // FIXME: This shouldn't be necessary, as explained in SNC-267. See also: CAPI-803 - nwinant, 2017-04-23s
+      //q.getRules().useOnlySpecifiedRules(false); // This is no longer necessary, as explained in CAPI-809. See also: CAPI-803 - nwinant, 2017-04-23s
       
       return q;
     } catch (UnsupportedCycOperationException | KbException ex) {
       throw ex;
-    } catch (JAXBException ex) {
-      throw new RuntimeException(ex);
-    } catch (NullPointerException ex) {
-      throw QueryConstructionException.fromThrowable("Could not load a query for " + id, ex);
-    } catch (SessionCommunicationException | SessionInitializationException
+    } catch (JAXBException |NullPointerException 
+            | SessionCommunicationException | SessionInitializationException
             | SessionCommandException | SessionConfigurationException
             | QueryConstructionException | QueryRuntimeException ex) {
-      throw QueryConstructionException.fromThrowable(ex);
+      throw QueryConstructionException.fromThrowable("Could not load a query for " + id, ex);
     }
   }
-
+  
   /**
    * Returns a new QueryImpl loaded from a term in Cyc specifying its properties. Terms in the
    * specified query can be replaced with others by providing a non-empty <code>indexicals</code>

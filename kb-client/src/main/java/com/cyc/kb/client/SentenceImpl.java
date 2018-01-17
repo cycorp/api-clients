@@ -83,10 +83,10 @@ import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
  * and understood by the server, and are used extensively to perform queries or make assertions.
  *
  * @author Vijay Raj
- * @version $Id: SentenceImpl.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: SentenceImpl.java 176349 2017-12-19 01:38:11Z nwinant $
  * @since 1.0
  */
-public class SentenceImpl extends PossiblyNonAtomicKbObjectImpl<FormulaSentence> implements Sentence {
+public class SentenceImpl extends KbObjectWithArityImpl<FormulaSentence> implements Sentence {
   
   //====|    Static methods    |==================================================================//
   

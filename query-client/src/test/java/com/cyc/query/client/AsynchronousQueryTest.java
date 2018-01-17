@@ -167,31 +167,58 @@ public class AsynchronousQueryTest {
    * @throws com.cyc.session.exception.SessionCommunicationException
    */
   @Test
-  public void testAddListener() throws InterruptedException, QueryConstructionException, SessionCommunicationException {
+  public void testAddListener() throws InterruptedException, QueryConstructionException, SessionCommunicationException, KbException {
     System.out.println("addListener");
-    final TestQueryListener testQueryListener = new TestQueryListener();
+    final List<InferenceStatus> expectedStatuses = Arrays.asList(
+            InferenceStatus.NOT_STARTED,
+            InferenceStatus.STARTED,
+            InferenceStatus.READY, 
+            InferenceStatus.RUNNING, 
+            InferenceStatus.SUSPENDED);
+    final String expectedSuspendReasonStr = "Exhausted";
     {
+      final TestQueryListener testQueryListener = new TestQueryListener();
       currentQuery = constructXIsaBirdQuery();
       currentQuery.setMaxTime(1);
+      currentQuery.setCloseTimeout(1);
+      System.out.println("Running query via #start():");
       currentQuery.addListener(testQueryListener).start();
       final long startMillis = System.currentTimeMillis();
       while (testQueryListener.terminated == false
               && System.currentTimeMillis() - startMillis < 1000) {
+        System.out.print(".");
         Thread.sleep(10);
       }
+      System.out.println("Suspend reason: " + testQueryListener.suspendReason);
+      System.out.println("Statuses      : " + testQueryListener.statuses);
+      System.out.println("Answers       : " + testQueryListener.answers);
+      assertTrue(testQueryListener.created);
       assertTrue(testQueryListener.terminated);
+      assertFalse(testQueryListener.answers.isEmpty());
+      assertEquals(expectedStatuses, testQueryListener.statuses);
+      assertEquals(expectedSuspendReasonStr, "" + testQueryListener.suspendReason);
     }
-    {//Try with performInference()
+    {
       currentQuery.close();
+      final TestQueryListener testQueryListener = new TestQueryListener();
       currentQuery = constructXIsaBirdQuery();
       currentQuery.setMaxTime(1);
+      System.out.println("Running query via #performInference():");
       currentQuery.addListener(testQueryListener).performInference();
       final long startMillis = System.currentTimeMillis();
       while (testQueryListener.terminated == false
               && System.currentTimeMillis() - startMillis < 1000) {
+        System.out.print(".");
         Thread.sleep(10);
       }
+      System.out.println("Suspend reason: " + testQueryListener.suspendReason);
+      System.out.println("Statuses      : " + testQueryListener.statuses);
+      System.out.println("Answers       : " + testQueryListener.answers);
+      assertTrue(testQueryListener.created);
       assertTrue(testQueryListener.terminated);
+      assertFalse(testQueryListener.answers.isEmpty());
+      assertEquals(expectedStatuses, testQueryListener.statuses);
+      assertEquals(expectedSuspendReasonStr, "" + testQueryListener.suspendReason);
     }
   }
 
@@ -221,7 +248,7 @@ public class AsynchronousQueryTest {
     System.out.println("setQueryVariables");
     currentQuery = constructXIsaBirdQuery();
     assertTrue(currentQuery + " does not contain " + X, currentQuery.getQueryVariables().contains(X));
-    final List<Variable> vars = new ArrayList<Variable>();
+    final List<Variable> vars = new ArrayList<>();
     currentQuery.setQueryVariables(vars);
     assertFalse(currentQuery.getQueryVariables().contains(X));
     vars.add(X);
@@ -357,11 +384,12 @@ public class AsynchronousQueryTest {
   
   private static class TestQueryListener implements QueryListener {
     // TODO: use some of these fields for verifying test results.
-    private boolean created = false;
-    private boolean terminated = false;
-    private final List<InferenceStatus> statuses = new ArrayList<InferenceStatus>();
-    private final List answers = new ArrayList();
-
+    public boolean created = false;
+    public boolean terminated = false;
+    public InferenceSuspendReason suspendReason = null;
+    public final List<InferenceStatus> statuses = new ArrayList<>();
+    public final List answers = new ArrayList();
+    
     @Override
     public void notifyInferenceCreated(Query query) {
       System.out.println("Inference created.");
@@ -375,8 +403,11 @@ public class AsynchronousQueryTest {
             Query query) {
       System.out.println(
               "Inference status changed from " + oldStatus + " to " + newStatus);
-      statuses.add(oldStatus);
+      if (!statuses.contains(oldStatus)) {
+        statuses.add(oldStatus);
+      }
       statuses.add(newStatus);
+      this.suspendReason = suspendReason;
     }
 
     @Override
@@ -390,6 +421,7 @@ public class AsynchronousQueryTest {
       System.out.println("Inference terminated.");
       terminated = true;
     }
+    
   }
   
   /* *

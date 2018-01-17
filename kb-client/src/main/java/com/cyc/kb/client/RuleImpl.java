@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * variables.
  *
  * @author vijay
- * @version $Id: RuleImpl.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: RuleImpl.java 176349 2017-12-19 01:38:11Z nwinant $
  * @since 1.0
  */
 public class RuleImpl extends AssertionImpl implements Rule {
@@ -277,7 +277,11 @@ public class RuleImpl extends AssertionImpl implements Rule {
     if ((cycObject instanceof CycAssertion) && !((CycAssertion) cycObject).isGaf()) {
       try {
         final CycObject operator = ((CycAssertion) cycObject).getArg0(getAccess());
-        return operator.equals(IMPLIES);
+        if (operator.equals(IMPLIES)) {
+          return true;
+        }
+        LOG.error("Expected a rule, but operator was '{}', not #$implies. CycAssertion: {}",
+                operator, cycObject);
       } catch (CycApiException | CycConnectionException ex) {
         throw KbRuntimeException.fromThrowable(ex);
       }

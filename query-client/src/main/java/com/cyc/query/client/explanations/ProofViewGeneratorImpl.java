@@ -36,15 +36,18 @@ import com.cyc.query.InferenceAnswerIdentifier;
 import com.cyc.query.InferenceIdentifier;
 import com.cyc.query.ProofView;
 import com.cyc.query.ProofViewGenerator;
+import com.cyc.query.ProofViewMarshaller;
 import com.cyc.query.ProofViewSpecification;
 import com.cyc.query.QueryAnswer;
 import com.cyc.query.QueryAnswerExplanationGenerator;
+import com.cyc.query.exception.ProofViewException;
 import com.cyc.query.exception.QueryRuntimeException;
 import com.cyc.session.compatibility.CycSessionRequirementList;
 import com.cyc.session.compatibility.NotOpenCycRequirement;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import com.cyc.session.exception.SessionCommunicationException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.xml.bind.JAXBException;
 
@@ -73,7 +76,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
   private SummaryAlgorithm summaryAlgorithm = SummaryAlgorithm.DEFAULT;
   private DenotationalTerm addressee = null;
   private com.cyc.xml.query.ProofView proofViewJaxb = null;
-  private final com.cyc.xml.query.ProofViewUnmarshaller proofViewJaxbUnmarshaller;
+  private final com.cyc.xml.query.ProofViewJaxbUnmarshaller proofViewJaxbUnmarshaller;
   private com.cyc.query.ProofView root = null;
   //"get-new-empty-proof-view-id"
 
@@ -102,10 +105,8 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
               "get-new-empty-proof-view-id",
               inferenceID.getProblemStoreId(), inferenceID.getInferenceId(),
               answerID.getAnswerId()));
-      this.proofViewJaxbUnmarshaller = new com.cyc.xml.query.ProofViewUnmarshaller();
-    } catch (JAXBException ex) {
-      throw new RuntimeException(ex);
-    } catch (CycConnectionException ex) {
+      this.proofViewJaxbUnmarshaller = new com.cyc.xml.query.ProofViewJaxbUnmarshaller();
+    } catch (JAXBException | CycApiException | CycConnectionException ex) {
       throw QueryRuntimeException.fromThrowable(ex);
     }
   }
@@ -139,8 +140,8 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
       try {
         initializeProofViewProperties();
         converseVoid(makeSublStmt("proof-view-id-populate", proofViewId));
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to populate proof view.", e);
+      } catch (CycApiException | CycConnectionException e) {
+        throw QueryRuntimeException.fromThrowable("Failed to populate proof view.", e);
       }
       isPopulated = true;
     }
@@ -299,7 +300,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
     return cyc;
   }
 
-  com.cyc.xml.query.ProofViewUnmarshaller getProofViewJaxbUnmarshaller() {
+  com.cyc.xml.query.ProofViewJaxbUnmarshaller getProofViewJaxbUnmarshaller() {
     return proofViewJaxbUnmarshaller;
   }
 
@@ -429,12 +430,21 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
   @Override
   public void marshal(org.w3c.dom.Node destination) {
     try {
-      marshal(destination, new com.cyc.xml.query.ProofViewMarshaller());
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
+      marshal(destination, new com.cyc.xml.query.ProofViewJaxbMarshaller());
+    } catch (JAXBException ex) {
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
-
+  
+  @Override
+  public ProofViewMarshaller getMarshaller() throws ProofViewException {
+    try {
+      return new ProofViewMarshallerImpl(this);
+    } catch (JAXBException ex) {
+      throw ProofViewException.fromThrowable("Error attempting to return ProofViewMarshaller", ex);
+    }
+  }
+  
   /**
    * Marshal this justification to the specified DOM node using the specified marshaller.
    *
@@ -442,11 +452,11 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
    * @param marshaller
    */
   public void marshal(org.w3c.dom.Node destination,
-          final com.cyc.xml.query.ProofViewMarshaller marshaller) {
+          final com.cyc.xml.query.ProofViewJaxbMarshaller marshaller) {
     try {
       marshaller.marshal(proofViewJaxb, destination);
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
+    } catch (IOException | JAXBException ex) {
+      throw QueryRuntimeException.fromThrowable(ex);
     }
   }
 
@@ -464,23 +474,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
       throw QueryRuntimeException.fromThrowable(e);
     }
   }
-
-  private boolean converseBoolean(final String command) throws CycConnectionException {
-    try {
-      return cyc.converse().converseBoolean(command);
-    } catch (CycApiException e) {
-      throw QueryRuntimeException.fromThrowable(e);
-    }
-  }
-
-  private CycObject converseCycObject(final String command) throws CycConnectionException {
-    try {
-      return cyc.converse().converseCycObject(command);
-    } catch (CycApiException e) {
-      throw QueryRuntimeException.fromThrowable(e);
-    }
-  }
-
+  
   private void ensureProofViewInitialized() throws RuntimeException, OpenCycUnsupportedFeatureException {
     PROOF_VIEW_JUSTIFICATION_REQUIREMENTS.throwRuntimeExceptionIfIncompatible();
     synchronized (lock) {
@@ -494,7 +488,7 @@ public class ProofViewGeneratorImpl implements ProofViewGenerator {
                 xml.getBytes()));
         final com.cyc.xml.query.ProofViewEntry rootEntryJaxb = proofViewJaxb.getProofViewEntry();
         setRoot(new com.cyc.query.client.explanations.ProofViewImpl(rootEntryJaxb, this));
-      } catch (Exception e) {
+      } catch (CycApiException | CycConnectionException | JAXBException e) {
         e.printStackTrace(System.err);
         throw QueryRuntimeException.fromThrowable("Failed to get root of proof view.", e);
       }

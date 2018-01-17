@@ -122,7 +122,7 @@ public class QueryRulesImpl implements QueryRules {
   
   @Deprecated
   public void useOnlySpecifiedRules(boolean includePracticeRules, boolean forceReload) throws QueryConstructionException, SessionCommunicationException {
-    // FIXME: This shouldn't be necessary, as explained in SNC-267 - nwinant, 2017-04-23
+    // FIXME: This shouldn't be necessary, as explained in CAPI-809 - nwinant, 2017-04-23
     if (forceReload || query.getInferenceParameters().containsKey(ALLOWED_RULES)) {
       query.getInferenceParameters().remove(ALLOWED_RULES);
       final Set rules = new LinkedHashSet();
@@ -155,18 +155,12 @@ public class QueryRulesImpl implements QueryRules {
   @Deprecated
   @Override
   public void useOnlySpecifiedRules(boolean includePracticeRules) throws QueryConstructionException, SessionCommunicationException {
-    // FIXME: This shouldn't be necessary, as explained in SNC-267 - nwinant, 2017-04-23
+    // FIXME: This shouldn't be necessary, as explained in CAPI-809 - nwinant, 2017-04-23
     useOnlySpecifiedRules(includePracticeRules, true);
   }
   
   
   // Private
-  
-  // (queryPracticeRules SNCQuery-GetMostRecentFiscalQuarterAndYear ?RULES)
-  // TestVocabularyMt
-  // (queryAllowedRules  SNCQuery-GetMostRecentFiscalQuarterAndYear ?RULES)
-  // AccountingMt
-  //ruleType.getFact(ctx, ruleType, 0, otherArgs)
   
   private Collection<Rule> getRules(Query rulesQuery) throws SessionCommunicationException {
     final Collection<Rule> results = new ArrayList();

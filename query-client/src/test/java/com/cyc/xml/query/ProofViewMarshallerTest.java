@@ -95,7 +95,7 @@ public class ProofViewMarshallerTest {
     System.out.println("Marshaling proof view to " + destination);
     final ProofView proofView = proofViewJustification.getProofViewJaxb();
     assertNotNull("Failed to get proof view.", proofView);
-    new ProofViewMarshaller().marshal(proofView, new FileWriter(destination));
+    new ProofViewJaxbMarshaller().marshal(proofView, new FileWriter(destination));
   }
   
   /**
@@ -107,7 +107,7 @@ public class ProofViewMarshallerTest {
     assumeNotOpenCyc();
     final ProofView proofView = proofViewJustification.getProofViewJaxb();
     assertNotNull("Failed to get proof view.", proofView);
-    new ProofViewMarshaller().marshal(proofView, System.out);
+    new ProofViewJaxbMarshaller().marshal(proofView, System.out);
   }
 
   /**
@@ -119,9 +119,9 @@ public class ProofViewMarshallerTest {
     assumeNotOpenCyc();
     final File file1 = File.createTempFile("proofViewTest", ".xml");
     final ProofView proofView = proofViewJustification.getProofViewJaxb();
-    final ProofViewMarshaller marshaller = new ProofViewMarshaller();
+    final ProofViewJaxbMarshaller marshaller = new ProofViewJaxbMarshaller();
     marshaller.marshal(proofView, new FileWriter(file1));
-    final ProofView proofView2 = new ProofViewUnmarshaller().unmarshalProofview(new FileInputStream(
+    final ProofView proofView2 = new ProofViewJaxbUnmarshaller().unmarshalProofview(new FileInputStream(
             file1));
     final File file2 = File.createTempFile("proofViewTest", ".xml");
     marshaller.marshal(proofView2, new FileWriter(file2));

@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * Each Assertion has to be explicitly stated to be true in at least one context.
  * 
  * @author Vijay Raj
- * @version $Id: ContextImpl.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: ContextImpl.java 176349 2017-12-19 01:38:11Z nwinant $
  */
 public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
   
@@ -665,4 +665,5 @@ public class ContextImpl extends KbIndividualImpl<ElMt> implements Context {
   static String getClassTypeString() {
     return "#$Microtheory";
   }
+  
 }

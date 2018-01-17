@@ -32,6 +32,7 @@ import com.cyc.base.cycobject.Fort;
 import com.cyc.base.exception.CycApiException;
 import com.cyc.base.exception.CycConnectionException;
 import com.cyc.base.exception.CycTimeOutException;
+import java.util.List;
 
 /**
  * Tools for examining individual CycObjects. To examine the relationship between
@@ -159,9 +160,10 @@ public interface InspectorTool {
    * @throws CycConnectionException if a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  boolean isBinaryPredicate(CycObject cycObject) throws
-          CycConnectionException, CycApiException;
+  boolean isBinaryPredicate(CycObject cycObject) throws CycConnectionException, CycApiException;
 
+  public boolean isBroadMt(CycObject mt) throws CycConnectionException, CycApiException;
+  
   /**
    * Returns true if the given term is a Collection.
    *
@@ -172,8 +174,7 @@ public interface InspectorTool {
    * @throws CycConnectionException if a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  boolean isCollection(CycObject cycObject)
-          throws CycConnectionException, CycApiException;
+  boolean isCollection(CycObject cycObject) throws CycConnectionException, CycApiException;
 
   /**
    * Returns true if the given object is a Collection.
@@ -185,8 +186,7 @@ public interface InspectorTool {
    * @throws CycConnectionException if a data communication error occurs
    * @throws CycApiException if the api request results in a cyc server error
    */
-  boolean isCollection(Object obj)
-          throws CycConnectionException, CycApiException;
+  boolean isCollection(Object obj) throws CycConnectionException, CycApiException;
 
   /**
    * Returns true if the given term is a collection, implemented by a cache to avoid asking the same
@@ -776,7 +776,7 @@ public interface InspectorTool {
 
   /**
    * Find the most specific collection that <code>term</code> is an instance of in 
-   * the tree: (#$Thing
+   * the tree: (#$Thingi
 			  (#$Collection
 			   (#$FirstOrderCollection #$SecondOrderCollection))
 			  (#$Individual
@@ -789,5 +789,7 @@ public interface InspectorTool {
    * @throws CycConnectionException 
    */
   CycObject categorizeTermWRTApi (CycObject term) throws CycConnectionException;
+  
+  List<CycObject> categorizeTermsWRTApi (List<CycObject> terms) throws CycConnectionException;
   
 }

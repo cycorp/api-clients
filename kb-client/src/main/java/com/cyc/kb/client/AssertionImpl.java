@@ -43,8 +43,6 @@ import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.Sentence;
-import static com.cyc.kb.client.KbContentLogger.KB_FIND_LOGGER;
-import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
 import com.cyc.kb.client.config.KbConfiguration;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.DeleteException;
@@ -59,6 +57,9 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.cyc.kb.client.KbContentLogger.KB_FIND_LOGGER;
+import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
+
 /**
  * An Assertion object is a facade for a
  * <code>#$CycLAssertion</code> in Cyc KB. An assertion is a semantically well
@@ -67,10 +68,10 @@ import org.slf4j.LoggerFactory;
  * Sub-classes include Fact and Rule.
  *
  * @author Vijay Raj
- * @version $Id: AssertionImpl.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: AssertionImpl.java 176349 2017-12-19 01:38:11Z nwinant $
  * @since 1.0
  */
-public class AssertionImpl extends PossiblyNonAtomicKbObjectImpl<CycAssertion> implements Assertion {
+public class AssertionImpl extends KbObjectWithArityImpl<CycAssertion> implements Assertion {
   
   /**
    * In some cases, the act of asserting a formula may be successful <em>without actually 

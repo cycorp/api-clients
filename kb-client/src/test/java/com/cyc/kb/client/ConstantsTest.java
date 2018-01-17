@@ -28,10 +28,12 @@ import com.cyc.kb.KbObject;
 import com.cyc.kb.KbObjectLibraryLoader;
 import java.util.Collection;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -85,11 +87,12 @@ public class ConstantsTest {
     for (KbObject o : allObj) {
       System.out.println("  - " + o);
     }
-    assertFalse(allObj.isEmpty());
-    assertEquals(32, allObj.size());
+    assertTrue(allObj.isEmpty()); // Fields on com.cyc.kb.client.Constants are no longer public - nwinant, 2017-12-18
+    //assertFalse(allObj.isEmpty());
+    //assertEquals(32, allObj.size());
     
     // Do a deeper inspection of constants classes by name:
-    validateCycLibrary(loader, Constants.class);
+    //validateCycLibrary(loader, Constants.class);
   }
   
   

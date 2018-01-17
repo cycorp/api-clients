@@ -95,14 +95,26 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.cyc.baseclient.CommonConstants.*;
-import static com.cyc.baseclient.CycObjectFactory.*;
+import static com.cyc.baseclient.CycObjectFactory.makeCycSymbol;
+import static com.cyc.baseclient.CycObjectFactory.makeCycVariable;
+import static com.cyc.baseclient.CycObjectFactory.makeGuid;
+import static com.cyc.baseclient.CycObjectFactory.nil;
+import static com.cyc.baseclient.CycObjectFactory.quote;
+import static com.cyc.baseclient.CycObjectFactory.resetCaches;
+import static com.cyc.baseclient.CycObjectFactory.resetCycConstantCaches;
+import static com.cyc.baseclient.CycObjectFactory.t;
 import static com.cyc.baseclient.testing.TestConstants.*;
 import static com.cyc.baseclient.testing.TestGuids.*;
 import static com.cyc.baseclient.testing.TestSentences.*;
 import static com.cyc.baseclient.testing.TestUtils.assumeNotOpenCyc;
 import static com.cyc.baseclient.testing.TestUtils.isEnterpriseCyc;
 import static com.cyc.baseclient.testing.TestUtils.skipTest;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Provides a unit test suite for the <tt>com.cyc.baseclient.api</tt> package
@@ -2057,6 +2069,8 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     testObjectScript(cycAccess, script, nil);
     script = "(progn (csetq my-large-dictionary (new-dictionary #'eq 200)) nil)";
     responseObject = cycAccess.converse().converseObject(script);
+    /*
+    // TODO: re-enable once capitalCity -> capitalEntity change has been reconciled - nwinant, 2017-12-18
     script = "(clet ((cities (remove-duplicates \n" + "                 (with-all-mts \n"
             + "                   (instances " + INDEPENDENT_COUNTRY_STRING + ")))) \n"
             + "        capital-city) \n" + "  (cdolist (city cities) \n"
@@ -2066,14 +2080,14 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
             + "                           (first capital-city) \n"
             + "                           ;; else \n" + "                           nil))))";
     responseObject = cycAccess.converse().converseObject(script);
-
+    
     script = "(mapdictionary my-large-dictionary #'my-mapdictionary-fn)";
     testObjectScript(cycAccess, script, nil);
     script = "(symbol-value 'answer)";
     responseList = cycAccess.converse().converseList(script);
     assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
             "(" + FRANCE_STRING + " " + CITY_OF_PARIS_FRANCE_STRING + ")")));
-
+    
     script = "(define my-parameterized-mapdictionary-fn (key value args) \n"
             + "  (cpush (list key value args) answer) \n" + "  (ret nil))";
     testObjectScript(cycAccess, script, makeCycSymbol(
@@ -2093,7 +2107,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
     responseList = cycAccess.converse().converseList(script);
     assertTrue(responseList.contains(cycAccess.getObjectTool().makeCycList(
             "(" + FRANCE_STRING + " " + CITY_OF_PARIS_FRANCE_STRING + " (1 2))")));
-
+    */
     // ccatch and throw
     script = "(define my-super () \n" + "  (clet (result) \n" + "    (ccatch :abort \n"
             + "      result \n" + "      (my-sub) \n" + "      (csetq result 0)) \n"
@@ -4046,7 +4060,7 @@ public class GeneralUnitTest implements CycLeaseManager.CycLeaseManagerListener 
   private static final String VULNERABLE_TO_DTML_METHOD_EXECUTION_STRING = TestConstants.VULNERABLE_TO_DTML_METHOD_EXECUTION.cyclify();
   private static final String JUVENILE_FN_STRING = TestConstants.JUVENILE_FN.cyclify();
   private static final String INDEPENDENT_COUNTRY_STRING = TestConstants.INDEPENDENT_COUNTRY.cyclify();
-  private static final String CAPITAL_CITY_STRING = TestConstants.CAPITAL_CITY.cyclify();
+  //private static final String CAPITAL_CITY_STRING = TestConstants.CAPITAL_CITY.cyclify();  // TODO: re-enable once capitalCity -> capitalEntity change has been reconciled - nwinant, 2017-12-18
   private static final String FRANCE_STRING = TestConstants.FRANCE.cyclify();
   private static final String CITY_OF_PARIS_FRANCE_STRING = TestConstants.CITY_OF_PARIS_FRANCE.cyclify();
   private static final String GIVEN_NAMES_STRING = GIVEN_NAMES.cyclify();

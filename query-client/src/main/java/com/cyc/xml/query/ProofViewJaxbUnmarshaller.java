@@ -2,7 +2,7 @@ package com.cyc.xml.query;
 
 /*
  * #%L
- * File: ProofViewUnmarshaller.java
+ * File: ProofViewJaxbUnmarshaller.java
  * Project: Query Client
  * %%
  * Copyright (C) 2013 - 2017 Cycorp, Inc.
@@ -39,13 +39,13 @@ import org.xml.sax.SAXParseException;
  *
  * @author baxter
  */
-public class ProofViewUnmarshaller {
+public class ProofViewJaxbUnmarshaller {
 
   public static final String XSD_URI = Constants.XSD_HOME + "/proofview.xsd";
   private boolean shouldValidate = true;
   private final javax.xml.bind.Unmarshaller unmarshaller;
 
-  public ProofViewUnmarshaller() throws JAXBException {
+  public ProofViewJaxbUnmarshaller() throws JAXBException {
     JAXBContext jaxbContext = getJaxbContext();
     this.unmarshaller = jaxbContext.createUnmarshaller();
     if (shouldValidate) {
@@ -75,7 +75,7 @@ public class ProofViewUnmarshaller {
 
   static JAXBContext getJaxbContext() throws JAXBException {
     final String packages = CycmlDecoder.class.getPackage().getName() + ":"
-            + ProofViewUnmarshaller.class.getPackage().getName();
+            + ProofViewJaxbUnmarshaller.class.getPackage().getName();
     final JAXBContext jaxbContext = JAXBContext.newInstance(packages);
     return jaxbContext;
   }

@@ -39,7 +39,7 @@ import com.cyc.query.exception.QueryConstructionException;
 import com.cyc.session.exception.OpenCycUnsupportedFeatureException;
 import com.cyc.session.exception.SessionCommunicationException;
 import com.cyc.session.exception.UnsupportedCycOperationException;
-import com.cyc.xml.query.ProofViewMarshaller;
+import com.cyc.xml.query.ProofViewJaxbMarshaller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +95,7 @@ public class KbContentTestTester implements QueryListener {
         verifyExactBindingsReturned();
       }
       final PrintStreamExporter<ProofViewGeneratorImpl> exporter = new PrintStreamExporter<ProofViewGeneratorImpl>() {
-        final ProofViewMarshaller marshaller = new ProofViewMarshaller();
+        final ProofViewJaxbMarshaller marshaller = new ProofViewJaxbMarshaller();
 
         @Override
         protected void doExport() throws JAXBException, IOException, OpenCycUnsupportedFeatureException {

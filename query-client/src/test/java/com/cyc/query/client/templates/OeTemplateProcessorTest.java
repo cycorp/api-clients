@@ -62,6 +62,7 @@ import static com.cyc.query.client.TestUtils.findOrCreate_Kbq;
 import static com.cyc.query.client.TestUtils.xIsaBird;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *
@@ -74,8 +75,9 @@ public class OeTemplateProcessorTest {
   
   @BeforeClass
   public static void setUpClass() throws QueryConstructionException, KbException {
+    assumeTrue("OeTemplateProcessor tests are currently disabled.", false); // FIXME: revise tests & re-enable - nwinant, 2017-08-09
     //deleteAllTestConstants();
-    KBQ_ID = KbIndividual.get("#$SNCVA-AWCAQuery");
+    KBQ_ID = null;
     SIMPLE_KBQ_ID = findOrCreate_Kbq("SimpleQuery", xIsaBird(), INFERENCE_PSC).getId();
   }
   
@@ -185,58 +187,6 @@ public class OeTemplateProcessorTest {
     System.out.println("----------");
     assertEquals(expectedBindings, resultingBindings);
   }
-  
-  /*
-  @Test
-  public void testGetResults_KBQ_async() throws Exception {
-    System.out.println("testGetResults_KBQ_async");
-    
-    final QueryAnswers expectedAnswers;
-    final int expectedNumAnswers;
-    {
-      expectedAnswers = Cyc.getQuery(SIMPLE_KBQ_ID).getAnswers();
-      expectedNumAnswers = expectedAnswers.size();
-      System.out.println("Expected:");
-      ANSWERS_PRINTER.accept(expectedAnswers);
-    }
-    System.out.println();
-    
-    final OeTemplateResults jobResults = new OeTemplateResults();
-    final OeTemplateProcessorConfig config = OeTemplateProcessorConfig.create();
-    final OeTemplateJob job = processTemplateAndWait(SIMPLE_KBQ_ID, config, jobResults);
-    final int jobResultsSize = jobResults.size();
-    final boolean jobIsDone = job.isDone();
-    final QueryAnswers resultingAnswers = jobResults.toQueryAnswers();
-    System.out.println("Results:");
-    ANSWERS_PRINTER.accept(resultingAnswers);
-    //System.out.println(jobResults.toPrettyString("    "));
-    //System.out.println("Total: " + jobResultsSize);
-    //System.out.println("--------");
-    assertTrue(jobIsDone);
-    assertTrue(job.isDone());
-    
-    LOG.info("Resulting status: {}", job.get());
-    
-    final QueryAnswers verifiedAnswers;
-    {
-      verifiedAnswers = Cyc.getQuery(SIMPLE_KBQ_ID).getAnswers();
-      assertEquals(expectedNumAnswers, verifiedAnswers.size());
-    }
-    assertEquals(expectedAnswers.size(), jobResults.size());
-    assertEquals(jobResultsSize, jobResults.size());
-    
-    final Variable var = KbFactory.getVariable("?X");
-    final List<String> expectedBindings = expectedAnswers.toBindingsStringsForVariable(var);
-    final List<String> resultingBindings = resultingAnswers.toBindingsStringsForVariable(var);
-    
-    System.out.println("----------");
-    expectedBindings.stream().forEach(System.out::println);
-    System.out.println("----------");
-    resultingBindings.stream().forEach(System.out::println);
-    System.out.println("----------");
-    assertEquals(expectedBindings, resultingBindings);
-  }
-  */
   
   //====|    Configuration & helper methods    |==================================================//
   

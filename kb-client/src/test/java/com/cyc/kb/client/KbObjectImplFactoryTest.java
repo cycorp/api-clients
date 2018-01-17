@@ -49,6 +49,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.cyc.kb.client.TestUtils.assumeKbObjects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -120,6 +121,9 @@ public class KbObjectImplFactoryTest {
 
   @Test
   public void testCacheNoCollisions() throws Exception {
+    assumeKbObjects(
+            "BELLAMBGIT-ProblemHasNoUnfinishedEventNodes", 
+            "BELLAMBGIT-GraphContainsNoTwinSiblings"); // TODO: update vocabulary - nwinant, 2017-12-18
     Context testVocabularyCtx = ContextImpl.get("TestVocabularyMt");
     KbPredicate testQuerySpecificationPred = KbPredicateImpl.get("testQuerySpecification");
     KbIndividual q1 = KbIndividualImpl.get("BELLAMBGIT-ProblemHasNoUnfinishedEventNodes");
@@ -182,7 +186,13 @@ public class KbObjectImplFactoryTest {
     final KbObject result   = KbObjectImplFactory.get(list, KbObjectImpl.class);
     assertEquals(expected, result);
   }
-  
-  
-
+  /*
+  @Test
+  public void testGet_CycList_Fact() throws SessionException, CreateException, KbTypeException {
+    System.out.println("testGet_CycList_Fact");
+    final Assertion result 
+            = Assertion.get("MyENgg2GDYMeK71YgQScKRGxna3DeWNvcnAogB4rl2gR1nS8EdaAAACgyZzFrg2DHiu9WKConCkRsZ2tw3ljb3JwKIAogQ2DHiu9WICynCkRsZ2tw3ljb3JwKIEogg2DHitM_NyYpm0R1oAAAKDJxtF-KIMohA2DHiu_9HbonCkRsZ2tw3ljb3JwHiu-t_B0nCkRsZ2tw3ljb3JwKIMNgx4rwDr6bZwpEbGdrcN5Y29ycCiCDYMeK71lcnqcKRGxna3DeWNvcnAohA2CHiu9WP_9nCkRsZ2tw3ljb3JwhQweK78ZKx6cKRGxna3DeWNvcnA");
+    System.out.println(result);
+  }
+  */
 }

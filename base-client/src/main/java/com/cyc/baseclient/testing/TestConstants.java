@@ -352,9 +352,9 @@ public class TestConstants {
   public static final CycConstantImpl CITY_OF_PARIS_FRANCE = new CycConstantImpl("CityOfParisFrance",
           new GuidImpl("bd58f98c-9c29-11b1-9dad-c379636f7270"));
   
-  @CycTerm(cycl="#$capitalEntity")
-  public static final CycConstantImpl CAPITAL_CITY = new CycConstantImpl("capitalEntity",
-          new GuidImpl("bd590b5f-9c29-11b1-9dad-c379636f7270"));
+  //@CycTerm(cycl="#$capitalEntity")  // TODO: re-enable once capitalCity -> capitalEntity change has been reconciled - nwinant, 2017-12-18
+  //public static final CycConstantImpl CAPITAL_CITY = new CycConstantImpl("capitalEntity",
+  //        new GuidImpl("bd590b5f-9c29-11b1-9dad-c379636f7270"));
   
   @CycTerm(cycl="#$IndependentCountry")
   public static final CycConstantImpl INDEPENDENT_COUNTRY = new CycConstantImpl("IndependentCountry",

@@ -41,7 +41,6 @@ import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
 import com.cyc.kb.KbTerm;
 import com.cyc.kb.Sentence;
-import static com.cyc.kb.client.KbObjectImpl.getCore;
 import com.cyc.kb.client.config.KbConfiguration;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.DeleteException;
@@ -54,6 +53,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
+import static com.cyc.kb.client.KbObjectImpl.getCore;
+
 /**
  * A <code>KBTerm</code> is a facade for any #$CycLDenotationalTerm, but in the 
  * API its purpose is to create terms that are only known to be #$Thing. 
@@ -61,9 +62,9 @@ import java.util.Map;
  * @param <T> type of CycObject core
  * 
  * @author Dave Schneider
- * @version $Id: KbTermImpl.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: KbTermImpl.java 176349 2017-12-19 01:38:11Z nwinant $
  */
-public class KbTermImpl<T extends DenotationalTerm> extends PossiblyNonAtomicKbObjectImpl<T> implements KbTerm {
+public class KbTermImpl<T extends DenotationalTerm> extends KbObjectWithArityImpl<T> implements KbTerm {
 
   //====|    Fields    |==========================================================================//
   

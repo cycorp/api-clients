@@ -35,7 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.cyc.baseclient.subl.functions.CycEvaluateFunction.CYC_EVALUATE_INDEXICAL;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -61,7 +63,7 @@ public class CycEvaluateFunction_IndexicalTest extends AbstractSublFunctionTest 
             access.getLookupTool().getConstantByName("#$ParaphraseDomainMt"),
             access.getLookupTool().getConstantByName("#$ParaphraseLanguageMt"));
     indexicalsResolvableToTerms = Arrays.asList(
-            access.getLookupTool().getConstantByName("#$TheCycProcessOwner"),
+            //access.getLookupTool().getConstantByName("#$TheCycProcessOwner"),
             access.getLookupTool().getConstantByName("#$TheUser"));
     indexicalsResolvableToStrings = Arrays.asList(
             access.getLookupTool().getConstantByName("#$TheCurrentHostName"),

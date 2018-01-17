@@ -39,7 +39,6 @@ import com.cyc.kb.Context;
 import com.cyc.kb.KbCollection;
 import com.cyc.kb.KbObject;
 import com.cyc.kb.KbStatus;
-import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
 import com.cyc.kb.exception.CreateException;
 import com.cyc.kb.exception.KbObjectNotFoundException;
 import com.cyc.kb.exception.KbRuntimeException;
@@ -60,6 +59,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.cyc.kb.client.KbObjectImpl.getStaticAccess;
+
 /**
  * This class provides factory methods to build instance of KBObjects and its subclasses. The class
  * also provides caching for the retrieved objects. Note that the cache may be stale and the API
@@ -68,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * The class and the methods of this class are not part of the KB API.
  *
  * @author David Baxter
- * @version $Id: KbObjectImplFactory.java 176267 2017-12-13 04:02:46Z nwinant $
+ * @version $Id: KbObjectImplFactory.java 176349 2017-12-19 01:38:11Z nwinant $
  */
 public class KbObjectImplFactory {
 
@@ -570,7 +571,7 @@ public class KbObjectImplFactory {
             | IllegalArgumentException
             | InvocationTargetException e) {
       LOG.error("Could not create {} from {}: {}", requiredKbClass, cycObject, e.getMessage());
-      e.printStackTrace(System.err);
+      //e.printStackTrace(System.err);
       constructionException = e;
     }
 //    for (final Class<? extends KBObjectImpl> subClass : KB_OBJECT_TYPES) {
@@ -598,7 +599,7 @@ public class KbObjectImplFactory {
     final String msg
             = "No KB object \"" + cycObject.toString()
             + "\" as " + requestedClass.getSimpleName() + ".";
-    LOG.warn(msg);
+    LOG.error(msg);
     if (constructionException != null) {
       throw KbObjectNotFoundException.fromThrowable(msg, constructionException);
     }

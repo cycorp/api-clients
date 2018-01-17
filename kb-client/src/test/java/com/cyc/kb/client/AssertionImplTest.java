@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.cyc.kb.client.TestConstants.kbapitc;
+import static com.cyc.kb.client.TestUtils.assumeKbObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -398,6 +399,7 @@ public class AssertionImplTest {
     
     @Test
     public void testRetriggerForwardInference () throws KbTypeException, CreateException, DeleteException, KbException {
+      assumeKbObject("ProprietaryTerm");
       ContextImpl ctx = ContextImpl.get("SomeAirlineLogMt");
       AssertionImpl.assertSentence("(implies (flyingDoneBySomething-Operate ?X ?Y) (quotedIsa ?X ProprietaryTerm))", "SomeAirlineLogMt", Assertion.Strength.AUTO, Direction.FORWARD);
       KbIndividual myFlying = Cyc.getKbIndividualService().findOrCreate("MyFlying", KbCollectionImpl.get("FlyingAnObject-Operate"));
